@@ -202,13 +202,14 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 .branch small{color:#b5a98f;font-size:14px;line-height:1.35}
 
 /* Controles táctiles */
-#touch{position:fixed;right:calc(env(safe-area-inset-right,0px) + 14px);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:4;width:210px;height:210px;pointer-events:none}
+#touch{position:fixed;right:calc(env(safe-area-inset-right,0px) + 14px);bottom:calc(env(safe-area-inset-bottom,0px) + 14px);z-index:4;width:180px;height:180px;pointer-events:none}
 #touch button{position:absolute;border-radius:50%;padding:0;pointer-events:auto;background:rgba(28,24,19,.72);border:1.5px solid var(--line);font-size:13px;line-height:1.05;touch-action:none}
-#tAtk{width:92px;height:92px;right:0;bottom:0;border-color:var(--amber)!important;font-family:var(--f-display);font-size:18px!important;color:var(--amber-hi)}
-#tS1{width:58px;height:58px;right:104px;bottom:6px}
-#tS2{width:58px;height:58px;right:90px;bottom:80px}
-#tS3{width:58px;height:58px;right:22px;bottom:110px}
-#tPot{width:46px;height:46px;right:150px;bottom:120px;border-color:var(--rust)!important}
+#tAtk{width:76px;height:76px;right:0;bottom:0;border-color:var(--amber)!important;font-family:var(--f-display);font-size:18px!important;color:var(--amber-hi)}
+#tS1,#tS2,#tS3{font-size:11.5px!important;overflow:hidden;word-break:break-word}
+#tS1{width:52px;height:52px;right:88px;bottom:2px}
+#tS2{width:52px;height:52px;right:72px;bottom:66px}
+#tS3{width:52px;height:52px;right:12px;bottom:90px}
+#tPot{width:44px;height:44px;right:130px;bottom:100px;border-color:var(--rust)!important}
 .shrine-box{max-width:820px;width:100%;padding:0;display:flex;flex-direction:column;max-height:calc(100vh - 32px)}
 .shrine-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:18px 18px 12px;flex-shrink:0}
 .shrine-box .tabs{flex-shrink:0}
@@ -505,6 +506,8 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 #shrine.dual .shrine-box{border-left:0;box-shadow:12px 0 40px rgba(0,0,0,.6)}
 #shrine.dual .tgrid{display:block}
 .dual-hint{font-size:12.5px;color:var(--dim);text-align:center;margin-top:8px}
+/* escala de interfaz */
+#bagDock,#shrine,#touch,#gameBtns,#rotate{zoom:var(--ui,1)}
 </style>
 </head>
 <body>
@@ -645,6 +648,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
       <button id="soundBtn">Sonido: sí</button>
       <button id="artBtn">Mantis: arte</button>
       <button id="qualBtn">Calidad: automática</button>
+      <button id="uiBtn">Tamaño de la interfaz: 100%</button>
       <button class="danger" id="abandonBtn">Volver a la madriguera</button>
     </div>
     <div class="botset">
@@ -665,7 +669,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.20 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.21 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -2097,7 +2101,7 @@ function render(){
   // viñeta
   const vg=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.75);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.55)');cx.fillStyle=vg;cx.fillRect(0,0,W,H);
   if(G.hurtFx>0){const gr=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.max(W,H)*.7);gr.addColorStop(0,'rgba(140,20,10,0)');gr.addColorStop(1,'rgba(140,20,10,'+(G.hurtFx*1.5)+')');cx.fillStyle=gr;cx.fillRect(0,0,W,H);}
-  {const W0=W;cx.save();cx.translate(SAFE_L,0);W=W0-SAFE_L-SAFE_R;drawHUD(cam);drawMinimap();W=W0;cx.restore();}if(G.bigMap&&!G.arena)drawBigMap();
+  {const W0=W,H0=H,sT=SAFE_T,sB=SAFE_B;cx.save();cx.translate(SAFE_L,0);cx.scale(UI,UI);W=(W0-SAFE_L-SAFE_R)/UI;H=H0/UI;SAFE_T=sT/UI;SAFE_B=sB/UI;drawHUD(cam);drawMinimap();W=W0;H=H0;SAFE_T=sT;SAFE_B=sB;cx.restore();}if(G.bigMap&&!G.arena)drawBigMap();
   if(joy){cx.strokeStyle='rgba(221,210,184,.3)';cx.lineWidth=2;cx.beginPath();cx.arc(joy.ox,joy.oy,48,0,7);cx.stroke();const ddx=joy.x-joy.ox,ddy=joy.y-joy.oy,l=Math.hypot(ddx,ddy),m=Math.min(l,48)/(l||1);cx.fillStyle='rgba(217,160,60,.5)';cx.beginPath();cx.arc(joy.ox+ddx*m,joy.oy+ddy*m,20,0,7);cx.fill();}
 }
 let MINIMAP=true;
@@ -2258,6 +2262,10 @@ $('pauseBtn').onclick=pauseGame;
 $('rotateOk').onclick=()=>{ROT_OK=true;syncRotate();};
 $('artBtn').onclick=()=>{SAVE.mantisArt=SAVE.mantisArt===false;persist();syncArtBtn();};
 function syncQualBtn(){$('qualBtn').textContent='Calidad: '+({auto:'automática',high:'máxima',low:'ahorro de batería'})[QUAL.mode];}
+/* Tamaño de la interfaz (80–130%): escala bolsa, Brugo, botones y HUD */
+const UI_STEPS=[.8,.9,1,1.1,1.2,1.3];let UI=UI_STEPS.includes(SAVE.ui)?SAVE.ui:1;
+function applyUI(){document.documentElement.style.setProperty('--ui',UI);$('uiBtn').textContent='Tamaño de la interfaz: '+Math.round(UI*100)+'%';}
+$('uiBtn').onclick=()=>{UI=UI_STEPS[(UI_STEPS.indexOf(UI)+1)%UI_STEPS.length];SAVE.ui=UI;persist();applyUI();};applyUI();
 $('qualBtn').onclick=()=>{QUAL.mode=QUAL.mode==='auto'?'high':QUAL.mode==='high'?'low':'auto';QUAL.cap=QUAL.mode==='low'?1.5:3;QUAL.scale=1;SAVE.quality=QUAL.mode;persist();syncQualBtn();resize();};
 function syncArtBtn(){$('artBtn').textContent='Mantis: '+(SAVE.mantisArt===false?'dibujo clásico':'arte');}
 $('soundBtn').onclick=()=>{SAVE.sound=!SAVE.sound;persist();$('soundBtn').textContent='Sonido: '+(SAVE.sound?'sí':'no');};
