@@ -198,7 +198,25 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 #tS3{width:58px;height:58px;right:22px;bottom:110px}
 #tPot{width:46px;height:46px;right:150px;bottom:120px;border-color:var(--rust)!important}
 .shrine-box{max-width:820px;width:100%;padding:0;display:flex;flex-direction:column;max-height:calc(100vh - 32px)}
-.shrine-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:18px 18px 12px;flex-wrap:wrap}
+.shrine-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:18px 18px 12px;flex-shrink:0}
+.shrine-box .tabs{flex-shrink:0}
+#shrine{padding:12px}
+@media (max-width:600px){
+  #shrine{padding:6px;padding-block:calc(env(safe-area-inset-top,0px) + 6px) calc(env(safe-area-inset-bottom,0px) + 6px)}
+  .shrine-box{max-height:calc(100vh - 12px)}
+  .shrine-head{padding:12px 12px 8px}
+  .shrine-box h2{font-size:22px}
+  .shrine-box .tabs button{padding:10px 12px;font-size:14px}
+  .shrine-box .tabpane{padding:12px;font-size:14px}
+  .shrine-box p{font-size:14px;line-height:1.4}
+  .shrine-box h3{font-size:17px}
+  .shrine-box .recipe{grid-template-columns:1fr;gap:8px}
+  .shrine-box .recipe b{font-size:17px}
+  .shrine-box .recipe button.main{width:100%}
+  .slotpick button{padding:7px 10px;font-size:14px}
+  .shrine-box .inv{grid-template-columns:repeat(auto-fill,minmax(48px,1fr))}
+  .shrine-box .equip{gap:6px}
+}
 .shrine-box .tabpane{overflow-y:auto}
 .recipes{display:grid;gap:10px;margin-top:12px}
 .recipe{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;border:1px solid var(--line);background:#120f0b}
@@ -294,7 +312,6 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
   </div>
 </aside>
 </div>
-<button id="talkBtn" class="talk" hidden>Hablar con Brugo<span class="k"> · E</span></button>
 <div id="touch" hidden>
   <button id="tPot" aria-label="Poción">Poción</button>
   <button id="tS3">3</button>
@@ -388,7 +405,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 <!-- SANTUARIO -->
 <section class="screen center dim-bg" id="shrine" hidden>
   <div class="frame shrine-box">
-    <div class="shrine-head"><div><div class="eyebrow" id="shrineName">Santuario de ámbar</div><h2 style="margin-top:4px">Brugo, el artesano</h2></div><button id="shrineClose">Volver al mapa</button></div>
+    <div class="shrine-head"><div><div class="eyebrow" id="shrineName">Santuario de ámbar</div><h2 style="margin-top:4px">Brugo, el artesano</h2></div><button id="shrineClose" class="icon" aria-label="Volver al mapa" title="Volver al mapa (Esc)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
     <div class="tabs" role="tablist">
       <button role="tab" id="st-craft" aria-selected="true">Artesano</button>
       <button role="tab" id="st-gear" aria-selected="false">Equipo</button>
@@ -428,7 +445,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.11 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.12 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -1267,7 +1284,7 @@ addEventListener('keyup',e=>{keys[e.code]=false;if(e.code==='KeyJ'||e.code==='Sp
 cv.addEventListener('pointerdown',e=>{
   initAudio();if(state!=='play')return;
   if(G.bigMap){G.bigMap=false;return;}
-  {const wx=(e.clientX-W/2)/ZOOM+G.cam.x,wy=(e.clientY-H/2)/ZOOM+G.cam.y,ai=artisanHit(wx,wy);if(ai>=0){if(G.nearShrine===ai)openShrine();else G.texts.push({x:G.P.x,y:G.P.y-50,s:'Acércate al santuario para hablar con Brugo',life:1.5,lvl:true});return;}}
+  {const wx=(e.clientX-W/2)/ZOOM+G.cam.x,wy=(e.clientY-H/2)/ZOOM+G.cam.y,ai=artisanHit(wx,wy);if(ai>=0){if(G.nearShrine===ai)openShrine();else G.walkTo={i:ai};return;}}
   if(e.pointerType==='mouse'){mouse.down=true;mouse.active=true;mouse.x=e.clientX;mouse.y=e.clientY;return;}
   if(!joy&&e.clientX<W*.6){joy={ox:e.clientX,oy:e.clientY,x:e.clientX,y:e.clientY,id:e.pointerId};try{cv.setPointerCapture(e.pointerId);}catch(_){}}
 });
@@ -1287,7 +1304,9 @@ function update(dt){
   if(mx||my){const l=Math.hypot(mx,my);mx/=l;my/=l;}
   else if(joy){const ddx=joy.x-joy.ox,ddy=joy.y-joy.oy,l=Math.hypot(ddx,ddy);if(l>6){const s=Math.min(1,l/48);mx=ddx/l*s;my=ddy/l*s;}}
   const manual=!!(mx||my)||held.atk||mouse.down;
-  if(G.bot.on){if(manual){G.bot.ax=P.x;G.bot.ay=P.y;}else if(!G.recall){const v=botThink(dt);if(v){mx=v[0];my=v[1];}}}
+  if(manual)G.walkTo=null;
+  else if(G.walkTo){const sh=WORLD.shrines[G.walkTo.i],tx=sh.x+ART_DX-40,ty=sh.y+ART_DY+40,ddx=tx-P.x,ddy=ty-P.y,dl=Math.hypot(ddx,ddy);if(dl<28||G.nearShrine===G.walkTo.i){G.walkTo=null;openShrine();return;}mx=ddx/dl;my=ddy/dl;}
+  if(G.bot.on&&!G.walkTo){if(manual){G.bot.ax=P.x;G.bot.ay=P.y;}else if(!G.recall){const v=botThink(dt);if(v){mx=v[0];my=v[1];}}}
   if(G.recall){G.recall-=dt;mx=my=0;if(G.recall<=0){G.recall=0;returnHub();return;}}
   if(mx||my)P.aimMove=Math.atan2(my,mx);
   if(P.dash){P.x+=P.dash.vx*dt;P.y+=P.dash.vy*dt;P.dash.t-=dt;G.parts.push({x:P.x,y:P.y,vx:0,vy:0,life:.25,max:.25,c:'rgba(217,160,60,.5)',s:10,rot:0});
@@ -1526,11 +1545,15 @@ function drawArtisan(g,x,y,t,near){
   if(hit>.97){g.fillStyle='rgba(255,200,120,.9)';for(let k=0;k<4;k++){g.beginPath();g.arc(-32+Math.cos(t*30+k)*6,4-Math.abs(Math.sin(t*20+k))*7,1.2,0,7);g.fill();}}
   g.restore();
   // nombre y aviso
-  g.save();g.textAlign='center';g.font='600 13px "Barlow Semi Condensed",sans-serif';g.fillStyle='#000';g.fillText('Brugo · Artesano',x+1,y-55);g.fillStyle='#f0c46a';g.fillText('Brugo · Artesano',x,y-56);
-  if(near){const bob=Math.sin(t*4)*2;g.fillStyle='#f0c46a';g.shadowColor='#f0c46a';g.shadowBlur=10;g.beginPath();g.moveTo(x,y-64+bob);g.lineTo(x-6,y-76+bob);g.lineTo(x+6,y-76+bob);g.closePath();g.fill();g.shadowBlur=0;}
+  const bob=Math.sin(t*4)*3,ay=y-60+bob;
+  g.save();g.textAlign='center';g.font='700 14px "Barlow Semi Condensed",sans-serif';const label='Brugo · Artesano',lw=g.measureText(label).width+14;
+  g.fillStyle='rgba(10,8,6,.78)';g.fillRect(x-lw/2,ay-42,lw,20);g.strokeStyle=near?'#f0c46a':'rgba(240,196,106,.45)';g.lineWidth=1;g.strokeRect(x-lw/2+.5,ay-41.5,lw-1,19);
+  g.fillStyle='#f0c46a';g.fillText(label,x,ay-27);
+  g.shadowColor='#f0c46a';g.shadowBlur=near?14:6;g.fillStyle=near?'#ffd98a':'#d9a03c';g.beginPath();g.moveTo(x,ay);g.lineTo(x-9,ay-15);g.lineTo(x-3,ay-15);g.lineTo(x-3,ay-21);g.lineTo(x+3,ay-21);g.lineTo(x+3,ay-15);g.lineTo(x+9,ay-15);g.closePath();g.fill();g.shadowBlur=0;
+  g.strokeStyle='rgba(8,6,4,.8)';g.lineWidth=1;g.stroke();
   g.restore();
 }
-function artisanHit(wx,wy){for(let i=0;i<WORLD.shrines.length;i++){const sh=WORLD.shrines[i];if(Math.hypot(wx-(sh.x+ART_DX),wy-(sh.y+ART_DY-14))<38)return i;}return -1;}
+function artisanHit(wx,wy){for(let i=0;i<WORLD.shrines.length;i++){const sh=WORLD.shrines[i];const ax=sh.x+ART_DX,ay=sh.y+ART_DY;if(Math.abs(wx-ax)<48&&wy>ay-110&&wy<ay+26)return i;}return -1;}
 function dropLabel(d){
   if(d.k==='gold')return ['Oro ×'+d.v,'#e8b84a'];
   if(d.k==='amber')return ['Ámbar'+(d.v>1?' ×'+d.v:''),'#f0a050'];
@@ -1950,7 +1973,6 @@ function closeShrine(){
   $('shrinePane').innerHTML='';PANE_ID='pane';persist();state='play';showScreen(null);PortalSDK.gameplayStart();
 }
 $('shrineClose').onclick=closeShrine;
-$('talkBtn').onclick=()=>{if(state==='play')openShrine();};
 ['craft','gear','forge','stash','shop'].forEach(k=>$('st-'+k).onclick=()=>{shrineTab=k;selItem=null;renderShrine();});
 function renderShrine(){
   ['craft','gear','forge','stash','shop'].forEach(k=>$('st-'+k).setAttribute('aria-selected',String(k===shrineTab)));
@@ -2138,7 +2160,6 @@ function frame(now){
   if(state==='play'&&QUAL.mode==='auto'){QUAL.acc+=raw;QUAL.n++;QUAL.cool-=raw;if(QUAL.n>=90){const avg=QUAL.acc/QUAL.n;QUAL.acc=0;QUAL.n=0;
     if(avg>1/45&&QUAL.scale>.6&&QUAL.cool<=0){QUAL.scale=Math.max(.6,QUAL.scale-.15);QUAL.cool=3;resize();}
     else if(avg<1/57&&QUAL.scale<1&&QUAL.cool<=0){QUAL.scale=Math.min(1,QUAL.scale+.1);QUAL.cool=6;resize();}}}
-  {const show=state==='play'&&G&&G.nearShrine>=0;if($('talkBtn').hidden===show)$('talkBtn').hidden=!show;}
   if(state==='play'&&G){syncBadge();update(dt);if(G&&G.bagOpen){bagT+=dt;if(BAG_DIRTY&&bagT>.3||bagT>1){bagT=0;renderBag();}}}
   render();syncTouch();
   if(state==='hub'){portraitT+=dt;if(portraitT>.06){portraitT=0;const c=CH();if(c)drawPortrait($('portrait'),c,null,null,3);}}

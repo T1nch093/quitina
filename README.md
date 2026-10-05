@@ -9,7 +9,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 - **Teclado y mouse:** WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, I bolsa, C poderes, H caza automática, M mapa grande, B volver a la madriguera, Esc pausa.
 - **Celular:** arrastra en la mitad izquierda para moverte y usa los botones de la derecha.
 
-## Contenido de la versión 0.11
+## Contenido de la versión 0.12
 
 | Sistema | Estado |
 |---|---|
@@ -20,7 +20,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 | Región I: Raíces podridas | Mapa abierto de 4800 × 3600 con santuario de entrada y 5 zonas por nivel recomendado (1–4 a 13–16). Las criaturas reaparecen a los 9–14 s, las élites al minuto y el jefe (Ciempiés de Hueso) cada 5 minutos. Las zonas descubiertas habilitan el viaje directo. |
 | Atributos | 4 puntos por nivel para Fuerza, Caparazón, Agilidad y Esencia. Reparto automático con receta por raza y reinicio pagando oro. |
 | Habilidades | Rango 1 a 5, con 1 punto cada 3 niveles. La habilidad 2 se desbloquea en nivel 3 y la 3 en nivel 6. Los rangos 3 y 5 cambian el funcionamiento (radio, aturdimiento, duración, robo de vida). |
-| Santuarios | 5 santuarios de ámbar (entrada y borde de cada zona): curan, alejan a las criaturas y tienen a Brugo, el artesano (clic, toque o tecla E). Su panel pausa el juego y ofrece Artesano, Equipo, Forja, Depósito y Mercader. |
+| Santuarios | 5 santuarios de ámbar (entrada y borde de cada zona): curan, alejan a las criaturas y tienen a Brugo, el artesano: flecha y nombre siempre visibles; se toca o cliquea (si estás lejos, el personaje camina hasta él) o tecla E. Su panel pausa el juego y ofrece Artesano, Equipo, Forja, Depósito y Mercader. |
 | Artesano | Funde las 3 piezas más débiles de un set + oro + ámbar en una pieza nueva de ese set (arma, casco, coraza, patas o amuleto), un nivel por encima de la mejor, con la rareza más alta y 25% de chance de subirla. |
 | Depósito | Baúl de 60 lugares compartido entre santuarios y madriguera. |
 | Caza automática | Estilo MU Helper (tecla H): caza alrededor del punto de activación, usa habilidades, recoge botín según filtros y toma pociones. Se configura en la pausa. |
