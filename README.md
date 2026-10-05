@@ -4,15 +4,16 @@ RPG de acción oscuro para navegador. Criaturas insecto en un reino subterráneo
 
 ## Cómo jugar
 
-Abre `index.html` en el navegador. No necesita instalación ni servidor. La carpeta `assets/` tiene el arte conceptual que usa la portada.
+Abre `index.html` en el navegador. No necesita instalación ni servidor. La carpeta `assets/` tiene el arte conceptual de la portada y el atlas de sprites de la Mantis. Las hojas originales están en `hojas/`; para regenerar el atlas: `python3 tools/armar_sprites.py` (necesita Pillow, NumPy y SciPy).
 
 - **Teclado y mouse:** WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, I bolsa, C poderes, H caza automática, M mapa grande, B volver a la madriguera, Esc pausa.
 - **Celular:** arrastra en la mitad izquierda para moverte y usa los botones de la derecha.
 
-## Contenido de la versión 0.7
+## Contenido de la versión 0.8
 
 | Sistema | Estado |
 |---|---|
+| Sprites | La Mantis usa sprites animados del arte conceptual: quieto (4), caminar (8), tajada frontal (golpe simple y Embestida), tajada hacia arriba (Furia), tajada giratoria (Torbellino), golpe recibido y muerte. Una dirección espejada. Los sets se marcan con un brillo del color del set; el retrato de la madriguera sigue mostrando cada pieza. En la pausa se puede volver al dibujo clásico. |
 | Personaje | Nombre propio al crear la criatura, placa con nombre y barras de vida y energía sobre la cabeza, y círculo de selección bajo los pies. La Mantis es una guerrera humanoide (hombreras, brazales con hebillas, cinturón, bolso y capa en la forma adulta) basada en el arte conceptual. |
 | Razas | Mantis (guerrera) y Polilla (hechicera) jugables. Escarabajo y Avispa anunciadas. La Mantis tiene Torbellino, Embestida y Furia (+70% de daño por 4 s). El golpe simple hace 70% del daño base. |
 | Metamorfosis | 3 etapas por raza (nivel 6 y 12). En la etapa adulta se elige una de dos ramas. |

@@ -359,6 +359,7 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
     <div class="stack" style="margin-top:18px">
       <button class="main" id="resumeBtn">Continuar</button>
       <button id="soundBtn">Sonido: sí</button>
+      <button id="artBtn">Mantis: arte</button>
       <button class="danger" id="abandonBtn">Volver a la madriguera</button>
     </div>
     <div class="botset">
@@ -378,7 +379,7 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.7 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.8 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -844,6 +845,33 @@ function drawPolilla(g,stage,branch,t,anim,glow,wings,gear){
   g.restore();
   g.restore();
 }
+/* --- Sprites de la Mantis (arte de Martin): atlas WebP + metadatos [x,y,ancho,alto,pieX,pieY] --- */
+const SPR={meta:{"ref":200,"anims":{"idle":[[2,2,136,207,43,203],[140,2,131,208,42,204],[273,2,132,205,39,201],[407,2,130,210,36,206]],"walk":[[2,214,131,203,94,199],[135,214,130,207,62,203],[267,214,127,200,57,196],[396,214,124,198,69,194],[522,214,133,197,100,193],[657,214,124,195,45,191],[783,214,131,202,45,198],[916,214,125,200,66,196]],"atk1":[[2,423,148,199,33,193],[152,423,176,200,42,193],[330,423,229,201,44,194],[561,423,227,194,40,187],[790,423,189,196,46,190],[981,423,181,204,38,197]],"atk2":[[2,629,138,192,19,185],[142,629,173,169,38,162],[317,629,171,192,106,185],[490,629,148,220,29,214],[640,629,171,195,28,188],[813,629,161,197,32,190]],"atk3":[[2,851,145,177,42,171],[149,851,191,176,74,169],[342,851,209,173,82,166],[553,851,217,163,102,156],[772,851,218,164,96,157],[992,851,204,162,135,155],[1198,851,154,181,42,174]],"hit":[[2,1034,166,177,46,168],[170,1034,159,182,40,173]],"death":[[2,1218,146,149,44,142],[150,1218,148,132,50,125],[300,1218,187,146,109,139],[489,1218,218,111,166,104],[709,1218,208,101,148,95],[919,1218,218,75,149,68],[1139,1218,206,66,139,59]]}},img:new Image(),ok:false};
+SPR.img.onload=()=>{SPR.ok=true;};SPR.img.src='assets/mantis-sprites.webp';
+const SPR_FPS={idle:6,walk:12,hit:10,death:9},SPR_H=128; // altura en el mundo de la Mantis adulta
+function useMantisArt(c){return c.race==='mantis'&&SPR.ok&&SAVE.mantisArt!==false;}
+function heroGlow(c){
+  const w=c.gear.arma;if(w&&w.plus>=4)return [glowCol(w.plus),w.plus>=7?18:10];
+  const sc=setCount(c);for(const id in sc)if(sc[id]>=5){const S=SETS[id];return [S.glow||S.c[1],14];}
+  if(w&&w.set&&SETS[w.set]&&SETS[w.set].glow)return [SETS[w.set].glow,7];
+  return null;
+}
+function drawMantisSprite(g,P,c,fy){
+  const A=SPR.meta.anims;let name='idle',f=0;
+  if(G.dead){name='death';const n=A.death.length;f=Math.min(n-1,Math.floor((performance.now()-(G.deadAt||0))/1000*SPR_FPS.death));}
+  else if(P.act&&P.act.t<P.act.d){name=P.act.k;const n=A[name].length;f=Math.min(n-1,Math.floor(P.act.t/P.act.d*n));}
+  else if(P.hitT>0){name='hit';f=Math.min(1,Math.floor((.25-P.hitT)/.125));}
+  else if(P.moving){name='walk';f=Math.floor(P.walkPh)%A.walk.length;}
+  else{name='idle';f=Math.floor(G.t*SPR_FPS.idle)%A.idle.length;}
+  const fr=A[name][f];if(!fr)return;
+  const [x,y,w,h,ax,ay]=fr,s=SPR_H/SPR.meta.ref*[.8,.9,1][c.stage];
+  g.save();g.scale(P.face,1);
+  const gl=heroGlow(c);if(gl){g.shadowColor=gl[0];g.shadowBlur=gl[1];}
+  g.drawImage(SPR.img,x,y,w,h,-ax*s,fy-ay*s,w*s,h*s);g.shadowBlur=0;
+  if(P.ifr>.3&&!G.dead){g.globalCompositeOperation='lighter';g.globalAlpha=.45;g.drawImage(SPR.img,x,y,w,h,-ax*s,fy-ay*s,w*s,h*s);g.globalAlpha=1;g.globalCompositeOperation='source-over';}
+  g.restore();
+}
+
 function drawHero(g,c,t,anim,face){
   const glow=c.gear.arma?c.gear.arma.plus:0,wings=!!c.gear.alas;
   g.save();g.scale(face,1);
@@ -1068,7 +1096,7 @@ function gainXP(v){
     persist();}
 }
 function hurtHero(d){
-  const P=G.P;if(P.ifr>0||P.dash||G.dead)return;
+  const P=G.P;if(P.ifr>0||P.dash||G.dead)return;P.hitT=.25;
   const v=d*(100/(100+G.st.armor));P.hp-=v;P.ifr=.45;G.shake=Math.max(G.shake,6);G.hurtFx=.3;sfx('hurt');
   if(G.recall){G.recall=0;G.texts.push({x:P.x,y:P.y-50,s:'Retorno interrumpido',life:1,hurt:true});}
   G.texts.push({x:P.x,y:P.y-30,s:Math.round(v),life:.7,hurt:true});
@@ -1092,7 +1120,7 @@ function basicAttack(aim){
   P.atkCd=G.st.atkCd/(1+(G.c.branch==='orquidea'?.1:0));
   const dmg=G.st.dmg*BASIC_MUL;
   if(G.c.race==='mantis'){
-    sfx('swing');const R=78;G.fx.push({k:'slash',x:P.x,y:P.y,a,life:.16,max:.16,r:R,fury:P.fury>0});
+    sfx('swing');P.act={k:'atk1',t:0,d:clamp(G.st.atkCd*.95,.24,.4)};const R=78;G.fx.push({k:'slash',x:P.x,y:P.y,a,life:.16,max:.16,r:R,fury:P.fury>0});
     for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R,a,1.15)){const r=rollDmg(dmg);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,140);}}
   }else{
     sfx('bolt');G.shots.push({k:'bolt',x:P.x+Math.cos(a)*14,y:P.y-10+Math.sin(a)*14,vx:Math.cos(a)*560,vy:Math.sin(a)*560,life:.85,r:7,dmg,pierce:1,hits:new Set()});
@@ -1105,6 +1133,7 @@ function useSkill(i,aim){
   P.mp-=S.mp;P.cds[i]=skillCd(G.c,i,G.st);sfx('skill');const a=aim??aimAngle();P.aim=a;P.face=Math.cos(a)>=0?1:-1;P.anim=1;
   const rm=(1+.15*((rk>=2)+(rk>=4)))*G.st.skillMul,dmg=G.st.dmg*rm;
   if(G.c.race==='mantis'){
+    if(i===0)P.act={k:'atk3',t:0,d:.45};if(i===1)P.act={k:'atk1',t:0,d:.3};if(i===2)P.act={k:'atk2',t:0,d:.5};
     if(i===0){const mul=2.6*(G.c.branch==='segadora'?1.3:1),R2=rk>=3?156:120;G.fx.push({k:'spin',x:P.x,y:P.y,life:.4,max:.4,r:R2});G.shake=5;
       for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2)){const r=rollDmg(dmg*mul);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,320);}}}
     if(i===1){P.dash={vx:Math.cos(a)*1250,vy:Math.sin(a)*1250,t:rk>=3?.31:.22,hits:new Set(),dmg:dmg*2.2,stun:rk>=5};}
@@ -1208,8 +1237,10 @@ function update(dt){
   if(P.dash){P.x+=P.dash.vx*dt;P.y+=P.dash.vy*dt;P.dash.t-=dt;G.parts.push({x:P.x,y:P.y,vx:0,vy:0,life:.25,max:.25,c:'rgba(217,160,60,.5)',s:10,rot:0});
     for(const e of G.foes){if(e.dead||P.dash.hits.has(e))continue;if(inArea(e,P.x,P.y,30)){P.dash.hits.add(e);const r=rollDmg(P.dash.dmg);hurtFoe(e,r.v,r.crit,P.dash.vx,P.dash.vy,260);if(P.dash.stun&&!e.dead)e.stun=1;}}
     if(P.dash.t<=0)P.dash=null;}
-  else if(mx||my){P.x+=mx*st.spd*dt;P.y+=my*st.spd*dt;if(Math.abs(mx)>.1&&!(held.atk||mouse.down)&&P.anim<=0)P.face=mx>0?1:-1;P.walk+=dt*10;}
+  P.moving=!P.dash&&!!(mx||my);if(P.moving)P.walkPh=(P.walkPh||0)+dt*12*Math.min(1,Math.hypot(mx,my)*1.2);
+  if(P.dash){}else if(mx||my){P.x+=mx*st.spd*dt;P.y+=my*st.spd*dt;if(Math.abs(mx)>.1&&!(held.atk||mouse.down)&&P.anim<=0)P.face=mx>0?1:-1;P.walk+=dt*10;}
   collideObst(P);
+  if(P.act)P.act.t+=dt;if(P.hitT>0)P.hitT-=dt;
   P.atkCd-=dt;P.potCd-=dt;if(P.anim>0)P.anim=Math.max(0,P.anim-dt*6);if(P.ifr>0)P.ifr-=dt;if(P.fury>0)P.fury-=dt;
   for(let i=0;i<3;i++)if(P.cds[i]>0)P.cds[i]-=dt;
   P.mp=Math.min(st.mp,P.mp+st.mpReg*dt);
@@ -1456,11 +1487,11 @@ function render(){
       if(e.stun>0){for(let k=0;k<3;k++){const a=t*6+k*2.09;cx.fillStyle='#f0d070';cx.beginPath();cx.arc(e.x+Math.cos(a)*e.r*.8,e.y-e.r-8+Math.sin(a)*4,2.4,0,7);cx.fill();}}
       if(e.slow>0){cx.strokeStyle='rgba(160,225,255,.55)';cx.lineWidth=2;cx.beginPath();cx.arc(e.x,e.y,e.r+5,0,7);cx.stroke();}}
     else if(en.k===3)drawCentipede(cx,en.o,t);
-    else{if(P.ifr>0&&Math.floor(P.ifr*24)%2)continue;
+    else{if(P.ifr>0&&Math.floor(P.ifr*24)%2&&!useMantisArt(G.c))continue;
       cx.save();cx.translate(P.x,P.y);const fy=G.c.race==='mantis'?27:19;softShadow(cx,0,fy,24,7,.6);
       cx.save();cx.shadowColor='#4dff6a';cx.shadowBlur=10;cx.strokeStyle='rgba(90,255,110,'+(.55+.15*Math.sin(t*3))+')';cx.lineWidth=2;cx.beginPath();cx.ellipse(0,fy,27,9.5,0,0,7);cx.stroke();cx.restore();
       if(P.fury>0){const fa=.45+.25*Math.sin(t*14);const fg=cx.createRadialGradient(0,-6,6,0,-6,46);fg.addColorStop(0,'rgba(255,90,40,0)');fg.addColorStop(.6,'rgba(255,90,40,'+(fa*.35)+')');fg.addColorStop(1,'rgba(255,90,40,0)');cx.fillStyle=fg;cx.beginPath();cx.arc(0,-6,46,0,7);cx.fill();cx.strokeStyle='rgba(255,106,58,'+fa+')';cx.lineWidth=2;cx.beginPath();cx.arc(0,-4,32+Math.sin(t*12)*2,0,7);cx.stroke();for(let k=0;k<3;k++){const a=t*3+k*2.1;cx.fillStyle='rgba(255,150,80,.8)';cx.beginPath();cx.arc(Math.cos(a)*24,-10+Math.sin(a*1.3)*16-((t*40+k*13)%30),2,0,7);cx.fill();}}
-      cx.scale(1.45,1.45);drawHero(cx,G.c,t+P.walk*.1,P.anim,P.face);cx.restore();}
+      if(useMantisArt(G.c))drawMantisSprite(cx,P,G.c,fy);else{cx.scale(1.45,1.45);drawHero(cx,G.c,t+P.walk*.1,P.anim,P.face);}cx.restore();}
   }
   for(const f of G.fx){const k=f.life/f.max;
     if(f.k==='furyburst'){cx.strokeStyle='rgba(255,106,58,'+k+')';cx.lineWidth=6*k+1;cx.beginPath();cx.arc(f.x,f.y-6,f.r*(1.2-k),0,7);cx.stroke();}
@@ -1516,7 +1547,7 @@ function render(){
     placed.push({x:lx,y:ly,w});
     cx.fillStyle='rgba(8,6,4,.78)';cx.fillRect(lx-w/2,ly-h+3/ZOOM,w,h);cx.strokeStyle=col;cx.globalAlpha=.5;cx.lineWidth=1/ZOOM;cx.strokeRect(lx-w/2,ly-h+3/ZOOM,w,h);cx.globalAlpha=1;
     cx.fillStyle=col;cx.fillText(txt,lx,ly-1/ZOOM);}
-  {const top=P.y-(G.c.race==='mantis'?[64,80,92][G.c.stage]:[30,48,62][G.c.stage]),w=52;
+  {const top=useMantisArt(G.c)?P.y+27-SPR_H*[.8,.9,1][G.c.stage]-4:P.y-(G.c.race==='mantis'?[64,80,92][G.c.stage]:[30,48,62][G.c.stage]),w=52;
     cx.textAlign='center';cx.font='600 '+(13/ZOOM*.95).toFixed(1)+'px "Barlow Semi Condensed",sans-serif';cx.fillStyle='#000';cx.fillText(G.c.name,P.x+1,top-6+1);cx.fillStyle='#f3ead6';cx.fillText(G.c.name,P.x,top-6);
     cx.fillStyle='rgba(0,0,0,.75)';cx.fillRect(P.x-w/2-1,top-3,w+2,8);cx.fillStyle='#d6402c';cx.fillRect(P.x-w/2,top-2,w*Math.max(0,P.hp/G.st.hp),3.5);cx.fillStyle='#4a8fd8';cx.fillRect(P.x-w/2,top+2,w*P.mp/G.st.mp,2.2);}
   for(const tx of G.texts){cx.globalAlpha=Math.min(1,tx.life*2.5);
@@ -1638,11 +1669,11 @@ function drawBackdrop(){
 /* ======================================================================
    PAUSA, MUERTE, RETORNO Y BOLSA
    ====================================================================== */
-function pauseGame(){if(state!=='play')return;state='pause';PortalSDK.gameplayStop();$('soundBtn').textContent='Sonido: '+(SAVE.sound?'sí':'no');syncBotForm();showScreen('pause');$('resumeBtn').focus();}
+function pauseGame(){if(state!=='play')return;state='pause';PortalSDK.gameplayStop();$('soundBtn').textContent='Sonido: '+(SAVE.sound?'sí':'no');syncArtBtn();syncBotForm();showScreen('pause');$('resumeBtn').focus();}
 function resumeGame(){state='play';showScreen(null);PortalSDK.gameplayStart();}
 let resultMode='summary';
 function die(){
-  if(G.dead)return;G.dead=true;state='dead';PortalSDK.gameplayStop();joy=null;held.atk=false;mouse.down=false;G.bot.on=false;G.recall=0;
+  if(G.dead)return;G.dead=true;G.deadAt=performance.now();state='dead';PortalSDK.gameplayStop();joy=null;held.atk=false;mouse.down=false;G.bot.on=false;G.recall=0;
   const c=G.c;G.penalty=Math.min(c.xp,Math.round(xpNext(c.lvl)*.1));resultMode='dead';
   $('rEyebrow').textContent='Has caído';$('rTitle').textContent='La oscuridad te devora';$('rStars').innerHTML='';
   $('rStarList').innerHTML='<div>Si reapareces pierdes '+fmt(G.penalty)+' de experiencia (10% del nivel). Revivir con un anuncio no tiene penalidad.</div>';
@@ -1676,6 +1707,8 @@ $('rRevive').onclick=()=>PortalSDK.rewardedBreak(ok=>{if(!ok)return;G.dead=false
   state='play';showScreen(null);PortalSDK.gameplayStart();banner('Vuelves de la oscuridad','');});
 $('resumeBtn').onclick=resumeGame;
 $('pauseBtn').onclick=pauseGame;
+$('artBtn').onclick=()=>{SAVE.mantisArt=SAVE.mantisArt===false;persist();syncArtBtn();};
+function syncArtBtn(){$('artBtn').textContent='Mantis: '+(SAVE.mantisArt===false?'dibujo clásico':'arte');}
 $('soundBtn').onclick=()=>{SAVE.sound=!SAVE.sound;persist();$('soundBtn').textContent='Sonido: '+(SAVE.sound?'sí':'no');};
 $('abandonBtn').onclick=()=>{returnHub();};
 $('botBtn').onclick=()=>{if(state==='play')toggleBot();};
