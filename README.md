@@ -13,7 +13,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 
 El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona sin conexión una vez abierto. Para instalarlo tiene que estar publicado en una dirección HTTPS (por ejemplo GitHub Pages). Desde Chrome en Android: abrir la dirección, menú ⋮ → **Instalar app** (o *Agregar a pantalla principal*). Se abre a pantalla completa y apaisado, sin barra del navegador. Si se juega desde el navegador, al entrar al mundo pide pantalla completa y gira a apaisado cuando el teléfono lo permite.
 
-## Contenido de la versión 0.22
+## Contenido de la versión 0.23
 
 | Sistema | Estado |
 |---|---|
@@ -38,6 +38,10 @@ El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona s
 | Calidad de imagen | Resolución nativa de la pantalla (hasta 3×) y sprites a 300 px. Modo automático que baja la resolución si no llega a ~45 cuadros por segundo; también máxima y ahorro de batería desde el menú. Zoom más cercano en celulares. |
 | Interfaz | Íconos en lugar de texto: caza automática (flechas en círculo; activa se pone verde azulado y gira, sin cartel en pantalla) y menú (tres líneas, pausa el juego). Los puntos sin repartir se avisan solo con el número sobre la bolsa. El cartel de zona ya no se encima con la barra del jefe. |
 | Subir de nivel: la muda | El insecto rompe su caparazón: cámara lenta, capullo de ámbar con grietas de luz que estalla en esquirlas, onda que empuja y aturde a los enemigos cercanos, columna de luz, título grande «Nivel N» con lo ganado y la piel vieja (exuvia) queda en el suelo unos segundos. Sonido propio. |
+| Bitácora (inicio) | Lista de criaturas creadas a la izquierda y ficha de la elegida a la derecha (retrato, nivel, tipo, color, vida, daño, oro, zona más profunda) con Descender, Madriguera y Borrar (confirmación doble). Vacía, invita a crear la primera. |
+| Crear criatura | Linaje, **tipo** (Mantis: Segadora, Acechadora, Coracera; Polilla: Bruja, Ceniza, Capullo; +3 al atributo principal y receta de reparto propia), **color del caparazón** (Musgo, Ámbar, Ceniza, Sangre, Noche) y nombre. |
+| Mapas del reino | Ícono de mapa (tecla V): viajar con oro a los 5 santuarios y 5 zonas. Se puede ir desde 3 niveles por debajo del recomendado; si estás por debajo, aparece «(nivel sugerido N)» en rojo. Regiones II–V anunciadas. |
+| Set completo +10 | Dos destellos dorados giran alrededor del cuerpo dejando estela. El arma +10 suma lenguas violetas que giran sobre las guadañas. En el menú hay un botón de prueba para equipar el set Ciempiés +10. |
 | Íconos pintados | Hojas generadas con IA (fondo magenta, 3×2) en `hojas/iconos-*.jpg`; `python3 tools/armar_iconos.py` arma `assets/iconos.webp`. Sets con íconos: Ciempiés de Hueso y Hierro negro, más alas, ámbar, icor, poción y oro (también en el suelo y en los contadores). Los sets sin hoja usan el ícono dibujado. |
 | Armas +10 | Aura violeta estilo Lineage: la silueta arde en violeta, llamas que suben, rayos cortos, tajos violetas y luz alrededor; +12 más intenso. En la bolsa el casillero arde en violeta. |
 | Vender | Con Brugo (Mercader): vender comunes, vender todos los peores (▼) o tocar un objeto para venderlo; en la ventana doble también desde la bolsa. Cerca de un santuario el detalle de la bolsa ofrece Vender. La caza automática ahora vende todo lo peor que lo equipado (no excelentes ni con suerte). |

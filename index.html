@@ -517,6 +517,46 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 @keyframes ench{0%,100%{box-shadow:inset 0 0 0 1px #9a6bff,inset 0 0 16px #8a5cff,0 0 10px #8a5cff}50%{box-shadow:inset 0 0 0 1px #d8c4ff,inset 0 0 22px #a07aff,0 0 18px #a07aff}}
 @keyframes enchf{0%{opacity:.6;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}100%{opacity:.7;transform:translateY(-1px)}}
 @media (prefers-reduced-motion:reduce){.slot.glow3,.slot.glow3::before{animation:none!important}}
+/* Mapas del reino: ventana angosta como la bolsa */
+#mapDock{position:fixed;top:0;right:0;bottom:0;width:clamp(240px,32vw,300px);z-index:7;overflow-y:auto;padding:10px;padding-block:calc(env(safe-area-inset-top,0px) + 10px) calc(env(safe-area-inset-bottom,0px) + 10px);animation:slidein .2s ease-out;zoom:var(--ui,1)}
+#mapDock .bag-head{margin:-10px -10px 10px;padding:3px 4px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:-10px;z-index:2}
+.mreg{font-family:var(--f-display);color:var(--amber-hi);font-size:16px;margin:10px 0 4px;display:flex;justify-content:space-between;align-items:baseline}
+.mreg small{font-family:var(--f-ui);font-size:11px;color:var(--dim)}
+.mspot{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;align-items:center;padding:6px 8px;border:1px solid var(--mu-cellb);background:var(--mu-cell);margin-bottom:4px}
+.mspot b{font-family:var(--f-display);font-weight:400;font-size:14.5px;color:var(--bone);display:block;line-height:1.15}
+.mspot small{display:block;font-size:11.5px;color:var(--dim);line-height:1.3}
+.mspot .sug{color:#e2604a;font-weight:600}
+.mspot.here{border-color:#c88a4a}
+.mspot.lock{opacity:.5}
+.mspot button{padding:5px 8px;font-size:12.5px;white-space:nowrap}
+/* Bitácora */
+#title .wrap.bita{max-width:860px;width:100%;padding:0;text-align:left;background:rgba(20,16,12,.94)}
+.bita-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:8px 14px;margin:6px}
+.bita-logo{font-family:var(--f-display);font-size:30px;letter-spacing:.14em;color:#ffe2b0}
+.bita-sub{font-family:var(--f-display);font-size:16px;color:#e8c9a0;letter-spacing:.08em}
+.bita-body{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:12px;padding:6px 14px 10px}
+.bita-list{display:flex;flex-direction:column;gap:6px;max-height:min(58vh,440px);overflow-y:auto}
+.bita-list .chars{margin:0;gap:6px}
+.charcard{grid-template-columns:52px minmax(0,1fr)!important;padding:6px 8px!important}
+.charcard canvas{width:52px!important;height:52px!important}
+.charcard.sel{border-color:var(--amber);box-shadow:inset 0 0 0 1px var(--amber)}
+.newslot{display:flex;align-items:center;gap:10px;justify-content:center;border:1.5px dashed #6b5434;background:rgba(0,0,0,.25);color:#c8a070;padding:10px}
+.newslot span{font-size:22px;line-height:1}
+.bita-page{border:1px solid var(--mu-cellb);background:var(--mu-cell);box-shadow:inset 0 0 20px #000;padding:10px;display:grid;grid-template-columns:150px minmax(0,1fr);gap:12px;align-items:center;min-height:220px}
+.bita-page canvas{width:150px;height:150px;background:radial-gradient(circle at 50% 62%,#2b2117,#0d0b09 72%);border:1px solid var(--line)}
+.bita-info h2{font-size:24px}.bita-info .stage{color:var(--amber);font-size:14px}
+.bita-info .stats{font-size:13.5px;margin-top:8px}
+.bita-acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.bita-acts button{padding:7px 12px;font-size:14px}.bita-acts button.main{font-size:18px;padding:8px 18px}
+.bita-empty{grid-column:1/-1;text-align:center;padding:16px}.bita-empty p{max-width:44ch;margin:8px auto 14px;color:var(--dim)}
+.bita-keys{font-size:12px!important;padding:0 14px 10px;margin:0}
+@media (pointer:coarse){.bita-keys{display:none}}
+@media (max-width:600px){.bita-body{grid-template-columns:1fr}.bita-page{grid-template-columns:110px minmax(0,1fr)}.bita-page canvas{width:110px;height:110px}}
+@media (orientation:landscape) and (max-height:520px){#title .wrap.bita{max-width:none;margin:0 auto!important}.bita-head{padding:4px 12px;margin:4px}.bita-logo{font-size:22px}.bita-list{max-height:calc(100vh - 90px)}.bita-page{min-height:0}}
+.create-opts{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:12px}
+.create-opts small{display:block;margin-top:4px;font-size:12.5px}
+.swatches{display:flex;gap:8px;align-items:center;margin-top:6px}
+.sw{width:28px;height:28px;padding:0;border-radius:50%;background:var(--sw);border:2px solid #2a2017}
+.sw[aria-pressed="true"]{border-color:#ffe2b0;box-shadow:0 0 0 2px var(--amber)}
 </style>
 </head>
 <body>
@@ -525,7 +565,8 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 <canvas id="cv" aria-label="Quitina"></canvas>
 <div id="safe"></div>
 <div id="rotate" hidden role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg><span>Gira el teléfono: Quitina se juega apaisado</span><button id="rotateOk">Seguir así</button></div>
-<div id="gameBtns" hidden><button id="botBtn" class="icon" aria-label="Caza automática" aria-pressed="false" title="Caza automática (H)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9"/><path d="M4 3.5V8h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.9"/><path d="M20 20.5V16h-4.5"/></svg></button><button id="pauseBtn" class="icon" aria-label="Menú y pausa" title="Menú (Esc)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button></div>
+<div id="gameBtns" hidden><button id="mapBtn" class="icon" aria-label="Mapas del reino" title="Mapas del reino (V)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5l6-2.5 6 2.5 6-2.5v13.5l-6 2.5-6-2.5-6 2.5z"/><path d="M9 4v13.5M15 6.5V20"/></svg></button><button id="botBtn" class="icon" aria-label="Caza automática" aria-pressed="false" title="Caza automática (H)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9"/><path d="M4 3.5V8h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.9"/><path d="M20 20.5V16h-4.5"/></svg></button><button id="pauseBtn" class="icon" aria-label="Menú y pausa" title="Menú (Esc)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button></div>
+<aside id="mapDock" class="frame" hidden aria-label="Mapas del reino"><div class="bag-head"><div class="bag-tabs"><button aria-selected="true" tabindex="-1">Mapas del reino</button></div><button id="mapClose" class="xbtn" aria-label="Cerrar mapas">✕</button></div><div id="mapList"></div></aside>
 <div id="bagDock" hidden>
 <button id="bagBtn" class="bagtab" aria-label="Bolsa" aria-expanded="false" title="Bolsa (I)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7.5V6a3.5 3.5 0 0 1 7 0v1.5"/><path d="M4.8 7.5h14.4l-1.1 11.6a2.2 2.2 0 0 1-2.2 2H8.1a2.2 2.2 0 0 1-2.2-2z"/><path d="M9 12.5h6"/></svg><span class="key">I</span><span class="badge" id="bagBadge" hidden></span></button>
 <div id="bagDetail" class="pop" role="dialog" aria-label="Detalle del objeto"></div>
@@ -554,14 +595,13 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 <section class="screen center" id="title">
   <img class="title-art" src="assets/mantis-arte.jpg" alt="Una mantis guerrera con hombreras y capa en ruinas cubiertas de raíces">
   <div class="title-shade"></div>
-  <div class="frame wrap">
-    <div class="eyebrow">Bajo las raíces del mundo</div>
-    <h1 style="margin-top:14px">QUITINA</h1>
-    <div class="tag">CRÓNICAS DEL NIDO</div>
-    <p style="margin:14px auto 0;max-width:40ch">La Reina Madre despertó y su plaga pudre el subsuelo. Elige una criatura, forja su caparazón y desciende.</p>
-    <div class="chars" id="charList"></div>
-    <div class="stack"><button class="main" id="newCharBtn">Nueva criatura</button></div>
-    <p class="muted" style="font-size:14px;margin-top:14px">Teclado: WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, I bolsa, C poderes, H caza automática, M mapa.<br>Celular: arrastra a la izquierda para moverte y usa los botones de la derecha.</p>
+  <div class="frame wrap bita">
+    <div class="bita-head titlebar"><span class="bita-logo">QUITINA</span><span class="bita-sub">Bitácora del nido</span></div>
+    <div class="bita-body">
+      <div class="bita-list"><div class="chars" id="charList"></div><button class="newslot" id="newCharBtn"><span>+</span>Nueva criatura</button></div>
+      <div class="bita-page" id="charPage"></div>
+    </div>
+    <p class="muted bita-keys">Teclado: WASD moverse · clic o J atacar · 1 2 3 habilidades · Q poción · I bolsa · C poderes · V mapas · H caza automática</p>
   </div>
 </section>
 
@@ -571,6 +611,8 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
     <div class="eyebrow">Elige tu linaje</div>
     <h2 style="margin-top:6px">¿Qué criatura serás?</h2>
     <div class="races" id="raceList"></div>
+    <div class="create-opts"><div><div class="eyebrow">Tipo</div><div class="mchips" id="typeList" style="justify-content:flex-start"></div><small class="muted" id="typeDesc"></small></div>
+      <div><div class="eyebrow">Color del caparazón</div><div class="swatches" id="tintList"></div></div></div>
     <div class="create-foot">
     <div class="namebox"><label for="charName">Nombre de tu criatura</label><input id="charName" maxlength="14" placeholder="Ej.: Mentic" autocomplete="off"></div>
     <div class="row" style="justify-content:flex-end;margin-top:18px">
@@ -658,6 +700,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
       <button id="artBtn">Mantis: arte</button>
       <button id="qualBtn">Calidad: automática</button>
       <button id="uiBtn">Tamaño de la interfaz: 100%</button>
+      <button id="testSetBtn">Prueba: equipar set completo +10</button>
       <button class="danger" id="abandonBtn">Volver a la madriguera</button>
     </div>
     <div class="botset">
@@ -678,7 +721,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.22 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.23 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -733,6 +776,11 @@ const STAGE_LVL=[1,6,12];
 const PTS_PER_LVL=4,SKILL_EVERY=3,SKILL_MAX=5;
 const ATTR=[{k:'fue',n:'Fuerza',d:'+0,6 de daño'},{k:'cap',n:'Caparazón',d:'+6 de vida y +0,5 de armadura'},{k:'agi',n:'Agilidad',d:'+1% vel. de ataque, +0,3% crítico, +0,4% velocidad'},{k:'esn',n:'Esencia',d:'+4 de energía, +0,08 de regeneración y +1% de daño de habilidades'}];
 const STAGE_MUL=[1,1.1,1.22];
+/* Tipo (orientación inicial) y color del caparazón al crear la criatura */
+const TYPES={mantis:[{id:'segadora',n:'Segadora',d:'Fuerza: golpes que parten caparazones.',main:'fue',rec:{fue:2,agi:1,cap:1}},{id:'acechadora',n:'Acechadora',d:'Agilidad: rápida y certera, más críticos.',main:'agi',rec:{agi:2,fue:1,cap:1}},{id:'coracera',n:'Coracera',d:'Caparazón: aguanta lo que otros no.',main:'cap',rec:{cap:2,fue:1,agi:1}}],
+  polilla:[{id:'bruja',n:'Bruja',d:'Esencia: maldiciones y hechizos más fuertes.',main:'esn',rec:{esn:2,cap:1,agi:1}},{id:'ceniza',n:'Ceniza',d:'Agilidad: lanza más rápido.',main:'agi',rec:{agi:2,esn:1,cap:1}},{id:'capullo',n:'Capullo',d:'Caparazón: resiste y sobrevive.',main:'cap',rec:{cap:2,esn:1,agi:1}}]};
+const TINTS=[{n:'Musgo',sw:'#7da04a',f:'none'},{n:'Ámbar',sw:'#d9932c',f:'hue-rotate(-55deg) saturate(1.35)'},{n:'Ceniza',sw:'#a8a29a',f:'saturate(.12) brightness(1.08) contrast(1.05)'},{n:'Sangre',sw:'#b0302a',f:'hue-rotate(-105deg) saturate(1.5) brightness(.92)'},{n:'Noche',sw:'#3f4f8a',f:'hue-rotate(150deg) saturate(.75) brightness(.82)'}];
+function tintFilter(c){const t=TINTS[(c&&c.tint)|0];return t?t.f:'none';}
 
 /* ---------- Datos: objetos ---------- */
 const SLOTS=['arma','casco','coraza','patas','amuleto','alas'];
@@ -846,11 +894,12 @@ for(const c of SAVE.chars){if(!c.name)c.name=RACES[c.race].name;for(const it of 
 function persist(){PortalSDK.save(SAVE_KEY,JSON.stringify(SAVE));}
 const CH=()=>SAVE.chars[SAVE.cur];
 function cleanName(v){return String(v||'').replace(/[^\p{L}\p{N} _-]/gu,'').trim().slice(0,14);}
-function newChar(race,name){
+function newChar(race,name,type,tint){
   const c={id:Date.now(),race,lvl:1,xp:0,stage:0,branch:null,gold:40,potions:3,amber:1,ichorJ:0,
     gear:{arma:makeItem('arma',0,1,race,'quitina'),casco:null,coraza:makeItem('coraza',0,1,race,'quitina'),patas:null,amuleto:null,alas:null},
     name:RACES[race].name,inv:[],stash:[],found:[],bossKilled:false,pendingStage:false,attr:{fue:0,cap:0,agi:0,esn:0},pts:0,sp:0,skl:[1,0,0],autoPts:false,autoI:0};
-  if(name)c.name=cleanName(name)||c.name;SAVE.chars.push(c);SAVE.cur=SAVE.chars.length-1;persist();return c;
+  if(name)c.name=cleanName(name)||c.name;
+  const T=(TYPES[race]||[]).find(x=>x.id===type);if(T){c.type=T.id;c.rec=T.rec;c.attr[T.main]+=3;}c.tint=tint|0;SAVE.chars.push(c);SAVE.cur=SAVE.chars.length-1;persist();return c;
 }
 const xpNext=l=>Math.floor(30*Math.pow(l,1.95));
 const INV_MAX=30;
@@ -1181,6 +1230,27 @@ const SPR={meta:{"ref":300,"anims":{"idle":[[2,2,203,311,65,305],[207,2,197,313,
 SPR.img.onload=()=>{SPR.ok=true;};SPR.img.src='assets/mantis-sprites.webp';
 const SPR_FPS={idle:6,walk:12,hit:10,death:9},SPR_H=128; // altura en el mundo de la Mantis adulta
 function useMantisArt(c){return c.race==='mantis'&&SPR.ok&&SAVE.mantisArt!==false;}
+function fullSet10(c){if(!c||!c.gear)return null;const sc=setCount(c);for(const id in sc)if(sc[id]>=5&&['arma','casco','coraza','patas','amuleto'].every(sl=>c.gear[sl]&&c.gear[sl].set===id&&c.gear[sl].plus>=10))return id;return null;}
+/* Set completo +10: dos destellos dorados que giran alrededor del cuerpo dejando estela */
+const ORBS={trail:[[],[]]};
+function drawSetOrbs(g,t){
+  const P=G.P;if(G.dead||!fullSet10(G.c)){ORBS.trail=[[],[]];return;}
+  g.save();g.globalCompositeOperation='lighter';
+  for(let i=0;i<2;i++){const a=t*3.1+i*Math.PI,h=-34+Math.sin(t*1.7+i*1.9)*30,x=P.x+Math.cos(a)*34,y=P.y+h+Math.sin(a)*11,front=Math.sin(a)>0;
+    const tr=ORBS.trail[i];tr.push([x,y]);if(tr.length>22)tr.shift();
+    for(let k=1;k<tr.length;k++){const f=k/tr.length;g.strokeStyle='rgba(255,'+Math.round(170+60*f)+',90,'+(f*.55)+')';g.lineWidth=f*5;g.lineCap='round';g.beginPath();g.moveTo(tr[k-1][0],tr[k-1][1]);g.lineTo(tr[k][0],tr[k][1]);g.stroke();}
+    const gr=g.createRadialGradient(x,y,0,x,y,10);gr.addColorStop(0,'rgba(255,250,220,1)');gr.addColorStop(.35,'rgba(255,205,90,.9)');gr.addColorStop(1,'rgba(255,170,40,0)');g.fillStyle=gr;g.globalAlpha=front?1:.55;g.beginPath();g.arc(x,y,10,0,7);g.fill();g.globalAlpha=1;
+    if(Math.random()<.35)G.parts.push({x,y,vx:rand(-20,20),vy:rand(-30,10),life:.4,max:.4,c:'#ffd27a',s:1.6,rot:0});}
+  g.restore();
+}
+/* Movimiento sobre el arma +10: dos lenguas violetas que giran en la zona de las guadañas */
+function drawWeaponWisps(g,t){
+  const P=G.P,en=enchantLvl(G.c);if(!en||G.dead)return;const cxw=P.x+P.face*16,cyw=P.y-46;
+  g.save();g.globalCompositeOperation='lighter';
+  for(let i=0;i<3;i++){const a0=t*5.5+i*2.09;for(let k=0;k<10;k++){const a=a0-k*.16,r=20+Math.sin(t*3+i)*5,x=cxw+Math.cos(a)*r,y=cyw+Math.sin(a)*r*.7,f=1-k/10;
+    g.fillStyle='rgba('+(en>=12?'210,180,255':'150,105,255')+','+(f*.55)+')';g.beginPath();g.arc(x,y,3.4*f+.6,0,7);g.fill();}}
+  g.restore();
+}
 function enchantLvl(c){const w=c&&c.gear&&c.gear.arma;return w&&w.plus>=10?w.plus:0;}
 function heroGlow(c){
   const w=c.gear.arma;if(w&&w.plus>=4)return [glowCol(w.plus),w.plus>=10?24:w.plus>=7?18:10];
@@ -1200,7 +1270,7 @@ function drawMantisSprite(g,P,c,fy){
   g.save();g.scale(P.face,1);g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
   const gl=heroGlow(c);if(gl){g.shadowColor=gl[0];g.shadowBlur=gl[1];}
   const en=enchantLvl(c);if(en&&!G.dead)drawEnchantAura(g,x,y,w,h,ax*s,ay*s,s,fy,en);
-  g.drawImage(SPR.img,x,y,w,h,-ax*s,fy-ay*s,w*s,h*s);g.shadowBlur=0;
+  const tf=tintFilter(c);if(tf!=='none')g.filter=tf;g.drawImage(SPR.img,x,y,w,h,-ax*s,fy-ay*s,w*s,h*s);g.filter='none';g.shadowBlur=0;
   if(P.ifr>.3&&!G.dead){g.globalCompositeOperation='lighter';g.globalAlpha=.45;g.drawImage(SPR.img,x,y,w,h,-ax*s,fy-ay*s,w*s,h*s);g.globalAlpha=1;g.globalCompositeOperation='source-over';}
   g.restore();
 }
@@ -1227,13 +1297,16 @@ function drawEnchantBolts(g){if(!ENCH.bolts.length)return;g.save();g.globalCompo
   g.restore();g.shadowBlur=0;}
 function drawHero(g,c,t,anim,face){
   const glow=c.gear.arma?c.gear.arma.plus:0,wings=!!c.gear.alas;
-  g.save();g.scale(face,1);
+  g.save();g.scale(face,1);g.filter=tintFilter(c);
   if(c.race==='mantis')drawMantis(g,c.stage,c.branch,t,anim,glow>=4?glow:0,wings,c.gear);
   else drawPolilla(g,c.stage,c.branch,t,anim,glow>=4?glow:0,wings,c.gear);
   g.restore();
 }
 function drawPortrait(canvas,c,stageOverride,branchOverride,scale){
   const g=canvas.getContext('2d'),w=canvas.width,h=canvas.height;g.clearRect(0,0,w,h);
+  if(c.race==='mantis'&&SPR.ok&&SAVE.mantisArt!==false&&stageOverride==null){ // la Mantis con su arte
+    const A=SPR.meta.anims.idle,fr=A[Math.floor(performance.now()/1000*SPR_FPS.idle)%A.length],[x,y,fw,fh,ax,ay]=fr,k=Math.min(w*.8/fw,h*.86/fh);
+    g.save();softShadow(g,w/2,h*.93,w*.22,h*.04,.6);g.filter=tintFilter(c);g.drawImage(SPR.img,x,y,fw,fh,w/2-ax*k,h*.93-ay*k,fw*k,fh*k);g.restore();return;}
   const mt=c.race==='mantis';g.save();g.translate(w/2,h*(mt?.74:.62));const s=scale||Math.min(w,h)/90;g.scale(s,s);
   softShadow(g,0,mt?22:20,28,7,.6);
   const fake=Object.assign({},c,{stage:stageOverride??c.stage,branch:branchOverride??c.branch});
@@ -1717,11 +1790,12 @@ addEventListener('keydown',e=>{
     if(e.code==='KeyH')toggleBot();
     if(e.code==='KeyB')startRecall();
     if(e.code==='KeyM'&&!G.arena)G.bigMap=!G.bigMap;
+    if(e.code==='KeyV')toggleMaps();
     if(e.code==='KeyE'&&G.nearShrine>=0)openShrine();
     if(e.code==='KeyI'||e.code==='Tab'){openPanel('bag');e.preventDefault();}
     if(e.code==='KeyC')openPanel('pow');
     if(e.code==='KeyJ'||e.code==='Space'){held.atk=true;e.preventDefault();}
-    if(e.code==='Escape'){if(G.bagOpen)toggleBag(false);else if(G.bigMap)G.bigMap=false;else pauseGame();}
+    if(e.code==='Escape'){if(G.mapsOpen)toggleMaps(false);else if(G.bagOpen)toggleBag(false);else if(G.bigMap)G.bigMap=false;else pauseGame();}
     if(e.code==='KeyP')pauseGame();
   }else if(state==='shrine'&&e.code==='Escape')closeShrine();
   else if(state==='pause'&&(e.code==='Escape'||e.code==='KeyP'))resumeGame();
@@ -1777,7 +1851,7 @@ function update(dt){
   // zona actual
   let zi=-1;WORLD.zones.forEach((z,i)=>{if(Math.hypot(P.x-z.x,P.y-z.y)<z.r)zi=i;});
   if(zi!==G.zone){const first=G.zone===-2;G.zone=zi;if(zi>=0){const z=WORLD.zones[zi];if(!first)banner(z.name,'Nivel recomendado '+z.lv.join('–'));
-      if(!G.c.found[zi]){G.c.found[zi]=true;persist();G.texts.push({x:P.x,y:P.y-60,s:'Zona descubierta: ya puedes viajar aquí desde la madriguera',life:2.6,lvl:true});}}}
+      if(!G.c.found[zi]){G.c.found[zi]=true;persist();G.texts.push({x:P.x,y:P.y-60,s:'Zona descubierta',life:2.6,lvl:true});}}}
   updateArena(dt);if(!G)return;
   // reaparición de criaturas
   for(const s of G.spawns){if(s.mob&&!s.mob.dead)continue;s.timer-=dt;if(s.timer<=0){if(Math.hypot(s.x-P.x,s.y-P.y)<280){s.timer=2;continue;}spawnAt(s);}}
@@ -2124,7 +2198,7 @@ function render(){
   for(const s of G.spores){s.x+=Math.sin(t*.6+s.p)*.15;s.y-=s.v;if(s.y<vy0||s.x<vx0||s.x>vx1){s.x=vx0+Math.random()*(vx1-vx0);s.y=vy1;}
     const a=.25+.25*Math.sin(t*2+s.p);cx.fillStyle=s.c+a+')';cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fill();}
   for(const e of G.foes)if(inView(e.x,e.y))drawFoeEyes(cx,e,t);
-  drawMolt(cx,t);drawEnchantBolts(cx);
+  drawMolt(cx,t);drawEnchantBolts(cx);drawWeaponWisps(cx,t);drawSetOrbs(cx,t);
   if(G.boss&&!G.boss.dead){const e=G.boss;cx.fillStyle='#ff4a2a';cx.shadowColor='#ff4a2a';cx.shadowBlur=16;for(const s of [-1,1]){cx.beginPath();cx.arc(e.x+Math.cos(e.ang)*14-Math.sin(e.ang)*s*9,e.y+Math.sin(e.ang)*14+Math.cos(e.ang)*s*9,3.2,0,7);cx.fill();}cx.shadowBlur=0;
     if(e.st===1){cx.strokeStyle='rgba(224,64,47,.35)';cx.lineWidth=e.r*2;cx.beginPath();cx.moveTo(e.x,e.y);cx.lineTo(e.x+Math.cos(e.ang)*420,e.y+Math.sin(e.ang)*420);cx.stroke();}}
   // nombres del botín en el suelo
@@ -2311,6 +2385,9 @@ function syncQualBtn(){$('qualBtn').textContent='Calidad: '+({auto:'automática'
 /* Tamaño de la interfaz (80–130%): escala bolsa, Brugo, botones y HUD */
 const UI_STEPS=[.8,.9,1,1.1,1.2,1.3];let UI=UI_STEPS.includes(SAVE.ui)?SAVE.ui:1;
 function applyUI(){document.documentElement.style.setProperty('--ui',UI);$('uiBtn').textContent='Tamaño de la interfaz: '+Math.round(UI*100)+'%';}
+$('testSetBtn').onclick=()=>{if(!G)return;const c=G.c;c.stash=c.stash||[];
+  for(const sl of SLOTS){const old=c.gear[sl];if(old){if(c.inv.length<INV_MAX)c.inv.push(old);else c.stash.push(old);}const it=makeItem(sl,3,Math.max(c.lvl,15),c.race,sl==='alas'?null:'ciempies');if(sl!=='alas')it.plus=10;c.gear[sl]=it;}
+  G.st=charStats(c);G.P.hp=G.st.hp;G.P.mp=G.st.mp;persist();BAG_DIRTY=true;resumeGame();toast('Set Ciempiés de Hueso +10 equipado (prueba)');};
 $('uiBtn').onclick=()=>{UI=UI_STEPS[(UI_STEPS.indexOf(UI)+1)%UI_STEPS.length];SAVE.ui=UI;persist();applyUI();};applyUI();
 $('qualBtn').onclick=()=>{QUAL.mode=QUAL.mode==='auto'?'high':QUAL.mode==='high'?'low':'auto';QUAL.cap=QUAL.mode==='low'?1.5:3;QUAL.scale=1;SAVE.quality=QUAL.mode;persist();syncQualBtn();resize();};
 function syncArtBtn(){$('artBtn').textContent='Mantis: '+(SAVE.mantisArt===false?'dibujo clásico':'arte');}
@@ -2329,7 +2406,31 @@ function syncBotForm(){$('botRadius').value=String(BOT.radius);$('botRar').value
 
 /* ---------- Bolsa en juego (I / Tab) ---------- */
 let BAG_DIRTY=false,bagSel=null,bagT=0,bagTab='bag';
-function toggleBag(open){if(!G)return;G.bagOpen=open===undefined?!G.bagOpen:open;$('bagDock').classList.toggle('open',G.bagOpen);if(G.bagOpen){bagSel=null;renderBagTabs();}syncGameBtns();}
+/* ---------- Mapas del reino: viajar con oro a santuarios y zonas según el nivel ---------- */
+const SHRINE_LV=[1,4,7,10,13],REGIONS_NEXT=[['II','Pantano negro',18],['III','Cripta bajo el cementerio',26],['IV','Colmena abandonada',34],['V','Nido de la Reina',42]];
+function travelSpots(){const sp=[];WORLD.shrines.forEach((sh,i)=>sp.push({k:'s',i,n:sh.n,lv:[SHRINE_LV[i],SHRINE_LV[i]+3],x:sh.x-70,y:sh.y+70,cost:i?10+SHRINE_LV[i]*8:0,sub:'Santuario · Brugo, curación'}));
+  WORLD.zones.forEach((z,i)=>sp.push({k:'z',i,n:z.name,lv:z.lv,x:z.x-z.r*.75,y:z.y+z.r*.35,cost:15+z.lv[0]*10,sub:z.mobs.map(m=>FOES[m[0]].n.split(' ')[0]).join(', ')+(z.elite?' · élite':'')+(z.boss?' · jefe':'')}));return sp;}
+function renderMaps(){
+  const c=G.c,P=G.P,sp=travelSpots();let h=`<div class="mreg">Región I · ${WORLD.name}<small>${fmt(c.gold)} oro</small></div>`;
+  for(const s of sp){const access=Math.max(1,s.lv[0]-3),lock=c.lvl<access,here=Math.hypot(P.x-s.x,P.y-s.y)<260,low=c.lvl<s.lv[0];
+    h+=`<div class="mspot ${here?'here':''} ${lock?'lock':''}"><div style="min-width:0"><b>${s.n}</b><small>Nv ${s.lv.join('–')}${low&&!lock?` <span class="sug">(nivel sugerido ${s.lv[0]})</span>`:''} · ${s.sub}</small></div>
+      ${here?'<small>Estás aquí</small>':lock?`<small>Requiere Nv ${access}</small>`:`<button id="tv-${s.k}${s.i}" ${c.gold<s.cost||G.arena?'disabled':''}>${s.cost?fmt(s.cost)+' oro':'Gratis'}</button>`}</div>`;}
+  for(const [n,name,lv] of REGIONS_NEXT)h+=`<div class="mreg">Región ${n} · ${name}<small>próximamente · Nv ${lv}+</small></div>`;
+  $('mapList').innerHTML=h;
+  for(const s of sp){const b=$('tv-'+s.k+s.i);if(b)b.onclick=()=>travelTo(s);}
+}
+function travelTo(s){
+  const c=G.c,P=G.P;if(G.arena||c.gold<s.cost)return;c.gold-=s.cost;
+  for(let i=0;i<24;i++){const a=i/24*6.283;G.parts.push({x:P.x,y:P.y-20,vx:Math.cos(a)*160,vy:Math.sin(a)*160-60,life:.6,max:.6,c:'#f0c46a',s:3,rot:0});}
+  P.x=s.x;P.y=s.y;collideObst(P);P.ifr=2;G.walkTo=null;G.eshots=[];G.bot.ax=P.x;G.bot.ay=P.y;G.bot.trip=null;G.zone=-2;
+  for(const e of G.foes)if(e.aggro){e.aggro=false;e.returning=true;}
+  for(let i=0;i<24;i++){const a=i/24*6.283;G.parts.push({x:P.x+Math.cos(a)*50,y:P.y-20+Math.sin(a)*30,vx:-Math.cos(a)*120,vy:-Math.sin(a)*90,life:.5,max:.5,c:'#ffe2a0',s:3,rot:0});}
+  for(const sp of G.spores){sp.x=P.x+rand(-700,700);sp.y=P.y+rand(-500,500);}
+  sfx('molt');banner(s.n,'Nivel recomendado '+s.lv.join('–'));persist();toggleMaps(false);
+}
+function toggleMaps(open){if(!G)return;G.mapsOpen=open===undefined?!G.mapsOpen:open;if(G.mapsOpen){toggleBag(false);renderMaps();}$('mapDock').hidden=!G.mapsOpen;}
+$('mapBtn').onclick=()=>{if(state==='play')toggleMaps();};$('mapClose').onclick=()=>toggleMaps(false);
+function toggleBag(open){if(!G)return;if(open!==false&&G.mapsOpen&&(open||!G.bagOpen)){G.mapsOpen=false;$('mapDock').hidden=true;}G.bagOpen=open===undefined?!G.bagOpen:open;$('bagDock').classList.toggle('open',G.bagOpen);if(G.bagOpen){bagSel=null;renderBagTabs();}syncGameBtns();}
 function openPanel(tab){if(!G)return;if(G.bagOpen&&bagTab===tab){toggleBag(false);return;}bagTab=tab;toggleBag(true);}
 function renderBagTabs(){$('bagTabBag').setAttribute('aria-selected',String(bagTab==='bag'));$('bagTabPow').setAttribute('aria-selected',String(bagTab==='pow'));$('bagMain').hidden=bagTab!=='bag';$('bagPowWrap').hidden=bagTab!=='pow';BAG_DIRTY=true;renderBag();}
 $('bagTabBag').onclick=()=>{bagTab='bag';renderBagTabs();};$('bagTabPow').onclick=()=>{bagTab='pow';renderBagTabs();};
@@ -2391,23 +2492,46 @@ const SCREENS=['title','create','hub','result','evolve','pause','shrine'];
 let PANE_ID='pane';const pane=()=>document.getElementById(PANE_ID);
 function showScreen(id){
   for(const s of SCREENS)$(s).hidden=s!==id;
-  const playing=id===null,dualBag=id==='shrine'&&SHRINE_DUAL;$('gameBtns').hidden=!playing;$('touch').hidden=!(playing&&IS_TOUCH);$('bagDock').hidden=!(playing||dualBag);if(!playing&&!dualBag){if(G)G.bagOpen=false;$('bagDock').classList.remove('open');}else if(G){$('bagDock').classList.toggle('open',!!G.bagOpen);lastBadge=-1;syncGameBtns();}
+  const playing=id===null,dualBag=id==='shrine'&&SHRINE_DUAL;if(!playing){$('mapDock').hidden=true;if(G)G.mapsOpen=false;}$('gameBtns').hidden=!playing;$('touch').hidden=!(playing&&IS_TOUCH);$('bagDock').hidden=!(playing||dualBag);if(!playing&&!dualBag){if(G)G.bagOpen=false;$('bagDock').classList.remove('open');}else if(G){$('bagDock').classList.toggle('open',!!G.bagOpen);lastBadge=-1;syncGameBtns();}
 }
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
 
+let bitaSel=0,delArm=false;
 function openTitle(){
-  state='title';showScreen('title');
+  state='title';showScreen('title');delArm=false;if(SAVE.cur>=0&&SAVE.cur<SAVE.chars.length)bitaSel=SAVE.cur;bitaSel=Math.min(bitaSel,SAVE.chars.length-1);
   const list=$('charList');list.innerHTML='';
-  SAVE.chars.forEach((c,i)=>{const R=RACES[c.race];const b=document.createElement('button');b.className='charcard';b.id='char'+i;
-    const zones=(c.found||[]).filter(Boolean).length;
-    b.innerHTML=`<canvas width="128" height="128"></canvas><div><b>${cleanName(c.name)}</b><small>${c.branch?R.branches[c.branch].name:R.stages[c.stage]} · Nivel ${c.lvl} · ${zones}/5 zonas</small></div><span class="muted">Jugar ›</span>`;
-    list.appendChild(b);drawPortrait(b.querySelector('canvas'),c,null,null,2.4);
-    b.onclick=()=>{SAVE.cur=i;persist();if(!checkEvolve())openHub();};});
-  $('newCharBtn').textContent=SAVE.chars.length?'Nueva criatura':'Comenzar';
+  SAVE.chars.forEach((c,i)=>{const R=RACES[c.race];const b=document.createElement('button');b.className='charcard'+(i===bitaSel?' sel':'');b.id='char'+i;
+    b.innerHTML=`<canvas width="96" height="96"></canvas><div><b>${cleanName(c.name)}</b><small>${R.name} · Nivel ${c.lvl}${c.resets?' · ✦'+c.resets:''}</small></div>`;
+    list.appendChild(b);drawPortrait(b.querySelector('canvas'),c,null,null,1.8);
+    b.onclick=()=>{bitaSel=i;openTitle();};});
+  renderCharPage();
 }
-let raceSel=null;
+function renderCharPage(){
+  const el=$('charPage'),c=SAVE.chars[bitaSel];
+  if(!c){el.innerHTML=`<div class="bita-empty"><h2>Tu bitácora está vacía</h2><p>La Reina Madre despertó y su plaga pudre el subsuelo. Crea tu primera criatura: elige su linaje, su forma de pelear y el color de su caparazón.</p><button class="main" id="emptyNew">Crear criatura</button></div>`;$('emptyNew').onclick=()=>{initAudio();openCreate();};return;}
+  const R=RACES[c.race],st=charStats(c),T=(TYPES[c.race]||[]).find(x=>x.id===c.type),far=Math.max(-1,...(c.found||[]).map((f,i)=>f?i:-1));
+  el.innerHTML=`<canvas id="bitaPortrait" width="260" height="260"></canvas>
+    <div class="bita-info"><h2>${cleanName(c.name)}</h2><div class="stage">${c.branch?R.branches[c.branch].name:R.stages[c.stage]} · Nivel ${c.lvl}${c.resets?' · Renacer '+c.resets:''}</div>
+    <div class="muted" style="font-size:13px">${R.role}${T?' · '+T.n:''} · caparazón ${TINTS[c.tint|0].n.toLowerCase()}</div>
+    <div class="stats"><span>Vida</span><span>${fmt(st.hp)}</span><span>Daño</span><span>${fmt(st.dmg)}</span><span>Oro</span><span>${fmt(c.gold)}</span><span>Zona más profunda</span><span>${far>=0?WORLD.zones[far].name:'Santuario de entrada'}</span></div>
+    <div class="bita-acts"><button class="main" id="bitaGo">Descender</button><button id="bitaHub">Madriguera</button><button class="danger" id="bitaDel">${delArm?'¿Borrar? Toca otra vez':'Borrar'}</button></div></div>`;
+  drawPortrait($('bitaPortrait'),c,null,null,4.4);
+  $('bitaGo').onclick=()=>{initAudio();SAVE.cur=bitaSel;persist();if(!checkEvolve(()=>enterWorld(-1)))enterWorld(-1);};
+  $('bitaHub').onclick=()=>{SAVE.cur=bitaSel;persist();if(!checkEvolve())openHub();};
+  $('bitaDel').onclick=()=>{if(!delArm){delArm=true;renderCharPage();setTimeout(()=>{delArm=false;},4000);return;}SAVE.chars.splice(bitaSel,1);SAVE.cur=SAVE.chars.length?0:-1;bitaSel=0;persist();openTitle();};
+}
+let raceSel=null,typeSel=null,tintSel=0;
+function renderCreateOpts(){
+  const ts=TYPES[raceSel]||[];if(!ts.find(t=>t.id===typeSel))typeSel=ts[0]&&ts[0].id;
+  $('typeList').innerHTML=ts.length?ts.map(t=>`<button id="ty-${t.id}" aria-pressed="${t.id===typeSel}">${t.n}</button>`).join(''):'<small class="muted">Elige un linaje</small>';
+  const T=ts.find(t=>t.id===typeSel);$('typeDesc').textContent=T?T.d+' (+3 al empezar)':'';
+  ts.forEach(t=>$('ty-'+t.id).onclick=()=>{typeSel=t.id;renderCreateOpts();});
+  $('tintList').innerHTML=TINTS.map((t,i)=>`<button class="sw" id="tn-${i}" aria-pressed="${i===tintSel}" title="${t.n}" aria-label="Color ${t.n}" style="--sw:${t.sw}"></button>`).join('')+`<span class="muted" style="font-size:13px">${TINTS[tintSel].n}</span>`;
+  TINTS.forEach((t,i)=>$('tn-'+i).onclick=()=>{tintSel=i;renderCreateOpts();const im=document.querySelector('#race-mantis .race-art');if(im)im.style.filter=TINTS[i].f;});
+  const im=document.querySelector('#race-mantis .race-art');if(im)im.style.filter=TINTS[tintSel].f;
+}
 function openCreate(){
-  state='create';showScreen('create');raceSel=null;$('createGo').disabled=true;
+  state='create';showScreen('create');raceSel=null;typeSel=null;tintSel=0;$('createGo').disabled=true;
   const list=$('raceList');list.innerHTML='';
   Object.entries(RACES).forEach(([k,R])=>{const b=document.createElement('button');b.className='race'+(R.locked?' locked':'');b.id='race-'+k;
     b.innerHTML=`${k==='mantis'?'<img class="race-art" src="assets/mantis-arte.jpg" alt="Mantis guerrera">':'<canvas width="220" height="220"></canvas>'}<span class="role">${R.role}</span><b>${R.name}</b><small>${R.locked?'Próximamente. ':''}${R.desc}</small>`;
@@ -2416,17 +2540,18 @@ function openCreate(){
     if(!R.locked){if(cvs)drawPortrait(cvs,{race:k,stage:2,branch:null,gear:{arma:null,alas:null}},2,null,2.2);}
     else{const g=cvs.getContext('2d');g.fillStyle='rgba(221,210,184,.25)';g.font='64px "IM Fell English SC",serif';g.textAlign='center';g.fillText('?',110,130);}
     if(R.locked){b.disabled=true;return;}
-    b.onclick=()=>{raceSel=k;list.querySelectorAll('.race').forEach(x=>x.classList.toggle('sel',x===b));$('createGo').disabled=false;};});
+    b.onclick=()=>{raceSel=k;list.querySelectorAll('.race').forEach(x=>x.classList.toggle('sel',x===b));$('createGo').disabled=false;renderCreateOpts();};});
+  renderCreateOpts();
 }
 $('newCharBtn').onclick=()=>{initAudio();openCreate();};
 $('createBack').onclick=openTitle;
-$('createGo').onclick=()=>{if(!raceSel)return;const c=newChar(raceSel,$('charName').value);openHub();toast(c.name+' despierta bajo las raíces');};
+$('createGo').onclick=()=>{if(!raceSel)return;const c=newChar(raceSel,$('charName').value,typeSel,tintSel);bitaSel=SAVE.chars.length-1;$('charName').value='';openTitle();toast(c.name+' despierta bajo las raíces');};
 $('toTitle').onclick=openTitle;
 
 /* ---------- Atributos y habilidades ---------- */
 function pips(l,max){let h='';for(let i=1;i<=max;i++)h+=`<i class="${i<=l?'on':''}"></i>`;return `<div class="pips">${h}</div>`;}
 function unlockSkills(c){const out=[];RACES[c.race].skills.forEach((k,i)=>{if(!c.skl[i]&&c.lvl>=k.unlock){c.skl[i]=1;out.push(k.n);}});return out;}
-function autoSpend(c){const rec=RACES[c.race].rec,seq=[];for(const k in rec)for(let i=0;i<rec[k];i++)seq.push(k);while(c.pts>0){c.attr[seq[c.autoI%seq.length]]++;c.autoI++;c.pts--;}}
+function autoSpend(c){const rec=c.rec||RACES[c.race].rec,seq=[];for(const k in rec)for(let i=0;i<rec[k];i++)seq.push(k);while(c.pts>0){c.attr[seq[c.autoI%seq.length]]++;c.autoI++;c.pts--;}}
 function resetCost(c){return 40*c.lvl;}
 const REBIRTH_LVL=30,REBIRTH_PTS=25;let rebirthArm=false;
 function rebirthCost(c){return 3000*((c.resets||0)+1);}
