@@ -13,7 +13,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 
 El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona sin conexión una vez abierto. Para instalarlo tiene que estar publicado en una dirección HTTPS (por ejemplo GitHub Pages). Desde Chrome en Android: abrir la dirección, menú ⋮ → **Instalar app** (o *Agregar a pantalla principal*). Se abre a pantalla completa y apaisado, sin barra del navegador. Si se juega desde el navegador, al entrar al mundo pide pantalla completa y gira a apaisado cuando el teléfono lo permite.
 
-## Contenido de la versión 0.14
+## Contenido de la versión 0.15
 
 | Sistema | Estado |
 |---|---|
@@ -36,7 +36,8 @@ El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona s
 
 | Calidad de imagen | Resolución nativa de la pantalla (hasta 3×) y sprites a 300 px. Modo automático que baja la resolución si no llega a ~45 cuadros por segundo; también máxima y ahorro de batería desde el menú. Zoom más cercano en celulares. |
 | Interfaz | Íconos en lugar de texto: caza automática (flechas en círculo; activa se pone verde azulado y gira, sin cartel en pantalla) y menú (tres líneas, pausa el juego). Los puntos sin repartir se avisan solo con el número sobre la bolsa. El cartel de zona ya no se encima con la barra del jefe. |
-| Celular apaisado | App instalable a pantalla completa y apaisada. HUD compacto: bolsa en la fila de íconos de arriba, minimapa más chico, botones de ataque un poco menores y márgenes para la cámara/muesca. Si se juega vertical aparece un aviso para girar el teléfono (se puede descartar). |
+| Subir de nivel: la muda | El insecto rompe su caparazón: cámara lenta, capullo de ámbar con grietas de luz que estalla en esquirlas, onda que empuja y aturde a los enemigos cercanos, columna de luz, título grande «Nivel N» con lo ganado y la piel vieja (exuvia) queda en el suelo unos segundos. Sonido propio. |
+| Celular apaisado | App instalable a pantalla completa y apaisada. HUD compacto: bolsa en la fila de íconos de arriba, minimapa más chico, botones de ataque un poco menores y márgenes para la cámara/muesca. Si se juega vertical aparece un aviso para girar el teléfono (se puede descartar). Vida, energía, nivel y experiencia en barras arriba a la izquierda (el joystick ya no tapa la vida). Portada, creación de criatura y madriguera compactas en apaisado; las pantallas ya no se cortan arriba. |
 | Comparación rápida | En las miniaturas del inventario, flecha verde si el objeto es de mejor nivel que lo equipado en ese casillero (nivel, luego rareza, luego refinado) y roja si es peor. Los atributos los decide el jugador con el detalle comparativo. |
 | Bolsa en juego | Cajón que se despliega desde una pestaña con ícono en el borde derecho (o con la tecla I / Tab), con aviso de puntos sin repartir: oro, pociones, materiales, equipo, inventario completo y botín reciente. Permite equipar y tirar objetos sin salir del mapa. Parado en un santuario, un botón vende todos los objetos comunes. El oro del botín reciente se agrupa en una sola línea. |
 | Muerte | Revivir con anuncio sin penalidad, o reaparecer en el santuario perdiendo 10% del nivel en experiencia. |
