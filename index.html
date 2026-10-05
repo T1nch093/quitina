@@ -256,7 +256,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 @keyframes tilt{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
 #rotate button{padding:6px 10px;font-size:14px}
 /* Bolsa: cajón lateral con pestaña */
-#bagDock{position:fixed;top:0;right:0;bottom:0;width:min(390px,calc(100vw - 52px));z-index:6;transform:translateX(100%);transition:transform .22s ease-out;pointer-events:none}
+#bagDock{position:fixed;top:0;right:0;bottom:0;width:min(330px,calc(100vw - 52px));z-index:6;transform:translateX(100%);transition:transform .22s ease-out;pointer-events:none}
 #bagDock.open{transform:translateX(0)}
 #bagDock .bagtab{position:absolute;left:-52px;top:50%;transform:translateY(-50%);width:52px;height:64px;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-right:0;background:rgba(28,24,19,.92);pointer-events:auto;border-radius:6px 0 0 6px}
 #bagDock .bagtab .key{font-size:11px;color:var(--dim);font-weight:700;letter-spacing:.1em}
@@ -305,8 +305,9 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 .pips i{width:9px;height:9px;transform:rotate(45deg);border:1.5px solid var(--amber);display:block}
 .pips i.on{background:var(--amber)}
 .pips{display:flex;gap:5px}
-#bag .equip{grid-template-columns:repeat(6,minmax(0,1fr))}
-#bag .inv{grid-template-columns:repeat(6,minmax(0,1fr))}
+#bag .equip,#bag .inv{grid-template-columns:repeat(6,minmax(0,1fr));gap:5px}
+#bag .slot .lbl{font-size:10px}
+#bag .bagtabs-up{color:#5fe07a;margin-left:4px}
 #bag .detail{grid-template-columns:48px minmax(0,1fr);gap:10px;padding:10px}
 #bag .detail .ic{width:48px;height:48px}
 #bag .detail .iname{font-size:18px}
@@ -404,6 +405,25 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
   .mesa-row .slot,.mslot{width:52px;height:52px}.mres{width:58px;height:58px}
 }
 .mlist{font-size:13.5px;color:var(--dim);margin:6px 0 0;padding-left:18px;line-height:1.45}
+/* Ventana de detalle: aparece al lado de la bolsa (sobre el mapa); en pantallas angostas, abajo dentro de la bolsa */
+#bagDetail.pop{position:absolute;right:calc(100% + 10px);top:50%;transform:translateY(-50%);width:min(300px,calc(100vw - 360px));pointer-events:auto;z-index:2;max-height:calc(100vh - 24px);overflow-y:auto}
+#bagDetail.pop:empty,#bagDock:not(.open) #bagDetail{display:none}
+#bagDetail .detail{margin:0;background:rgba(20,16,12,.97);box-shadow:0 10px 40px rgba(0,0,0,.7);border-color:var(--amber);grid-template-columns:48px minmax(0,1fr);gap:10px;padding:12px;position:relative}
+#bagDetail .detail .ic{width:48px;height:48px}
+#bagDetail .detail .iname{font-size:18px;padding-right:26px}
+#bagDetail .detail ul{font-size:14px}
+#bagDetail .detail .acts button{flex:1;padding:8px 10px}
+#bagDetail .px{position:absolute;top:6px;right:6px;width:28px;height:28px;padding:0;font-size:16px;line-height:1}
+@media (max-width:699px){#bagDetail.pop{right:8px;left:8px;top:auto;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);transform:none;width:auto;max-height:62vh}}
+/* Indicadores de puntos para repartir */
+.upar{color:#5fe07a;font-weight:700}
+#bagDock .badge{background:#3fbf5f;color:#06200c}
+.attr .btns button.can{border-color:#3fbf5f;color:#8ff0a4}
+.skill button.can{border-color:#3fbf5f;color:#8ff0a4;box-shadow:0 0 10px rgba(63,191,95,.35)}
+.ptsbar .free.on{color:#5fe07a}
+#touch button.canup::after{content:'▲';position:absolute;top:-4px;right:-2px;font-size:12px;color:#5fe07a;text-shadow:0 0 4px #000}
+.skill .form{display:block;font-size:12.5px;color:var(--dim);letter-spacing:.04em}
+.skill .next.newform{color:#8ff0a4}
 </style>
 </head>
 <body>
@@ -415,6 +435,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 <div id="gameBtns" hidden><button id="botBtn" class="icon" aria-label="Caza automática" aria-pressed="false" title="Caza automática (H)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9"/><path d="M4 3.5V8h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.9"/><path d="M20 20.5V16h-4.5"/></svg></button><button id="pauseBtn" class="icon" aria-label="Menú y pausa" title="Menú (Esc)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button></div>
 <div id="bagDock" hidden>
 <button id="bagBtn" class="bagtab" aria-label="Bolsa" aria-expanded="false" title="Bolsa (I)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7.5V6a3.5 3.5 0 0 1 7 0v1.5"/><path d="M4.8 7.5h14.4l-1.1 11.6a2.2 2.2 0 0 1-2.2 2H8.1a2.2 2.2 0 0 1-2.2-2z"/><path d="M9 12.5h6"/></svg><span class="key">I</span><span class="badge" id="bagBadge" hidden></span></button>
+<div id="bagDetail" class="pop" role="dialog" aria-label="Detalle del objeto"></div>
 <aside id="bag" class="frame" aria-label="Bolsa">
   <div class="bag-head"><div class="bag-tabs" role="tablist"><button role="tab" id="bagTabBag" aria-selected="true">Bolsa · I</button><button role="tab" id="bagTabPow" aria-selected="false">Poderes · C</button></div><button id="bagClose" aria-label="Cerrar">Cerrar</button></div>
   <div id="bagPowWrap" hidden></div>
@@ -424,7 +445,6 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
   <div class="section-t"><span class="eyebrow">Inventario</span><span class="muted num" id="bagCount"></span></div>
   <div class="inv" id="bagInv"></div>
   <div id="bagSellRow"></div>
-  <div id="bagDetail"></div>
   <div class="eyebrow" style="margin:16px 0 6px">Botín reciente</div><ul class="recent" id="bagRecent"></ul>
   </div>
 </aside>
@@ -564,7 +584,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.16 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.17 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -597,9 +617,9 @@ const RACES={
     branches:{
       segadora:{name:'Mantis Segadora',desc:'+10% de daño y el Torbellino golpea 30% más fuerte.'},
       orquidea:{name:'Mantis Orquídea',desc:'+12% de crítico y +10% de velocidad. Bella y letal.'}},
-    skills:[{n:'Torbellino',mp:15,cd:5,unlock:1,d:'Giro que daña a todo lo que te rodea.',up:['','+15% de daño','Radio 30% mayor','+15% de daño','Enfriamiento 2 s menor']},
-      {n:'Embestida',mp:12,cd:4,unlock:3,d:'Te lanzas hacia adelante cortando todo a tu paso.',up:['','+15% de daño','Recorre 40% más distancia','+15% de daño','Aturde 1 s a quien golpea']},
-      {n:'Furia',mp:18,cd:12,unlock:6,d:'Durante 4 s todos tus golpes hacen 70% más de daño.',up:['','+10% de daño extra','Dura 5 s','+10% de daño extra','Robas 8% de vida durante la furia']}],
+    skills:[{n:'Torbellino',mp:15,cd:5,unlock:1,d:'Giro que daña a todo lo que te rodea.',f:{3:'Torbellino doble',5:'Tornado de guadañas'},up:['','+15% de daño','Nueva forma, Torbellino doble: atrae a los enemigos, radio 30% mayor y gira dos veces','+15% de daño','Nueva forma, Tornado de guadañas: además lanza 6 cuchillas en abanico y enfría 2 s menos']},
+      {n:'Embestida',mp:12,cd:4,unlock:3,d:'Te lanzas hacia adelante cortando todo a tu paso.',f:{3:'Embestida de sombra',5:'Triple embestida'},up:['','+15% de daño','Nueva forma, Embestida de sombra: recorre 40% más y el corte que dejas estalla','+15% de daño','Nueva forma, Triple embestida: encadena 2 embestidas más contra los enemigos cercanos y aturde 1 s']},
+      {n:'Furia',mp:18,cd:12,unlock:6,d:'Durante 4 s todos tus golpes hacen 70% más de daño.',f:{3:'Furia sangrienta',5:'Furia del depredador'},up:['','+10% de daño extra','Nueva forma, Furia sangrienta: dura 5 s y cada golpe lanza un tajo a distancia','+10% de daño extra','Nueva forma, Furia del depredador: rugido que empuja y aturde, y robas 8% de vida']}],
     rec:{fue:2,agi:1,cap:1}},
   polilla:{name:'Polilla',role:'Hechicera',desc:'A distancia. Polvo maldito, fuego frío y enjambres de esporas.',
     base:{hp:90,mp:100,dmg:13,spd:158,mpReg:6,atkCd:.55},per:{hp:7,mp:5,dmg:1.8},
@@ -607,9 +627,9 @@ const RACES={
     branches:{
       calavera:{name:'Polilla Calavera',desc:'+10% de daño y la maldición del Polvo dura y duele 50% más.'},
       lunar:{name:'Polilla Lunar',desc:'El Fuego frío congela más tiempo y regeneras energía 50% más rápido.'}},
-    skills:[{n:'Polvo maldito',mp:14,cd:4,unlock:1,d:'Cono de polvo que maldice: daño continuo.',up:['','+15% de daño','Cono más amplio','+15% de daño','La maldición dura 2 s más']},
-      {n:'Fuego frío',mp:20,cd:7,unlock:3,d:'Estallido helado alrededor tuyo que ralentiza.',up:['','+15% de daño','Radio 25% mayor','+15% de daño','Congela 1 s']},
-      {n:'Enjambre',mp:25,cd:9,unlock:6,d:'Siete esporas que persiguen a los enemigos.',up:['','+15% de daño','+3 esporas','+15% de daño','Las esporas atraviesan 2 enemigos']}],
+    skills:[{n:'Polvo maldito',mp:14,cd:4,unlock:1,d:'Cono de polvo que maldice: daño continuo.',f:{3:'Nube maldita',5:'Plaga'},up:['','+15% de daño','Nueva forma, Nube maldita: cono más amplio y deja una nube que daña 2,5 s','+15% de daño','Nueva forma, Plaga: la maldición dura 2 s más y salta a 2 enemigos cuando el maldito muere']},
+      {n:'Fuego frío',mp:20,cd:7,unlock:3,d:'Estallido helado alrededor tuyo que ralentiza.',f:{3:'Doble estallido',5:'Invierno'},up:['','+15% de daño','Nueva forma, Doble estallido: radio 25% mayor y una segunda onda','+15% de daño','Nueva forma, Invierno: congela 1 s y dispara 8 esquirlas de hielo']},
+      {n:'Enjambre',mp:25,cd:9,unlock:6,d:'Siete esporas que persiguen a los enemigos.',f:{3:'Nube de esporas',5:'Esporas explosivas'},up:['','+15% de daño','Nueva forma, Nube de esporas: 10 esporas','+15% de daño','Nueva forma, Esporas explosivas: atraviesan 2 enemigos y estallan al tocar']}],
     rec:{esn:2,cap:1,agi:1}},
   escarabajo:{name:'Escarabajo',role:'Guardián',desc:'Caparazón, escudo y golpes que aturden.',locked:true},
   avispa:{name:'Avispa',role:'Cazadora',desc:'Aguijones venenosos a distancia y mucha agilidad.',locked:true}
@@ -1349,6 +1369,7 @@ function hurtFoe(e,amt,crit,kx,ky,force){
 }
 function killFoe(e){
   e.dead=true;G.kills++;sfx('crunch');
+  if(e.plague&&e.curse>0){let n=0;for(const o of G.foes){if(n>=2)break;if(o.dead||o===e||Math.hypot(o.x-e.x,o.y-e.y)>170)continue;o.curse=Math.max(o.curse,3);o.curseD=e.curseD;o.curseT=.5;o.plague=true;n++;G.fx.push({k:'dust',x:e.x,y:e.y,a:Math.atan2(o.y-e.y,o.x-e.x),life:.4,max:.4,r:Math.hypot(o.x-e.x,o.y-e.y)});}}
   if(e.spawn){e.spawn.mob=null;e.spawn.timer=e.spawn.respawn;}
   const T=FOES[e.type];
   for(let i=0;i<(e.boss?40:12);i++)G.parts.push({x:e.x+rand(-e.r,e.r)*.5,y:e.y+rand(-e.r,e.r)*.5,vx:rand(-220,220),vy:rand(-220,220),life:rand(.4,.8),max:.8,c:i%3?T.ichor:'#1d1812',s:rand(2,5),rot:rand(0,6)});
@@ -1448,10 +1469,22 @@ function basicAttack(aim){
   if(G.c.race==='mantis'){
     sfx('swing');P.act={k:'atk1',t:0,d:clamp(G.st.atkCd*.95,.24,.4)};const R=78;G.fx.push({k:'slash',x:P.x,y:P.y,a,life:.16,max:.16,r:R,fury:P.fury>0});
     for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R,a,1.15)){const r=rollDmg(dmg);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,140);}}
+    if(P.fury>0&&skillRank(2)>=3)G.shots.push({k:'blade',x:P.x+Math.cos(a)*30,y:P.y-8+Math.sin(a)*30,vx:Math.cos(a)*620,vy:Math.sin(a)*620,life:.45,r:18,dmg:dmg*.9,pierce:2,hits:new Set(),rot:a,red:true});
   }else{
     sfx('bolt');G.shots.push({k:'bolt',x:P.x+Math.cos(a)*14,y:P.y-10+Math.sin(a)*14,vx:Math.cos(a)*560,vy:Math.sin(a)*560,life:.85,r:7,dmg,pierce:1,hits:new Set()});
   }
 }
+function dashEnd(){
+  const P=G.P,d=P.dash;P.dash=null;if(!d)return;
+  if(d.scar){const sc={k:'scar',x0:d.sx,y0:d.sy,x1:P.x,y1:P.y,x:(d.sx+P.x)/2,y:(d.sy+P.y)/2,r:50,life:.55,max:.55};G.fx.push(sc);
+    later(.4,()=>{G.shake=Math.max(G.shake,6);for(let k=0;k<=6;k++)G.fx.push({k:'nova',x:sc.x0+(sc.x1-sc.x0)*k/6,y:sc.y0+(sc.y1-sc.y0)*k/6,life:.3,max:.3,r:46});
+      for(const e of G.foes){if(e.dead)continue;const L=Math.hypot(sc.x1-sc.x0,sc.y1-sc.y0)||1,t=clamp(((e.x-sc.x0)*(sc.x1-sc.x0)+(e.y-sc.y0)*(sc.y1-sc.y0))/(L*L),0,1),px=sc.x0+(sc.x1-sc.x0)*t,py=sc.y0+(sc.y1-sc.y0)*t;
+        if(Math.hypot(e.x-px,e.y-py)<e.r+40){const r=rollDmg(d.dmg*.6);hurtFoe(e,r.v,r.crit,0,0,0);}}});}
+  if(d.chain>0){let best=null,bd=340;for(const e of G.foes){if(e.dead)continue;const dd=Math.hypot(e.x-P.x,e.y-P.y);if(dd<bd&&dd>20){bd=dd;best=e;}}
+    if(best){const a=Math.atan2(best.y-P.y,best.x-P.x);P.aim=a;P.face=Math.cos(a)>=0?1:-1;P.act={k:'atk1',t:0,d:.3};P.dash={vx:Math.cos(a)*1250,vy:Math.sin(a)*1250,t:Math.min(.31,(bd+40)/1250),hits:new Set(),dmg:d.dmg,stun:d.stun,sx:P.x,sy:P.y,scar:d.scar,chain:d.chain-1};sfx('swing');}}
+}
+function formName(S,r){return S.f?(r>=5?S.f[5]:r>=3?S.f[3]:S.n):S.n;}
+function later(t,f){(G.later=G.later||[]).push({t,f});}
 function skillRank(i){return (G.c.skl||[1,0,0])[i]||0;}
 function skillCd(c,i,st){const S=RACES[c.race].skills[i],r=(c.skl||[])[i]||0,base=S.cd-(c.race==='mantis'&&i===0&&r>=5?2:0);return Math.round(base*(1-(st||charStats(c)).cdr)*10)/10;}
 function useSkill(i,aim){
@@ -1460,16 +1493,24 @@ function useSkill(i,aim){
   const rm=(1+.15*((rk>=2)+(rk>=4)))*G.st.skillMul,dmg=G.st.dmg*rm;
   if(G.c.race==='mantis'){
     if(i===0)P.act={k:'atk3',t:0,d:.45};if(i===1)P.act={k:'atk1',t:0,d:.3};if(i===2)P.act={k:'atk2',t:0,d:.5};
-    if(i===0){const mul=2.6*(G.c.branch==='segadora'?1.3:1),R2=rk>=3?156:120;G.fx.push({k:'spin',x:P.x,y:P.y,life:.4,max:.4,r:R2});G.shake=5;
-      for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2)){const r=rollDmg(dmg*mul);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,320);}}}
-    if(i===1){P.dash={vx:Math.cos(a)*1250,vy:Math.sin(a)*1250,t:rk>=3?.31:.22,hits:new Set(),dmg:dmg*2.2,stun:rk>=5};}
-    if(i===2){P.fury=rk>=3?5:4;P.furyB=.7+.1*((rk>=2)+(rk>=4));P.furyLs=rk>=5;G.fx.push({k:'furyburst',x:P.x,y:P.y,life:.5,max:.5,r:90});G.shake=4;G.texts.push({x:P.x,y:P.y-44,s:'¡Furia! +'+Math.round(P.furyB*100)+'% de daño',life:1.3,fury:true,lvl:true});}
+    if(i===0){const mul=2.6*(G.c.branch==='segadora'?1.3:1),R2=rk>=3?156:120;
+      const spin=(rr,m)=>{G.fx.push({k:'spin',x:P.x,y:P.y,life:.4,max:.4,r:rr});G.shake=5;for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,rr)){const r=rollDmg(dmg*m);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,320);}}};
+      if(rk>=3)for(const e of G.foes){if(e.dead||e.boss)continue;const dx=P.x-e.x,dy=P.y-e.y,d=Math.hypot(dx,dy);if(d<R2+110&&d>30){e.kx+=dx/d*380;e.ky+=dy/d*380;}}
+      spin(R2,mul);if(rk>=3)later(.24,()=>{P.act={k:'atk3',t:0,d:.45};spin(R2*1.12,mul*.7);});
+      if(rk>=5){G.fx.push({k:'furyburst',x:P.x,y:P.y,life:.4,max:.4,r:70});for(let k=0;k<6;k++){const aa=a+k*1.047;G.shots.push({k:'blade',x:P.x,y:P.y-8,vx:Math.cos(aa)*560,vy:Math.sin(aa)*560,life:.55,r:16,dmg:dmg*1.2,pierce:3,hits:new Set(),rot:aa});}}}
+    if(i===1){P.dash={vx:Math.cos(a)*1250,vy:Math.sin(a)*1250,t:rk>=3?.31:.22,hits:new Set(),dmg:dmg*2.2,stun:rk>=5,sx:P.x,sy:P.y,scar:rk>=3,chain:rk>=5?2:0};}
+    if(i===2){if(rk>=5){G.fx.push({k:'nova',x:P.x,y:P.y,life:.5,max:.5,r:210});G.shake=8;for(const e of G.foes){if(e.dead||e.boss)continue;const dx=e.x-P.x,dy=e.y-P.y,d=Math.hypot(dx,dy);if(d<210){e.kx+=dx/(d||1)*480;e.ky+=dy/(d||1)*480;e.stun=Math.max(e.stun||0,.7);}}}
+      P.fury=rk>=3?5:4;P.furyB=.7+.1*((rk>=2)+(rk>=4));P.furyLs=rk>=5;G.fx.push({k:'furyburst',x:P.x,y:P.y,life:.5,max:.5,r:90});G.shake=4;G.texts.push({x:P.x,y:P.y-44,s:'¡Furia! +'+Math.round(P.furyB*100)+'% de daño',life:1.3,fury:true,lvl:true});}
   }else{
     if(i===0){const R2=230,cb=G.c.branch==='calavera'?1.5:1,arc=rk>=3?.9:.65;G.fx.push({k:'dust',x:P.x,y:P.y,a,life:.5,max:.5,r:R2});
-      for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2,a,arc)){const r=rollDmg(dmg*.9);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,80);e.curse=(3+(rk>=5?2:0))*cb;e.curseD=dmg*.6*cb;e.curseT=.5;}}}
+      for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2,a,arc)){const r=rollDmg(dmg*.9);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,80);e.curse=(3+(rk>=5?2:0))*cb;e.curseD=dmg*.6*cb;e.curseT=.5;e.plague=rk>=5;}}
+      if(rk>=3)(G.clouds=G.clouds||[]).push({x:P.x+Math.cos(a)*140,y:P.y+Math.sin(a)*140,r:105,life:2.5,max:2.5,tick:0,dmg:dmg*.45});}
     if(i===1){const R2=rk>=3?212:170,sl=G.c.branch==='lunar'?4:2.5;G.fx.push({k:'nova',x:P.x,y:P.y,life:.5,max:.5,r:R2});G.shake=5;
-      for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2)){const r=rollDmg(dmg*2);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,200);e.slow=sl;if(rk>=5&&!e.dead)e.stun=1;}}}
-    if(i===2){const n=rk>=3?10:7;for(let k=0;k<n;k++){const aa=a+(k-(n-1)/2)*.3;G.shots.push({k:'spore',x:P.x,y:P.y-10,vx:Math.cos(aa)*260,vy:Math.sin(aa)*260,life:2.6,r:6,dmg:dmg*1.2,pierce:rk>=5?2:1,hits:new Set(),home:true});}}
+      const wave=(rr,m)=>{G.fx.push({k:'nova',x:P.x,y:P.y,life:.5,max:.5,r:rr});for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,rr)){const r=rollDmg(dmg*m);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,200);e.slow=sl;if(rk>=5&&!e.dead)e.stun=1;}}};
+      for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2)){const r=rollDmg(dmg*2);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,200);e.slow=sl;if(rk>=5&&!e.dead)e.stun=1;}}
+      if(rk>=3)later(.3,()=>wave(R2*1.3,1));
+      if(rk>=5)for(let k=0;k<8;k++){const aa=k*.785+a;G.shots.push({k:'ice',x:P.x,y:P.y-8,vx:Math.cos(aa)*480,vy:Math.sin(aa)*480,life:.8,r:8,dmg:dmg*.9,pierce:2,hits:new Set(),slow:sl,rot:aa});}}
+    if(i===2){const n=rk>=3?10:7;for(let k=0;k<n;k++){const aa=a+(k-(n-1)/2)*.3;G.shots.push({k:'spore',x:P.x,y:P.y-10,vx:Math.cos(aa)*260,vy:Math.sin(aa)*260,life:2.6,r:6,dmg:dmg*1.2,pierce:rk>=5?2:1,hits:new Set(),home:true,boom:rk>=5});}}
   }
   return true;
 }
@@ -1581,7 +1622,9 @@ function update(dt){
   if(G.molt){G.molt.t+=dt;if(!G.molt.burst&&G.molt.t>=.78)moltBurst();if(G.molt.t>3.4)G.molt=null;}
   if(G.exuviae){for(const ex of G.exuviae)ex.life-=dt;G.exuviae=G.exuviae.filter(ex=>ex.life>0);}
   if(G.slowT>0){G.slowT-=dt;dt*=.35;}
-  G.t+=dt;const P=G.P,st=G.st;
+  G.t+=dt;
+  if(G.later&&G.later.length){for(const l of G.later)l.t-=dt;const due=G.later.filter(l=>l.t<=0);G.later=G.later.filter(l=>l.t>0);for(const l of due)l.f();}
+  if(G.clouds){for(const cl of G.clouds){cl.life-=dt;cl.tick-=dt;if(cl.tick<=0){cl.tick=.5;for(const e of G.foes){if(!e.dead&&Math.hypot(e.x-cl.x,e.y-cl.y)<cl.r+e.r){const r=rollDmg(cl.dmg);hurtFoe(e,r.v,r.crit,0,0,0);}}}}G.clouds=G.clouds.filter(cl=>cl.life>0);}const P=G.P,st=G.st;
   let mx=(keys.KeyD||keys.ArrowRight?1:0)-(keys.KeyA||keys.ArrowLeft?1:0),my=(keys.KeyS||keys.ArrowDown?1:0)-(keys.KeyW||keys.ArrowUp?1:0);
   if(mx||my){const l=Math.hypot(mx,my);mx/=l;my/=l;}
   else if(joy){const ddx=joy.x-joy.ox,ddy=joy.y-joy.oy,l=Math.hypot(ddx,ddy);if(l>6){const s=Math.min(1,l/48);mx=ddx/l*s;my=ddy/l*s;}}
@@ -1593,7 +1636,7 @@ function update(dt){
   if(mx||my)P.aimMove=Math.atan2(my,mx);
   if(P.dash){P.x+=P.dash.vx*dt;P.y+=P.dash.vy*dt;P.dash.t-=dt;G.parts.push({x:P.x,y:P.y,vx:0,vy:0,life:.25,max:.25,c:'rgba(217,160,60,.5)',s:10,rot:0});
     for(const e of G.foes){if(e.dead||P.dash.hits.has(e))continue;if(inArea(e,P.x,P.y,30)){P.dash.hits.add(e);const r=rollDmg(P.dash.dmg);hurtFoe(e,r.v,r.crit,P.dash.vx,P.dash.vy,260);if(P.dash.stun&&!e.dead)e.stun=1;}}
-    if(P.dash.t<=0)P.dash=null;}
+    if(P.dash.t<=0)dashEnd();}
   P.moving=!P.dash&&!!(mx||my);if(P.moving)P.walkPh=(P.walkPh||0)+dt*12*Math.min(1,Math.hypot(mx,my)*1.2);
   if(P.dash){}else if(mx||my){P.x+=mx*st.spd*dt;P.y+=my*st.spd*dt;if(Math.abs(mx)>.1&&!(held.atk||mouse.down)&&P.anim<=0)P.face=mx>0?1:-1;P.walk+=dt*10;}
   collideObst(P);
@@ -1649,7 +1692,8 @@ function update(dt){
   for(const s of G.shots){
     if(s.home){const t=nearestFoe(s.x,s.y,320);if(t){const a=Math.atan2(t.y-s.y,t.x-s.x),cur=Math.atan2(s.vy,s.vx),na=cur+clamp(angDiff(a,cur),-5*dt,5*dt),sp=Math.min(520,Math.hypot(s.vx,s.vy)+500*dt);s.vx=Math.cos(na)*sp;s.vy=Math.sin(na)*sp;}}
     s.x+=s.vx*dt;s.y+=s.vy*dt;s.life-=dt;
-    for(const e of G.foes){if(e.dead||s.pierce<=0||s.hits.has(e))continue;if(hitFoeAt(e,s.x,s.y,s.r)){s.hits.add(e);s.pierce--;const r=rollDmg(s.dmg);hurtFoe(e,r.v,r.crit,s.vx,s.vy,120);}}
+    for(const e of G.foes){if(e.dead||s.pierce<=0||s.hits.has(e))continue;if(hitFoeAt(e,s.x,s.y,s.r)){s.hits.add(e);s.pierce--;const r=rollDmg(s.dmg);hurtFoe(e,r.v,r.crit,s.vx,s.vy,120);if(s.slow&&!e.dead)e.slow=s.slow;
+      if(s.boom){G.fx.push({k:'nova',x:s.x,y:s.y,life:.3,max:.3,r:64});for(const o of G.foes){if(o.dead||o===e)continue;if(Math.hypot(o.x-s.x,o.y-s.y)<64){const r2=rollDmg(s.dmg*.5);hurtFoe(o,r2.v,r2.crit,o.x-s.x,o.y-s.y,90);}}}}}
     for(const o of G.obst)if(Math.abs(s.x-o.x)<o.r&&Math.abs(s.y-o.y)<o.r&&Math.hypot(s.x-o.x,s.y-o.y)<o.r)s.life=0;
   }
   G.shots=G.shots.filter(s=>s.life>0&&s.pierce>0);
@@ -1901,11 +1945,15 @@ function render(){
     else if(f.k==='slash'){cx.lineCap='round';cx.strokeStyle=f.fury?'rgba(255,140,90,'+k+')':'rgba(240,225,190,'+k+')';cx.lineWidth=7*k+2;cx.beginPath();cx.arc(f.x,f.y,f.r*.85,f.a-1.1,f.a+1.1);cx.stroke();cx.strokeStyle='rgba(217,160,60,'+(k*.6)+')';cx.lineWidth=2;cx.beginPath();cx.arc(f.x,f.y,f.r*.65,f.a-.9,f.a+.9);cx.stroke();}
     else if(f.k==='spin'){cx.lineCap='round';cx.strokeStyle='rgba(240,225,190,'+k+')';cx.lineWidth=10*k;cx.beginPath();cx.arc(f.x,f.y,f.r*(1.1-k*.4),G.t*20,G.t*20+4.5);cx.stroke();cx.strokeStyle='rgba(217,160,60,'+(k*.5)+')';cx.lineWidth=4*k;cx.beginPath();cx.arc(f.x,f.y,f.r*(.8-k*.3),G.t*20+2,G.t*20+5.5);cx.stroke();}
     else if(f.k==='dust'){for(let i=0;i<16;i++){const a=f.a+(i/15-.5)*1.3,rr=f.r*(1-k)*((i*37%10)/10*.5+.5);cx.fillStyle='rgba(165,115,205,'+(k*.5)+')';cx.beginPath();cx.arc(f.x+Math.cos(a)*rr,f.y+Math.sin(a)*rr,10*(1-k)+4,0,7);cx.fill();}}
+    else if(f.k==='scar'){cx.strokeStyle='rgba(255,170,90,'+(k*.9)+')';cx.shadowColor='#ff8a3a';cx.shadowBlur=12;cx.lineWidth=5*k+1;cx.lineCap='round';cx.beginPath();cx.moveTo(f.x0,f.y0+10);cx.lineTo(f.x1,f.y1+10);cx.stroke();cx.shadowBlur=0;}
     else if(f.k==='moltwave'){cx.strokeStyle='rgba(255,214,130,'+k+')';cx.lineWidth=10*k+1;cx.beginPath();cx.ellipse(f.x,f.y+20,f.r*(1-k*.9),f.r*.55*(1-k*.9),0,0,7);cx.stroke();cx.strokeStyle='rgba(255,250,220,'+(k*.7)+')';cx.lineWidth=3;cx.beginPath();cx.ellipse(f.x,f.y+20,f.r*(1-k)*.8,f.r*.44*(1-k),0,0,7);cx.stroke();}
     else if(f.k==='nova'){cx.strokeStyle='rgba(160,228,255,'+k+')';cx.lineWidth=8*k+1;cx.beginPath();cx.arc(f.x,f.y,f.r*(1-k*.85),0,7);cx.stroke();cx.fillStyle='rgba(160,228,255,'+(k*.15)+')';cx.fill();}
   }
   for(const s of G.shots){if(s.k==='bolt'){cx.shadowColor='#58d2c0';cx.shadowBlur=14;cx.fillStyle=grad(cx,s.x,s.y,6,'#ffffff','#58d2c0','#1a6a5c');cx.beginPath();cx.arc(s.x,s.y,5.5,0,7);cx.fill();cx.shadowBlur=0;cx.strokeStyle='rgba(88,210,192,.35)';cx.lineWidth=4;cx.lineCap='round';cx.beginPath();cx.moveTo(s.x,s.y);cx.lineTo(s.x-s.vx*.03,s.y-s.vy*.03);cx.stroke();}
-    else{cx.fillStyle=grad(cx,s.x,s.y,5,'#f0d8ff','#b98ae0','#5a2a80');cx.beginPath();cx.arc(s.x,s.y,4.5,0,7);cx.fill();}}
+    else if(s.k==='blade'){cx.save();cx.translate(s.x,s.y);cx.rotate(Math.atan2(s.vy,s.vx));cx.strokeStyle=s.red?'rgba(255,120,80,.95)':'rgba(245,232,200,.95)';cx.shadowColor=s.red?'#ff5a2a':'#ffd27a';cx.shadowBlur=10;cx.lineWidth=4;cx.lineCap='round';cx.beginPath();cx.arc(-6,0,16,-1.2,1.2);cx.stroke();cx.shadowBlur=0;cx.restore();}
+    else if(s.k==='ice'){cx.save();cx.translate(s.x,s.y);cx.rotate(Math.atan2(s.vy,s.vx));cx.fillStyle=lin(cx,-10,0,10,0,['rgba(160,228,255,.2)','#e8fbff']);cx.beginPath();cx.moveTo(12,0);cx.lineTo(-8,-4);cx.lineTo(-8,4);cx.closePath();cx.fill();cx.restore();}
+    else{cx.fillStyle=grad(cx,s.x,s.y,5,s.boom?'#fff0d0':'#f0d8ff',s.boom?'#e0a060':'#b98ae0',s.boom?'#7a3a10':'#5a2a80');cx.beginPath();cx.arc(s.x,s.y,s.boom?5.5:4.5,0,7);cx.fill();}}
+  if(G.clouds)for(const cl of G.clouds){const k=Math.min(1,cl.life/.6,(cl.max-cl.life)*4);for(let i=0;i<7;i++){const a=i*.9+G.t*.6,rr=cl.r*.45;cx.fillStyle='rgba(150,95,200,'+(.16*k)+')';cx.beginPath();cx.arc(cl.x+Math.cos(a)*rr,cl.y+Math.sin(a)*rr*.6,cl.r*.55,0,7);cx.fill();}}
   for(const s of G.eshots){cx.fillStyle=grad(cx,s.x,s.y,7,'#ffffff',s.c,'#1a1a0a');cx.beginPath();cx.arc(s.x,s.y,6,0,7);cx.fill();}
   for(const p of G.parts){cx.globalAlpha=Math.max(0,p.life/p.max);cx.fillStyle=p.c;cx.save();cx.translate(p.x,p.y);cx.rotate(p.rot);cx.beginPath();cx.moveTo(-p.s,-p.s*.6);cx.lineTo(p.s,0);cx.lineTo(-p.s*.4,p.s*.8);cx.fill();cx.restore();}cx.globalAlpha=1;
   cx.restore();
@@ -2041,7 +2089,7 @@ function drawHUD(cam){
       if(i<3&&!c.skl[i]){const S=sk[i];cx.fillStyle='#5a5246';const ws=S.n.split(' ');ws.forEach((w,j)=>cx.fillText(w,x+sz/2,y+sz/2-2+(j-(ws.length-1)/2)*13));cx.fillStyle='#9c907a';cx.font='600 11px "Barlow Semi Condensed",sans-serif';cx.fillText('Nivel '+S.unlock,x+sz/2,y+sz-6);}
       else if(i<3){const S=sk[i],cd=P.cds[i];const can=P.mp>=S.mp;cx.fillStyle=cd>0?'rgba(221,210,184,.18)':can?'#ddd2b8':'#6b6355';const ws=S.n.split(' ');ws.forEach((w,j)=>cx.fillText(w,x+sz/2,y+sz/2+4+(j-(ws.length-1)/2)*13));
         if(cd>0){const fc=Math.min(1,cd/skillCd(c,i,st));cx.fillStyle='rgba(0,0,0,.65)';cx.fillRect(x,y+sz*(1-fc),sz,sz*fc);cx.fillStyle='#f3ead6';cx.font='700 16px "Barlow Semi Condensed",sans-serif';cx.fillText(Math.ceil(cd),x+sz/2,y+sz/2+6);}
-        cx.fillStyle='#d9a03c';cx.font='700 12px "Barlow Semi Condensed",sans-serif';cx.textAlign='left';cx.fillText(String(i+1),x+4,y+13);cx.fillStyle='#f0c46a';cx.textAlign='right';cx.font='600 11px "Barlow Semi Condensed",sans-serif';cx.fillText('R'+c.skl[i],x+sz-4,y+13);
+        cx.fillStyle='#d9a03c';cx.font='700 12px "Barlow Semi Condensed",sans-serif';cx.textAlign='left';cx.fillText(String(i+1),x+4,y+13);cx.fillStyle='#f0c46a';cx.textAlign='right';cx.font='600 11px "Barlow Semi Condensed",sans-serif';cx.fillText('R'+c.skl[i],x+sz-4,y+13);if(c.sp>0&&c.skl[i]<SKILL_MAX){cx.fillStyle='#5fe07a';cx.beginPath();cx.moveTo(x+sz/2,y-9);cx.lineTo(x+sz/2+6,y-2);cx.lineTo(x+sz/2-6,y-2);cx.closePath();cx.fill();}
         cx.fillStyle='#5b9bd8';cx.textAlign='right';cx.font='600 11px "Barlow Semi Condensed",sans-serif';cx.fillText(S.mp,x+sz-4,y+sz-4);}
       else{cx.fillStyle='#9b3322';cx.beginPath();cx.ellipse(x+sz/2,y+sz/2+2,10,13,0,0,7);cx.fill();cx.fillStyle='#f3ead6';cx.font='700 14px "Barlow Semi Condensed",sans-serif';cx.fillText('x'+c.potions,x+sz/2,y+sz-4);cx.fillStyle='#d9a03c';cx.textAlign='left';cx.font='700 12px "Barlow Semi Condensed",sans-serif';cx.fillText('Q',x+4,y+13);}}
   }
@@ -2070,7 +2118,7 @@ function drawBigMap(){
 // cooldowns en los botones táctiles
 function syncTouch(){
   if(!IS_TOUCH||state!=='play')return;const P=G.P,sk=RACES[G.c.race].skills;
-  ['tS1','tS2','tS3'].forEach((id,i)=>{const b=$(id),cd=P.cds[i],lk=!G.c.skl[i];const txt=lk?'Nv '+sk[i].unlock:cd>0?String(Math.ceil(cd)):sk[i].n;if(b.textContent!==txt)b.textContent=txt;b.style.opacity=lk?.3:(cd>0||P.mp<sk[i].mp)?.45:1;});
+  ['tS1','tS2','tS3'].forEach((id,i)=>{const b=$(id),cd=P.cds[i],lk=!G.c.skl[i];const rk=G.c.skl[i]||0,txt=lk?'Nv '+sk[i].unlock:cd>0?String(Math.ceil(cd)):sk[i].n+(rk>=5?' III':rk>=3?' II':'');if(b.textContent!==txt)b.textContent=txt;b.classList.toggle('canup',!lk&&G.c.sp>0&&rk<SKILL_MAX);b.style.opacity=lk?.3:(cd>0||P.mp<sk[i].mp)?.45:1;});
   const pt='Poción x'+G.c.potions;if($('tPot').textContent!==pt)$('tPot').textContent=pt;
 }
 /* Fondo animado de menús */
@@ -2137,7 +2185,7 @@ $('botBtn').onclick=()=>{if(state==='play')toggleBot();};
 $('bagBtn').onclick=()=>{if(state==='play')openPanel('bag');};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play'&&!G.bot.on)pauseGame();});
 function syncGameBtns(){if(!G)return;$('botBtn').classList.toggle('on',G.bot.on);$('botBtn').setAttribute('aria-pressed',String(G.bot.on));$('bagBtn').setAttribute('aria-expanded',String(!!G.bagOpen));}
-let lastBadge=-1;function syncBadge(){if(!G)return;const n=G.c.pts+G.c.sp;if(n===lastBadge)return;lastBadge=n;$('bagBadge').hidden=!n;$('bagBadge').textContent=n;}
+let lastBadge=-1;function syncBadge(){if(!G)return;const n=G.c.pts+G.c.sp;if(n===lastBadge)return;lastBadge=n;$('bagBadge').hidden=!n;$('bagBadge').textContent='▲'+n;$('bagTabPow').innerHTML='Poderes · C'+(n?' <span class="upar">▲</span>':'');}
 
 /* ---------- Ajustes del asistente de caza ---------- */
 function syncBotForm(){$('botRadius').value=String(BOT.radius);$('botRar').value=String(BOT.minRar);$('botPot').value=String(BOT.potAt);$('botSkills').checked=BOT.skills;$('botHome').checked=BOT.homeNoPots;$('botMats').checked=BOT.mats;$('botSell').checked=BOT.sell!==false;}
@@ -2153,7 +2201,7 @@ $('bagTabBag').onclick=()=>{bagTab='bag';renderBagTabs();};$('bagTabPow').onclic
 $('bagClose').onclick=()=>toggleBag(false);
 function renderBag(){
   if(!G||!G.bagOpen)return;const c=G.c,sc=$('bag').scrollTop;
-  if(bagTab==='pow'){if(BAG_DIRTY)renderPowers($('bagPowWrap'),'g');$('bag').scrollTop=sc;BAG_DIRTY=false;return;}
+  if(bagTab==='pow'){bagSel=null;$('bagDetail').innerHTML='';if(BAG_DIRTY)renderPowers($('bagPowWrap'),'g');$('bag').scrollTop=sc;BAG_DIRTY=false;return;}
   $('bagPurse').innerHTML=`<span><i class="dot gold"></i>${fmt(c.gold)} oro</span><span><i class="dot pot"></i>${c.potions} pociones</span><span><i class="dot amb"></i>${c.amber}</span><span><i class="dot ich"></i>${c.ichorJ}</span>`;
   $('bagEq').innerHTML=setSummary(c)+'<div class="equip" style="margin-top:6px">'+SLOTS.map(s=>slotHtml(c.gear[s],s,'bq-'+s,bagSel&&bagSel.where==='eq'&&bagSel.slot===s?'sel':'')).join('')+'</div>';
   $('bagCount').textContent=c.inv.length+' / '+INV_MAX;
@@ -2166,14 +2214,15 @@ function renderBag(){
   let det='';
   if(bagSel){const it=bagSel.where==='eq'?c.gear[bagSel.slot]:c.inv[bagSel.i];
     if(it){const cur=bagSel.where==='inv'?c.gear[it.slot]:null,wrong=it.slot==='arma'&&it.race&&it.race!==c.race;
-      det=`<div class="detail"><img class="ic" src="${itemIcon(it.slot,it.race,it.rar,it.set)}" alt=""><div style="min-width:0"><div class="iname c${it.rar}${it.exc?' cexc':''}">${it.name}${it.plus?' +'+it.plus:''}</div><div class="muted" style="font-size:14px">${it.exc?'<span class="cexc">Excelente</span> · ':''}${RAR[it.rar]} · ${SLOT_N[it.slot]} · Nv ${it.ilvl}</div><ul>${statLines(it,cur)}</ul>${setInfo(it,c)}</div>
+      det=`<div class="detail"><button class="px" id="bgClose" aria-label="Cerrar detalle">✕</button><img class="ic" src="${itemIcon(it.slot,it.race,it.rar,it.set)}" alt=""><div style="min-width:0"><div class="iname c${it.rar}${it.exc?' cexc':''}">${it.name}${it.plus?' +'+it.plus:''}</div><div class="muted" style="font-size:13px">${it.exc?'<span class="cexc">Excelente</span> · ':''}${RAR[it.rar]} · ${SLOT_N[it.slot]} · Nv ${it.ilvl}</div><ul>${statLines(it,cur)}</ul>${setInfo(it,c)}</div>
       <div class="acts">${bagSel.where==='inv'?`<button class="main" id="bgEquip" ${wrong?'disabled':''}>${wrong?'No es para tu raza':'Equipar'}</button><button id="bgDrop">Tirar al suelo</button>`:'<span class="muted" style="font-size:14px">Equipado</span>'}</div></div>`;}}
   $('bagDetail').innerHTML=det;
   $('bagRecent').innerHTML=G.recent.length?G.recent.map(r=>`<li><span style="color:${r.col}">${r.txt}</span><span class="muted">hace ${fmtAgo(G.t-r.t)}</span></li>`).join(''):'<li class="muted">Todavía nada.</li>';
-  SLOTS.forEach(s=>{const b=$('bq-'+s);if(b)b.onclick=()=>{if(!c.gear[s])return;bagSel={where:'eq',slot:s};renderBag();};});
-  c.inv.forEach((_,i)=>{const b=$('bi-'+i);if(b)b.onclick=()=>{bagSel={where:'inv',i};renderBag();};});
+  SLOTS.forEach(s=>{const b=$('bq-'+s);if(b)b.onclick=()=>{if(!c.gear[s])return;bagSel=bagSel&&bagSel.where==='eq'&&bagSel.slot===s?null:{where:'eq',slot:s};renderBag();};});
+  c.inv.forEach((_,i)=>{const b=$('bi-'+i);if(b)b.onclick=()=>{bagSel=bagSel&&bagSel.where==='inv'&&bagSel.i===i?null:{where:'inv',i};renderBag();};});
+  if($('bgClose'))$('bgClose').onclick=()=>{bagSel=null;renderBag();};
   if($('bgEquip'))$('bgEquip').onclick=()=>{const it=c.inv[bagSel.i],old=c.gear[it.slot];c.gear[it.slot]=it;c.inv.splice(bagSel.i,1);if(old)c.inv.push(old);
-    G.st=charStats(c);G.P.hp=Math.min(G.P.hp,G.st.hp);G.P.mp=Math.min(G.P.mp,G.st.mp);bagSel={where:'eq',slot:it.slot};persist();sfx('loot');renderBag();};
+    G.st=charStats(c);G.P.hp=Math.min(G.P.hp,G.st.hp);G.P.mp=Math.min(G.P.mp,G.st.mp);bagSel=null;persist();sfx('loot');toast('Equipaste '+it.name);renderBag();};
   if($('bgDrop'))$('bgDrop').onclick=()=>{const it=c.inv.splice(bagSel.i,1)[0];G.drops.push({k:'item',it,x:G.P.x+rand(-30,30),y:G.P.y+30,t:-4,vy:0,z:0,life:90});bagSel=null;persist();renderBag();};
   $('bag').scrollTop=sc;BAG_DIRTY=false;
 }
@@ -2249,23 +2298,23 @@ function rebirth(c){
   c.gold-=rebirthCost(c);c.resets=(c.resets||0)+1;c.lvl=1;c.xp=0;for(const k in c.attr)c.attr[k]=0;c.pts=c.resets*REBIRTH_PTS;c.autoI=0;if(c.autoPts)autoSpend(c);
   persist();sfx('level');toast(c.name+' renace por '+(c.resets===1?'primera':c.resets+'ª')+' vez');
 }
-function powersChanged(c){persist();if(state==='hub'){const n=c.pts+c.sp;$('tab-pow').textContent='Poderes'+(n?' ('+n+')':'');}if(G&&G.c===c&&state==='play'){const hr=G.P.hp/G.st.hp;G.st=charStats(c);G.P.hp=Math.min(G.st.hp,Math.max(1,G.st.hp*hr));G.P.mp=Math.min(G.P.mp,G.st.mp);}if(state==='hub')renderSheet();}
+function powersChanged(c){persist();if(state==='hub'){const n=c.pts+c.sp;$('tab-pow').innerHTML='Poderes'+(n?' <span class="upar">▲'+n+'</span>':'');}lastBadge=-1;if(G&&G.c===c&&state==='play'){const hr=G.P.hp/G.st.hp;G.st=charStats(c);G.P.hp=Math.min(G.st.hp,Math.max(1,G.st.hp*hr));G.P.mp=Math.min(G.P.mp,G.st.mp);}if(state==='hub')renderSheet();}
 function renderPowers(el,pre){
   const c=CH(),R=RACES[c.race],st=charStats(c);
-  const attrs=ATTR.map(A=>`<div class="attr"><div style="min-width:0"><b>${A.n}</b><small>${A.d} por punto</small></div><span class="val">${c.attr[A.k]}</span><div class="btns"><button id="${pre}a1-${A.k}" ${c.pts<1?'disabled':''} aria-label="Sumar 1 a ${A.n}">+1</button><button id="${pre}a5-${A.k}" ${c.pts<5?'disabled':''} aria-label="Sumar 5 a ${A.n}">+5</button></div></div>`).join('');
+  const attrs=ATTR.map(A=>`<div class="attr"><div style="min-width:0"><b>${A.n}</b><small>${A.d} por punto</small></div><span class="val">${c.attr[A.k]}</span><div class="btns"><button id="${pre}a1-${A.k}" class="${c.pts>=1?'can':''}" ${c.pts<1?'disabled':''} aria-label="Sumar 1 a ${A.n}">▲ +1</button><button id="${pre}a5-${A.k}" class="${c.pts>=5?'can':''}" ${c.pts<5?'disabled':''} aria-label="Sumar 5 a ${A.n}">+5</button></div></div>`).join('');
   const skills=R.skills.map((S,i)=>{const r=c.skl[i]||0,locked=!r;const nx=r<SKILL_MAX?S.up[r]:'';
-    return `<div class="skill ${locked?'locked':''}"><div style="min-width:0"><b>${S.n}</b>${locked?'':pips(r,SKILL_MAX)}<small>${S.d} · ${S.mp} de energía · ${skillCd(c,i,st)} s</small>
-    ${locked?`<small class="next">Se desbloquea en nivel ${S.unlock}</small>`:nx?`<small class="next">Rango ${r+1}: ${nx}</small>`:'<small class="next">Rango máximo</small>'}</div>
-    ${locked||r>=SKILL_MAX?'':`<button id="${pre}s-${i}" ${c.sp<1?'disabled':''}>Mejorar</button>`}</div>`;}).join('');
+    const fn=formName(S,r);return `<div class="skill ${locked?'locked':''}"><div style="min-width:0"><b>${fn}</b>${fn!==S.n?`<span class="form">${S.n} · forma ${r>=5?'III':'II'}</span>`:''}${locked?'':pips(r,SKILL_MAX)}<small>${S.d} · ${S.mp} de energía · ${skillCd(c,i,st)} s</small>
+    ${locked?`<small class="next">Se desbloquea en nivel ${S.unlock}</small>`:nx?`<small class="next ${S.f&&S.f[r+1]?'newform':''}">Rango ${r+1}: ${nx}</small>`:'<small class="next">Rango máximo</small>'}</div>
+    ${locked||r>=SKILL_MAX?'':`<button id="${pre}s-${i}" class="${c.sp>=1?'can':''}" ${c.sp<1?'disabled':''}>${c.sp>=1?'▲ ':''}Mejorar</button>`}</div>`;}).join('');
   const rs=c.resets||0,canReb=c.lvl>=REBIRTH_LVL&&c.gold>=rebirthCost(c)&&state==='hub';
   const reb=`<div class="rebirth"><div><b>Renacer${rs?' · llevas '+rs:''}</b><small>Desde nivel ${REBIRTH_LVL}: vuelves a nivel 1 y conservas equipo, metamorfosis y habilidades. Cada renacer da ${REBIRTH_PTS} puntos de atributo permanentes y +4% de vida y daño.${state!=='hub'?' Se hace en la madriguera.':c.lvl<REBIRTH_LVL?' Te faltan '+(REBIRTH_LVL-c.lvl)+' niveles.':''}</small></div><button class="${rebirthArm?'danger':''}" id="${pre}reb" ${canReb?'':'disabled'}>${rebirthArm?'¿Seguro? Toca otra vez':'Renacer · '+fmt(rebirthCost(c))+' oro'}</button></div>`;
-  el.innerHTML=`${reb}<div class="ptsbar" style="margin-top:0"><h3>Atributos</h3><span>Puntos libres: <span class="free">${c.pts}</span></span></div>
+  el.innerHTML=`${reb}<div class="ptsbar" style="margin-top:0"><h3>Atributos</h3><span>Puntos libres: <span class="free ${c.pts?'on':''}">${c.pts?'▲ ':''}${c.pts}</span></span></div>
   <div class="attrs">${attrs}</div>
   <div class="row" style="margin-top:10px"><button id="${pre}auto" ${c.pts<1?'disabled':''}>Repartir automáticamente</button><button id="${pre}reset" ${c.gold<resetCost(c)?'disabled':''}>Reiniciar · ${fmt(resetCost(c))} oro</button></div>
   <label class="chk" style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:15px"><input type="checkbox" id="${pre}autoChk" ${c.autoPts?'checked':''} style="accent-color:var(--amber);width:16px;height:16px"> Repartir solo al subir de nivel (receta para ${R.name}: ${Object.entries(R.rec).map(([k,v])=>v+' '+ATTR.find(a=>a.k===k).n.toLowerCase()).join(', ')})</label>
-  <div class="ptsbar"><h3>Habilidades</h3><span>Puntos de habilidad: <span class="free">${c.sp}</span></span></div>
+  <div class="ptsbar"><h3>Habilidades</h3><span>Puntos de habilidad: <span class="free ${c.sp?'on':''}">${c.sp?'▲ ':''}${c.sp}</span></span></div>
   <div class="skills">${skills}</div>
-  <p class="muted" style="font-size:14px;margin-top:10px">Cada nivel da ${PTS_PER_LVL} puntos de atributo. Cada ${SKILL_EVERY} niveles ganas 1 punto de habilidad. Los rangos 3 y 5 cambian cómo funciona la habilidad.</p>`;
+  <p class="muted" style="font-size:14px;margin-top:10px">Cada nivel da ${PTS_PER_LVL} puntos de atributo. Cada ${SKILL_EVERY} niveles ganas 1 punto de habilidad. En los rangos 3 y 5 cada habilidad cambia de forma: ataca de otra manera.</p>`;
   const again=()=>{powersChanged(c);renderPowers(el,pre);};
   ATTR.forEach(A=>{const b1=$(pre+'a1-'+A.k),b5=$(pre+'a5-'+A.k);b1.onclick=()=>{if(c.pts<1)return;c.attr[A.k]++;c.pts--;again();};b5.onclick=()=>{if(c.pts<5)return;c.attr[A.k]+=5;c.pts-=5;again();};});
   $(pre+'auto').onclick=()=>{autoSpend(c);again();};
@@ -2427,7 +2476,7 @@ function renderSheet(){
 ['map','gear','pow','forge','stash','shop'].forEach(k=>$('tab-'+k).onclick=()=>{tab=k;selItem=null;renderTab();});
 function renderTab(){
   ['map','gear','pow','forge','stash','shop'].forEach(k=>$('tab-'+k).setAttribute('aria-selected',String(k===tab)));
-  {const c=CH(),n=c.pts+c.sp;$('tab-pow').textContent='Poderes'+(n?' ('+n+')':'');}
+  {const c=CH(),n=c.pts+c.sp;$('tab-pow').innerHTML='Poderes'+(n?' <span class="upar">▲'+n+'</span>':'');}
   ({map:renderMap,gear:renderGear,pow:()=>renderPowers(pane(),'h'),forge:renderTable,stash:renderStash,shop:renderShop})[tab]();
 }
 function starStr(n){return [0,1,2].map(i=>`<span class="${i<n?'':'off'}">★</span>`).join('');}
@@ -2557,7 +2606,7 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 openTitle();requestAnimationFrame(frame);
-window.__QUITINA__={startMolt,get G(){return G;},drawPortrait,SETS,charStats,enterWorld,newChar,update,makeItem,toggleBot,SAVE,BOT,lootItem,makeExc,enterArena,arenaSlot,rebirth,refineInfo,openShrine,botSell,openHub}; // para pruebas
+window.__QUITINA__={useSkill,startMolt,get G(){return G;},drawPortrait,SETS,charStats,enterWorld,newChar,update,makeItem,toggleBot,SAVE,BOT,lootItem,makeExc,enterArena,arenaSlot,rebirth,refineInfo,openShrine,botSell,openHub}; // para pruebas
 })();
 </script>
 
