@@ -13,7 +13,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 
 El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona sin conexión una vez abierto. Para instalarlo tiene que estar publicado en una dirección HTTPS (por ejemplo GitHub Pages). Desde Chrome en Android: abrir la dirección, menú ⋮ → **Instalar app** (o *Agregar a pantalla principal*). Se abre a pantalla completa y apaisado, sin barra del navegador. Si se juega desde el navegador, al entrar al mundo pide pantalla completa y gira a apaisado cuando el teléfono lo permite.
 
-## Contenido de la versión 0.15
+## Contenido de la versión 0.16
 
 | Sistema | Estado |
 |---|---|
@@ -24,8 +24,8 @@ El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona s
 | Región I: Raíces podridas | Mapa abierto de 4800 × 3600 con santuario de entrada y 5 zonas por nivel recomendado (1–4 a 13–16). Las criaturas reaparecen a los 9–14 s, las élites al minuto y el jefe (Ciempiés de Hueso) cada 5 minutos. Las zonas descubiertas habilitan el viaje directo. |
 | Atributos | 4 puntos por nivel para Fuerza, Caparazón, Agilidad y Esencia. Reparto automático con receta por raza y reinicio pagando oro. |
 | Habilidades | Rango 1 a 5, con 1 punto cada 3 niveles. La habilidad 2 se desbloquea en nivel 3 y la 3 en nivel 6. Los rangos 3 y 5 cambian el funcionamiento (radio, aturdimiento, duración, robo de vida). |
-| Santuarios | 5 santuarios de ámbar (entrada y borde de cada zona): curan, alejan a las criaturas y tienen a Brugo, el artesano: flecha y nombre siempre visibles; se toca o cliquea (si estás lejos, el personaje camina hasta él) o tecla E. Su panel pausa el juego y ofrece Artesano, Equipo, Forja, Depósito y Mercader. |
-| Artesano | Funde las 3 piezas más débiles de un set + oro + ámbar en una pieza nueva de ese set (arma, casco, coraza, patas o amuleto), un nivel por encima de la mejor, con la rareza más alta y 25% de chance de subirla. |
+| Santuarios | 5 santuarios de ámbar (entrada y borde de cada zona): curan, alejan a las criaturas y tienen a Brugo, el artesano: flecha y nombre siempre visibles; se toca o cliquea (si estás lejos, el personaje camina hasta él) o tecla E. Su panel se abre como cajón lateral (igual que la bolsa, el mapa queda a la vista y en pausa; tocar el mapa lo cierra) con Mesa, Depósito y Mercader. |
+| Mesa de Brugo | Se colocan objetos en la mesa (3 lugares) tocándolos en la bolsa o en lo equipado, y Brugo hace lo que corresponda con un botón: **1 objeto** → refinar +1 (con probabilidad, riesgo y protección por anuncio); **3 piezas del mismo set** → pieza nueva del set elegida (arma, casco, coraza, patas o amuleto) un nivel más arriba, con 25% de subir rareza; **3 de la misma rareza** → un objeto de rareza superior. Si sirven las dos recetas se elige cuál. Muestra el resultado esperado, costos y probabilidad antes de confirmar. También es la pestaña Mesa de la madriguera. |
 | Depósito | Baúl de 60 lugares compartido entre santuarios y madriguera. |
 | Caza automática | Estilo MU Helper (tecla H): caza alrededor del punto de activación, usa habilidades, recoge botín según filtros y toma pociones. Con la bolsa llena o sin pociones va sola al santuario más cercano, vende comunes y raros peores que lo equipado, compra hasta 10 pociones, guarda en el depósito lo más débil si sigue llena y vuelve al punto de caza. Se configura en la pausa. |
 | Objetos excelentes | Estilo MU: cualquier objeto puede salir **Excelente** (nombre y borde verdes, +15% de atributos base) con 1 o 2 opciones especiales: golpe excelente (daño ×1,6), vida al matar, energía al matar, +oro de criaturas, −daño recibido o +velocidad de ataque. Probabilidad: 2,5% en criaturas, 10% en élites, 30% en jefes. Aviso en pantalla cuando cae uno. La caza automática siempre los recoge; no se funden ni se venden en lote. |
