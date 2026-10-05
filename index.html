@@ -424,6 +424,51 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 #touch button.canup::after{content:'▲';position:absolute;top:-4px;right:-2px;font-size:12px;color:#5fe07a;text-shadow:0 0 4px #000}
 .skill .form{display:block;font-size:12.5px;color:var(--dim);letter-spacing:.04em}
 .skill .next.newform{color:#8ff0a4}
+/* ===== Estilo MU: ventanas de metal oscuro, barra de título roja, cuadrícula apretada ===== */
+:root{--mu-red1:#6a1610;--mu-red2:#2c0805;--mu-metal:#4a3a2a;--mu-edge:#8a6a44;--mu-cell:#0b0907;--mu-cellb:#2a2017}
+.frame{background:linear-gradient(180deg,rgba(30,24,18,.98),rgba(16,12,9,.98));border:2px solid #1a120c;box-shadow:inset 0 0 0 1px var(--mu-edge),inset 0 0 0 3px #120c08,inset 0 0 0 4px #3a2a1a,0 0 0 1px #000,0 18px 50px rgba(0,0,0,.75)}
+.frame::before,.frame::after{width:12px;height:12px;border:0;background:radial-gradient(circle at 40% 35%,#e8c88a,#8a6030 45%,#2a1a0a 75%);border-radius:50%;box-shadow:0 0 0 1px #000}
+.frame::before{top:4px;left:4px}.frame::after{bottom:4px;right:4px}
+.titlebar,#bag .bag-head,.shrine-head{background:linear-gradient(180deg,var(--mu-red1),var(--mu-red2));border:1px solid #9a5a30;box-shadow:inset 0 1px 0 rgba(255,190,140,.25),inset 0 -1px 0 rgba(0,0,0,.6),0 2px 0 #000}
+#bag .bag-head{margin:-10px -10px 10px;padding:5px 6px;position:sticky;top:-10px;z-index:3}
+#bag{padding:10px;padding-block:calc(env(safe-area-inset-top,0px) + 10px) calc(env(safe-area-inset-bottom,0px) + 10px)}
+.bag-tabs button,#bag .bag-head button{background:transparent;border:1px solid transparent;color:#e8c9a0;font-family:var(--f-display);font-weight:400;font-size:16px;letter-spacing:.06em;padding:4px 10px}
+.bag-tabs button[aria-selected="true"]{border-color:#c88a4a;background:rgba(0,0,0,.25);color:#ffe2b0}
+.xbtn,#shrineClose{width:28px!important;height:28px!important;padding:0!important;display:grid;place-items:center;background:linear-gradient(#8a2a1a,#4a0c06)!important;border:1px solid #e0905a!important;color:#ffd8b0!important;font-size:15px!important;border-radius:3px}
+#shrineClose svg{width:16px;height:16px}
+.shrine-head{margin:6px 6px 8px}
+#shrine .shrine-head{padding:4px 8px!important;align-items:center}
+.shrine-head .eyebrow{display:none}
+.shrine-head h2{font-size:18px!important;color:#ffe2b0;text-align:center;flex:1;letter-spacing:.06em}
+/* muñeco de equipo */
+.doll{display:grid;grid-template-columns:1fr 1.25fr 1fr;grid-template-rows:54px 64px 54px;grid-template-areas:"alas casco amuleto" "arma coraza set" "arma patas set";gap:6px;padding:8px;border:1px solid var(--mu-cellb);background:radial-gradient(ellipse at 50% 55%,rgba(120,80,40,.18),transparent 60%),var(--mu-cell);box-shadow:inset 0 0 18px #000}
+.doll>div>.slot{width:100%;height:100%;aspect-ratio:auto;background:linear-gradient(#15100c,#0a0806);border-color:#3a2a1c;box-shadow:inset 0 0 10px #000}
+.doll>div>.slot.empty img{opacity:.35}
+.doll .slot img{width:62%;height:62%}
+.doll .slot .lbl{font-size:10px}
+.dset{display:flex;flex-direction:column;justify-content:center;gap:4px;font-size:11.5px;line-height:1.25;color:var(--dim);text-align:center}
+.dset .on{color:#8fd16a}
+@media (orientation:landscape) and (max-height:520px){.doll{grid-template-rows:44px 52px 44px;gap:4px;padding:6px}.doll .slot .lbl{display:none}}
+/* cuadrícula del inventario */
+#bag .inv,#shrine .inv{gap:0!important;border:1px solid var(--mu-edge);background:var(--mu-cell);box-shadow:inset 0 0 0 1px #000;padding:0}
+#bag .inv .slot,#shrine .inv .slot{border:1px solid var(--mu-cellb);background:linear-gradient(#100c09,#080605);box-shadow:inset 0 0 8px #000}
+#bag .inv .slot.r1,#shrine .inv .slot.r1{box-shadow:inset 0 0 0 1px var(--r-raro),inset 0 0 10px rgba(91,155,216,.25)}
+#bag .inv .slot.r2,#shrine .inv .slot.r2{box-shadow:inset 0 0 0 1px var(--r-epico),inset 0 0 10px rgba(179,107,224,.3)}
+#bag .inv .slot.r3,#shrine .inv .slot.r3{box-shadow:inset 0 0 0 1px var(--r-leg),inset 0 0 12px rgba(232,169,58,.35)}
+#bag .inv .slot.r4,#shrine .inv .slot.r4{box-shadow:inset 0 0 0 1px var(--r-mit),inset 0 0 12px rgba(232,80,58,.4)}
+#bag .inv .slot.exc,#shrine .inv .slot.exc{box-shadow:inset 0 0 0 1px var(--exc),inset 0 0 12px rgba(79,224,138,.4)}
+#bag .inv .slot .lbl,#shrine .inv .slot .lbl{font-size:9px;text-align:right;left:auto;right:3px;bottom:1px;color:#8a7c64}
+#bag .inv .slot.sel,#shrine .inv .slot.sel{outline:2px solid #ffe2b0;outline-offset:-2px}
+/* oro abajo, como en el MU */
+#bagMain{display:flex;flex-direction:column}
+#bagPurse{order:5;margin:8px 0 0;padding:6px 10px;border:1px solid var(--mu-cellb);background:var(--mu-cell);justify-content:flex-end;font-size:14px}
+#bagMain>.eyebrow:last-of-type,#bagRecent{order:6}
+#bag .section-t{margin:10px 0 4px}
+#bag .section-t .eyebrow{color:#c8a070}
+.tabs{background:linear-gradient(#1a130d,#0f0b08);border-bottom:1px solid var(--mu-edge)}
+.tabs button[aria-selected="true"]{color:#ffe2b0;background:linear-gradient(rgba(106,22,16,.6),rgba(44,8,5,.2));box-shadow:inset 0 -2px 0 #c88a4a}
+.mesa{border-color:var(--mu-edge);box-shadow:inset 0 0 20px #000}
+#bagDetail .detail{border:1px solid var(--mu-edge);box-shadow:inset 0 0 0 3px #120c08,inset 0 0 0 4px #3a2a1a,0 10px 40px rgba(0,0,0,.8)}
 </style>
 </head>
 <body>
@@ -437,11 +482,11 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 <button id="bagBtn" class="bagtab" aria-label="Bolsa" aria-expanded="false" title="Bolsa (I)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7.5V6a3.5 3.5 0 0 1 7 0v1.5"/><path d="M4.8 7.5h14.4l-1.1 11.6a2.2 2.2 0 0 1-2.2 2H8.1a2.2 2.2 0 0 1-2.2-2z"/><path d="M9 12.5h6"/></svg><span class="key">I</span><span class="badge" id="bagBadge" hidden></span></button>
 <div id="bagDetail" class="pop" role="dialog" aria-label="Detalle del objeto"></div>
 <aside id="bag" class="frame" aria-label="Bolsa">
-  <div class="bag-head"><div class="bag-tabs" role="tablist"><button role="tab" id="bagTabBag" aria-selected="true">Bolsa · I</button><button role="tab" id="bagTabPow" aria-selected="false">Poderes · C</button></div><button id="bagClose" aria-label="Cerrar">Cerrar</button></div>
+  <div class="bag-head"><div class="bag-tabs" role="tablist"><button role="tab" id="bagTabBag" aria-selected="true">Bolsa · I</button><button role="tab" id="bagTabPow" aria-selected="false">Poderes · C</button></div><button id="bagClose" class="xbtn" aria-label="Cerrar bolsa">✕</button></div>
   <div id="bagPowWrap" hidden></div>
   <div id="bagMain">
   <div class="purse" id="bagPurse"></div>
-  <div class="eyebrow" style="margin:14px 0 6px">Equipado</div><div id="bagEq"></div>
+  <div id="bagEq"></div>
   <div class="section-t"><span class="eyebrow">Inventario</span><span class="muted num" id="bagCount"></span></div>
   <div class="inv" id="bagInv"></div>
   <div id="bagSellRow"></div>
@@ -584,7 +629,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.17 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.18 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -2203,7 +2248,7 @@ function renderBag(){
   if(!G||!G.bagOpen)return;const c=G.c,sc=$('bag').scrollTop;
   if(bagTab==='pow'){bagSel=null;$('bagDetail').innerHTML='';if(BAG_DIRTY)renderPowers($('bagPowWrap'),'g');$('bag').scrollTop=sc;BAG_DIRTY=false;return;}
   $('bagPurse').innerHTML=`<span><i class="dot gold"></i>${fmt(c.gold)} oro</span><span><i class="dot pot"></i>${c.potions} pociones</span><span><i class="dot amb"></i>${c.amber}</span><span><i class="dot ich"></i>${c.ichorJ}</span>`;
-  $('bagEq').innerHTML=setSummary(c)+'<div class="equip" style="margin-top:6px">'+SLOTS.map(s=>slotHtml(c.gear[s],s,'bq-'+s,bagSel&&bagSel.where==='eq'&&bagSel.slot===s?'sel':'')).join('')+'</div>';
+  $('bagEq').innerHTML=dollHtml(c,'bq-',s=>bagSel&&bagSel.where==='eq'&&bagSel.slot===s?'sel':'');
   $('bagCount').textContent=c.inv.length+' / '+INV_MAX;
   let inv='';for(let i=0;i<INV_MAX;i++)inv+=c.inv[i]?slotHtml(c.inv[i],null,'bi-'+i,bagSel&&bagSel.where==='inv'&&bagSel.i===i?'sel':''):'<div class="slot empty"></div>';
   $('bagInv').innerHTML=inv;
@@ -2500,6 +2545,11 @@ function renderMap(){
   $('enterBtn').onclick=()=>{initAudio();enterWorld(selStart);};
 }
 function setInfo(it,c){if(!it||!it.set)return '';const S=SETS[it.set],n=setCount(c)[it.set]||0;return `<div class="setinfo"><b>Set ${S.n}</b> · ${n}/5 equipadas<br><span class="${n>=3?'on':''}">3 piezas: ${S.d3}</span><br><span class="${n>=5?'on':''}">5 piezas: ${S.d5}</span></div>`;}
+/* Equipo alrededor de la silueta, como el inventario del MU */
+function dollHtml(c,pre,sel){
+  const sc=setCount(c),sets=Object.entries(sc).filter(([,n])=>n>=2).map(([id,n])=>`<span class="${n>=3?'on':''}">${SETS[id].n} ${n}/5${n>=5?'<br>'+SETS[id].d5:n>=3?'<br>'+SETS[id].d3:''}</span>`).join('');
+  return `<div class="doll">${SLOTS.map(s=>`<div style="grid-area:${s}">${slotHtml(c.gear[s],s,pre+s,sel(s))}</div>`).join('')}<div class="dset" style="grid-area:set">${sets||'<span class="muted">Sin set</span>'}</div></div>`;
+}
 function setSummary(c){const sc=setCount(c);const parts=Object.entries(sc).filter(([,n])=>n>=2).map(([id,n])=>{const S=SETS[id];return `<span class="setpill ${n>=3?'on':''}">${S.n} ${n}/5${n>=5?' · '+S.d5:n>=3?' · '+S.d3:''}</span>`;});return parts.length?`<div class="setsum">${parts.join('')}</div>`:'';}
 /* Flecha en la miniatura: compara el nivel del objeto (nivel, rareza y refinado) con lo equipado en ese casillero */
 function tierScore(it){return it.ilvl*100+it.rar*10+it.plus+(it.exc?5:0);}
