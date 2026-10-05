@@ -721,7 +721,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.23 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.24 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -1227,7 +1227,7 @@ function drawPolilla(g,stage,branch,t,anim,glow,wings,gear){
 }
 /* --- Sprites de la Mantis (arte de Martin): atlas WebP + metadatos [x,y,ancho,alto,pieX,pieY] --- */
 const SPR={meta:{"ref":300,"anims":{"idle":[[2,2,203,311,65,305],[207,2,197,313,64,307],[406,2,198,308,59,302],[606,2,195,315,55,309]],"walk":[[2,319,196,305,141,300],[200,319,195,310,93,305],[397,319,190,300,87,295],[589,319,186,297,104,292],[777,319,200,295,151,289],[979,319,186,293,67,287],[1167,319,196,302,68,297],[1365,319,187,300,98,294]],"atk1":[[2,631,222,299,50,290],[226,631,265,301,63,292],[493,631,345,303,66,293],[840,631,341,291,60,281],[1183,631,284,295,70,286],[1469,631,272,307,58,297]],"atk2":[[2,940,207,289,29,279],[211,940,261,255,57,245],[474,940,257,289,160,279],[733,940,222,332,44,323],[957,940,257,293,42,283],[1216,940,242,297,48,287]],"atk3":[[2,1274,219,266,64,257],[223,1274,288,265,111,255],[513,1274,314,261,123,251],[829,1274,326,245,154,235],[1157,1274,328,247,144,237],[1487,1274,307,243,205,233],[1796,1274,232,272,64,262]],"hit":[[2,1548,249,266,70,253],[253,1548,240,273,61,260]],"death":[[2,1823,220,224,66,214],[224,1823,222,199,76,188],[448,1823,282,220,164,210],[732,1823,328,167,250,157],[1062,1823,312,151,223,142],[1376,1823,328,113,225,103],[1706,1823,311,100,209,90]]}},img:new Image(),ok:false};
-SPR.img.onload=()=>{SPR.ok=true;};SPR.img.src='assets/mantis-sprites.webp';
+SPR.img.onload=()=>{SPR.ok=true;try{const cv=document.createElement('canvas');cv.width=SPR.img.width;cv.height=SPR.img.height;const g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(SPR.img,0,0);SPR.data=g.getImageData(0,0,cv.width,cv.height);}catch(e){SPR.data=null;}};SPR.img.src='assets/mantis-sprites.webp';
 const SPR_FPS={idle:6,walk:12,hit:10,death:9},SPR_H=128; // altura en el mundo de la Mantis adulta
 function useMantisArt(c){return c.race==='mantis'&&SPR.ok&&SAVE.mantisArt!==false;}
 function fullSet10(c){if(!c||!c.gear)return null;const sc=setCount(c);for(const id in sc)if(sc[id]>=5&&['arma','casco','coraza','patas','amuleto'].every(sl=>c.gear[sl]&&c.gear[sl].set===id&&c.gear[sl].plus>=10))return id;return null;}
@@ -1258,6 +1258,39 @@ function heroGlow(c){
   if(w&&w.set&&SETS[w.set]&&SETS[w.set].glow)return [SETS[w.set].glow,7];
   return null;
 }
+/* ---------- Equipo montado sobre el sprite ----------
+   Se separa cada cuadro por color y altura: guadañas (naranja rojizo), cabeza (casco), torso (coraza) y patas,
+   y se repinta con la paleta del set equipado. Las capas se calculan una vez por cuadro y se guardan. */
+const GEAR_LAYERS={},GEAR_PAL={ambar:['#fff0c0','#e8a23a','#5a2c06'],hierro:['#c9d0d6','#5d646b','#141619'],viuda:['#c05058','#2a1418','#060203'],ciempies:['#fffaf0','#e6dbbf','#5a4426']};
+function hsv(r,g,b){const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360;}return [h,mx?d/mx:0,mx/255];}
+function pixKind(r,g,b,yf){const [h,sa,v]=hsv(r,g,b);
+  if((h<38||h>335)&&sa>.38&&v>.42&&yf>.08&&yf<.9)return 'arma';
+  if(v<.24)return null;
+  if(yf<.27&&h>40&&h<120&&sa>.22)return 'casco';
+  if(yf>=.24&&yf<.6&&((h>38&&h<120&&sa>.25)||(h<=38&&sa>.3&&v<.62)))return 'coraza';
+  if(yf>=.6&&yf<.97&&h>38&&h<120&&sa>.22)return 'patas';
+  return null;}
+function gearLayer(anim,f,kind,set){
+  const key=anim+f+kind+set;if(GEAR_LAYERS[key]!==undefined)return GEAR_LAYERS[key];
+  if(!SPR.data)return GEAR_LAYERS[key]=null;
+  const [x,y,w,h]=SPR.meta.anims[anim][f],D=SPR.data,cv=document.createElement('canvas');cv.width=w;cv.height=h;const g=cv.getContext('2d'),out=g.createImageData(w,h),o=out.data;
+  const pal=kind==='ench'?['#f4e8ff','#9a6bff','#2a1080']:GEAR_PAL[set],P3=pal.map(rgbOf),pts=[];let n=0;
+  for(let j=0;j<h;j++){const yf=j/h;for(let i=0;i<w;i++){const si=((y+j)*D.width+(x+i))*4,a=D.data[si+3];if(a<40)continue;const r=D.data[si],gg=D.data[si+1],b=D.data[si+2],k=pixKind(r,gg,b,yf);
+    if(k!==(kind==='ench'?'arma':kind))continue;n++;if(kind==='ench'&&Math.random()<.04&&pts.length<50)pts.push([i,j]);
+    let L=Math.min(1,(.3*r+.59*gg+.11*b)/255*1.35),c0,c1,t;if(L<.5){c0=P3[2];c1=P3[1];t=L/.5;}else{c0=P3[1];c1=P3[0];t=(L-.5)/.5;}
+    const di=(j*w+i)*4;o[di]=c0[0]+(c1[0]-c0[0])*t;o[di+1]=c0[1]+(c1[1]-c0[1])*t;o[di+2]=c0[2]+(c1[2]-c0[2])*t;o[di+3]=kind==='ench'?a*.9:a*.88;}}
+  if(n<20)return GEAR_LAYERS[key]=null;
+  g.putImageData(out,0,0);cv.pts=pts;return GEAR_LAYERS[key]=cv;
+}
+function drawGearOnSprite(g,c,anim,f,X,Y,W2,H2,skip){
+  if(!c||!c.gear)return;
+  for(const sl of ['patas','coraza','casco','arma']){const it=c.gear[sl];if(!it||!it.set||!GEAR_PAL[it.set]||(skip&&skip===sl))continue;const L=gearLayer(anim,f,sl,it.set);if(L)g.drawImage(L,X,Y,W2,H2);}
+  const am=c.gear.amuleto;if(am){const S=SETS[am.set]||{},col=(S.glow||S.acc||'#d9a03c');g.save();g.fillStyle=col;g.shadowColor=col;g.shadowBlur=8;g.beginPath();const ax=X+W2*.47,ay=Y+H2*.36;g.moveTo(ax,ay-4);g.lineTo(ax+3,ay);g.lineTo(ax,ay+4);g.lineTo(ax-3,ay);g.closePath();g.fill();g.restore();}
+}
+function drawWingsBehind(g,c,X,Y,W2,H2,t){
+  if(!c.gear.alas||!ICONS.ok)return;const pos=iconPos('extras','alas');if(!pos)return;const T=ICONS.meta.tam,flap=1+Math.sin(t*7)*.08;
+  g.save();g.globalAlpha=.85;g.translate(X+W2*.42,Y+H2*.34);for(const sx of [-1,1]){g.save();g.scale(sx*flap,1);g.rotate(-.25);g.drawImage(ICONS.img,pos[0],pos[1],T,T,-6,-H2*.36,H2*.5,H2*.5);g.restore();}g.restore();
+}
 function drawMantisSprite(g,P,c,fy){
   const A=SPR.meta.anims;let name='idle',f=0;
   if(G.dead){name='death';const n=A.death.length;f=Math.min(n-1,Math.floor((performance.now()-(G.deadAt||0))/1000*SPR_FPS.death));}
@@ -1268,9 +1301,16 @@ function drawMantisSprite(g,P,c,fy){
   const fr=A[name][f];if(!fr)return;
   const [x,y,w,h,ax,ay]=fr,s=SPR_H/SPR.meta.ref*[.8,.9,1][c.stage];
   g.save();g.scale(P.face,1);g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
-  const gl=heroGlow(c);if(gl){g.shadowColor=gl[0];g.shadowBlur=gl[1];}
-  const en=enchantLvl(c);if(en&&!G.dead)drawEnchantAura(g,x,y,w,h,ax*s,ay*s,s,fy,en);
-  const tf=tintFilter(c);if(tf!=='none')g.filter=tf;g.drawImage(SPR.img,x,y,w,h,-ax*s,fy-ay*s,w*s,h*s);g.filter='none';g.shadowBlur=0;
+  const X=-ax*s,Y=fy-ay*s,W2=w*s,H2=h*s,en=enchantLvl(c);
+  if(!G.dead)drawWingsBehind(g,c,X,Y,W2,H2,G.t);
+  const tf=tintFilter(c);if(tf!=='none')g.filter=tf;g.drawImage(SPR.img,x,y,w,h,X,Y,W2,H2);g.filter='none';
+  drawGearOnSprite(g,c,name,f,X,Y,W2,H2);
+  const wp=c.gear.arma;if(wp&&wp.plus>=4&&!G.dead){const L=gearLayer(name,f,'ench','x');if(L){ // brillo solo en las guadañas
+    const t=performance.now()/1000,col=glowCol(wp.plus);g.save();g.globalCompositeOperation='lighter';
+    if(en){for(let i=0;i<3;i++){const j=Math.sin(t*11+i*2)*1.6;g.globalAlpha=(.55-i*.12)*(.75+.25*Math.sin(t*15+i*3));g.shadowColor='#8a5cff';g.shadowBlur=12+i*7;g.drawImage(L,X+j,Y-i*1.5-Math.abs(Math.sin(t*8+i))*2,W2,H2);}}
+    else{g.globalAlpha=wp.plus>=7?.5:.3;g.shadowColor=col;g.shadowBlur=10;g.filter='hue-rotate('+(wp.plus>=9?'150deg':wp.plus>=7?'-90deg':'170deg')+')';g.drawImage(L,X,Y,W2,H2);g.filter='none';}
+    g.restore();g.shadowBlur=0;
+    P.blade={pts:L.pts,X,Y,k:W2/w,face:P.face};}}else P.blade=null;
   if(P.ifr>.3&&!G.dead){g.globalCompositeOperation='lighter';g.globalAlpha=.45;g.drawImage(SPR.img,x,y,w,h,-ax*s,fy-ay*s,w*s,h*s);g.globalAlpha=1;g.globalCompositeOperation='source-over';}
   g.restore();
 }
@@ -1288,8 +1328,9 @@ function drawEnchantAura(g,x,y,w,h,ax,ay,s,fy,en){
 }
 function enchantFx(dt){ // llamas que suben y rayos cortos alrededor del héroe
   const P=G.P,en=enchantLvl(G.c);if(!en||G.dead)return;const k=en>=12?1.6:1;
-  if(Math.random()<dt*40*k){const a=rand(-1.2,1.2),r=rand(10,30);G.parts.push({x:P.x+Math.sin(a)*r*P.face+P.face*8,y:P.y-rand(20,80),vx:rand(-12,12),vy:rand(-70,-30),life:rand(.35,.7),max:.7,c:Math.random()<.3?'#e8d8ff':'#8a5cff',s:rand(2,4.5),rot:rand(0,6)});}
-  if(Math.random()<dt*3.5*k){const pts=[];let x=P.x+P.face*rand(4,26),y=P.y-rand(30,90);for(let i=0;i<5;i++){pts.push([x,y]);x+=rand(-12,12)+P.face*6;y+=rand(4,14);}ENCH.bolts.push({pts,life:.09});}
+  const B=P.blade;if(B&&B.pts&&B.pts.length){const at=()=>{const q=B.pts[(Math.random()*B.pts.length)|0];return [P.x+B.face*(B.X+q[0]*B.k),P.y+B.Y+q[1]*B.k];};
+    for(let n=0;n<3;n++)if(Math.random()<dt*24*k){const [x,y]=at();G.parts.push({x,y,vx:rand(-10,10),vy:rand(-60,-25),life:rand(.25,.5),max:.5,c:Math.random()<.35?'#efe2ff':'#8a5cff',s:rand(1.6,3.4),rot:rand(0,6)});}
+    if(Math.random()<dt*3*k){const [x0,y0]=at(),[x1,y1]=at(),pts=[];for(let i=0;i<=5;i++){const t=i/5;pts.push([x0+(x1-x0)*t+rand(-5,5),y0+(y1-y0)*t+rand(-5,5)]);}ENCH.bolts.push({pts,life:.08});}}
   for(const b of ENCH.bolts)b.life-=dt;ENCH.bolts=ENCH.bolts.filter(b=>b.life>0);
 }
 function drawEnchantBolts(g){if(!ENCH.bolts.length)return;g.save();g.globalCompositeOperation='lighter';g.lineJoin='round';
@@ -1306,7 +1347,7 @@ function drawPortrait(canvas,c,stageOverride,branchOverride,scale){
   const g=canvas.getContext('2d'),w=canvas.width,h=canvas.height;g.clearRect(0,0,w,h);
   if(c.race==='mantis'&&SPR.ok&&SAVE.mantisArt!==false&&stageOverride==null){ // la Mantis con su arte
     const A=SPR.meta.anims.idle,fr=A[Math.floor(performance.now()/1000*SPR_FPS.idle)%A.length],[x,y,fw,fh,ax,ay]=fr,k=Math.min(w*.8/fw,h*.86/fh);
-    g.save();softShadow(g,w/2,h*.93,w*.22,h*.04,.6);g.filter=tintFilter(c);g.drawImage(SPR.img,x,y,fw,fh,w/2-ax*k,h*.93-ay*k,fw*k,fh*k);g.restore();return;}
+    const fi=Math.floor(performance.now()/1000*SPR_FPS.idle)%A.length,X=w/2-ax*k,Y=h*.93-ay*k;g.save();softShadow(g,w/2,h*.93,w*.22,h*.04,.6);drawWingsBehind(g,c,X,Y,fw*k,fh*k,performance.now()/1000);g.filter=tintFilter(c);g.drawImage(SPR.img,x,y,fw,fh,X,Y,fw*k,fh*k);g.filter='none';drawGearOnSprite(g,c,'idle',fi,X,Y,fw*k,fh*k);g.restore();return;}
   const mt=c.race==='mantis';g.save();g.translate(w/2,h*(mt?.74:.62));const s=scale||Math.min(w,h)/90;g.scale(s,s);
   softShadow(g,0,mt?22:20,28,7,.6);
   const fake=Object.assign({},c,{stage:stageOverride??c.stage,branch:branchOverride??c.branch});
@@ -2190,7 +2231,7 @@ function render(){
   for(const sh of WORLD.shrines)tint(sh.x,sh.y,220,'rgba(255,170,70,.16)');
   if(G.arena)tint(ARENA_W/2,ARENA_W/2,500,'rgba(79,224,138,.05)');
   if(P.fury>0)tint(P.x,P.y,180,'rgba(255,80,30,.12)');
-  if(enchantLvl(G.c))tint(P.x,P.y-30,200,'rgba(120,80,255,.16)');
+  if(enchantLvl(G.c))tint(P.x+P.face*14,P.y-40,90,'rgba(120,80,255,.12)');
   if(G.molt)tint(P.x,P.y-30,360,'rgba(255,170,60,'+(.22*Math.max(0,1-Math.abs(G.molt.t-.8)/1.6))+')');
   cx.restore();
   // esporas flotantes, ojos y textos por encima de la sombra
@@ -2198,7 +2239,7 @@ function render(){
   for(const s of G.spores){s.x+=Math.sin(t*.6+s.p)*.15;s.y-=s.v;if(s.y<vy0||s.x<vx0||s.x>vx1){s.x=vx0+Math.random()*(vx1-vx0);s.y=vy1;}
     const a=.25+.25*Math.sin(t*2+s.p);cx.fillStyle=s.c+a+')';cx.beginPath();cx.arc(s.x,s.y,s.r,0,7);cx.fill();}
   for(const e of G.foes)if(inView(e.x,e.y))drawFoeEyes(cx,e,t);
-  drawMolt(cx,t);drawEnchantBolts(cx);drawWeaponWisps(cx,t);drawSetOrbs(cx,t);
+  drawMolt(cx,t);drawEnchantBolts(cx);drawSetOrbs(cx,t);
   if(G.boss&&!G.boss.dead){const e=G.boss;cx.fillStyle='#ff4a2a';cx.shadowColor='#ff4a2a';cx.shadowBlur=16;for(const s of [-1,1]){cx.beginPath();cx.arc(e.x+Math.cos(e.ang)*14-Math.sin(e.ang)*s*9,e.y+Math.sin(e.ang)*14+Math.cos(e.ang)*s*9,3.2,0,7);cx.fill();}cx.shadowBlur=0;
     if(e.st===1){cx.strokeStyle='rgba(224,64,47,.35)';cx.lineWidth=e.r*2;cx.beginPath();cx.moveTo(e.x,e.y);cx.lineTo(e.x+Math.cos(e.ang)*420,e.y+Math.sin(e.ang)*420);cx.stroke();}}
   // nombres del botín en el suelo
