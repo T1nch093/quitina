@@ -185,6 +185,27 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 #bag{position:fixed;right:16px;top:calc(env(safe-area-inset-top,0px) + 60px);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:min(380px,calc(100% - 32px));z-index:6;overflow-y:auto;padding:16px;background:rgba(28,24,19,.96)}
 #bag .bag-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
 #bag .bag-head button{padding:6px 10px;font-size:14px}
+.bag-tabs{display:flex;gap:4px}
+.bag-tabs button[aria-selected="true"]{border-color:var(--amber);color:var(--amber-hi)}
+.attrs{display:grid;gap:6px}
+.attr{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:8px 10px;border:1px solid var(--line);background:#120f0b}
+.attr b{font-family:var(--f-display);font-weight:400;font-size:18px;color:var(--bone)}
+.attr small{display:block;color:var(--dim);font-size:13px;line-height:1.3}
+.attr .val{font-family:var(--f-display);font-size:22px;color:var(--amber-hi);font-variant-numeric:tabular-nums;min-width:2.5ch;text-align:right}
+.attr .btns{display:flex;gap:4px}
+.attr .btns button{padding:6px 10px;font-size:15px}
+.skills{display:grid;gap:8px}
+.skill{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--line);background:#120f0b}
+.skill.locked{opacity:.55}
+.skill b{font-family:var(--f-display);font-weight:400;font-size:19px;color:var(--bone)}
+.skill .pips{justify-content:flex-start;margin:4px 0}
+.skill small{display:block;color:#c3b79e;font-size:14px;line-height:1.35}
+.skill .next{color:var(--amber)}
+.ptsbar{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin:16px 0 8px;flex-wrap:wrap}
+.ptsbar .free{font-weight:700;color:var(--amber-hi);font-variant-numeric:tabular-nums}
+.pips i{width:9px;height:9px;transform:rotate(45deg);border:1.5px solid var(--amber);display:block}
+.pips i.on{background:var(--amber)}
+.pips{display:flex;gap:5px}
 #bag .equip{grid-template-columns:repeat(6,minmax(0,1fr))}
 #bag .inv{grid-template-columns:repeat(6,minmax(0,1fr))}
 #bag .detail{grid-template-columns:48px minmax(0,1fr);gap:10px;padding:10px}
@@ -207,13 +228,16 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 <div id="safe"></div>
 <div id="gameBtns" hidden><button id="bagBtn" title="Bolsa (I)">Bolsa</button><button id="botBtn" title="Caza automática (H)">Auto</button><button id="pauseBtn" aria-label="Pausa" title="Pausa (Esc)">Pausa</button></div>
 <aside id="bag" class="frame" hidden aria-label="Bolsa">
-  <div class="bag-head"><h3>Bolsa</h3><button id="bagClose" aria-label="Cerrar bolsa">Cerrar</button></div>
+  <div class="bag-head"><div class="bag-tabs" role="tablist"><button role="tab" id="bagTabBag" aria-selected="true">Bolsa · I</button><button role="tab" id="bagTabPow" aria-selected="false">Poderes · C</button></div><button id="bagClose" aria-label="Cerrar">Cerrar</button></div>
+  <div id="bagPowWrap" hidden></div>
+  <div id="bagMain">
   <div class="purse" id="bagPurse"></div>
   <div class="eyebrow" style="margin:14px 0 6px">Equipado</div><div class="equip" id="bagEq"></div>
   <div class="section-t"><span class="eyebrow">Inventario</span><span class="muted num" id="bagCount"></span></div>
   <div class="inv" id="bagInv"></div>
   <div id="bagDetail"></div>
   <div class="eyebrow" style="margin:16px 0 6px">Botín reciente</div><ul class="recent" id="bagRecent"></ul>
+  </div>
 </aside>
 <div id="touch" hidden>
   <button id="tPot" aria-label="Poción">Poción</button>
@@ -232,7 +256,7 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
     <p style="margin:14px auto 0;max-width:40ch">La Reina Madre despertó y su plaga pudre el subsuelo. Elige una criatura, forja su caparazón y desciende.</p>
     <div class="chars" id="charList"></div>
     <div class="stack"><button class="main" id="newCharBtn">Nueva criatura</button></div>
-    <p class="muted" style="font-size:14px;margin-top:14px">Teclado: WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, I bolsa, H caza automática, M mapa.<br>Celular: arrastra a la izquierda para moverte y usa los botones de la derecha.</p>
+    <p class="muted" style="font-size:14px;margin-top:14px">Teclado: WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, I bolsa, C poderes, H caza automática, M mapa.<br>Celular: arrastra a la izquierda para moverte y usa los botones de la derecha.</p>
   </div>
 </section>
 
@@ -267,6 +291,7 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
         <button role="tab" id="tab-map" aria-selected="true">Mapa</button>
         <button role="tab" id="tab-gear" aria-selected="false">Equipo</button>
         <button role="tab" id="tab-forge" aria-selected="false">Forja</button>
+        <button role="tab" id="tab-pow" aria-selected="false">Poderes</button>
         <button role="tab" id="tab-shop" aria-selected="false">Mercader</button>
       </div>
       <div class="tabpane" id="pane"></div>
@@ -326,7 +351,7 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.3 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.4 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -354,23 +379,32 @@ function fmtT(t){t=Math.floor(t);return Math.floor(t/60)+':'+String(t%60).padSta
 /* ---------- Datos: razas ---------- */
 const RACES={
   mantis:{name:'Mantis',role:'Guerrera',desc:'Cuerpo a cuerpo. Guadañas rápidas, embestidas y torbellinos.',
-    base:{hp:130,mp:50,dmg:11,spd:170,mpReg:3,atkCd:.42},per:{hp:15,mp:3,dmg:2.3},
+    base:{hp:130,mp:50,dmg:11,spd:170,mpReg:3,atkCd:.42},per:{hp:10,mp:2,dmg:1.5},
     stages:['Larva de mantis','Ninfa de mantis','Mantis imago'],
     branches:{
       segadora:{name:'Mantis Segadora',desc:'+10% de daño y el Torbellino golpea 30% más fuerte.'},
       orquidea:{name:'Mantis Orquídea',desc:'+12% de crítico y +10% de velocidad. Bella y letal.'}},
-    skills:[{n:'Torbellino',mp:15,cd:5,d:'Giro que daña a todo lo que te rodea.'},{n:'Embestida',mp:12,cd:4,d:'Te lanzas hacia adelante cortando todo a tu paso.'},{n:'Furia',mp:18,cd:12,d:'Durante 4 s todos tus golpes hacen 70% más de daño.'}]},
+    skills:[{n:'Torbellino',mp:15,cd:5,unlock:1,d:'Giro que daña a todo lo que te rodea.',up:['','+15% de daño','Radio 30% mayor','+15% de daño','Enfriamiento 2 s menor']},
+      {n:'Embestida',mp:12,cd:4,unlock:3,d:'Te lanzas hacia adelante cortando todo a tu paso.',up:['','+15% de daño','Recorre 40% más distancia','+15% de daño','Aturde 1 s a quien golpea']},
+      {n:'Furia',mp:18,cd:12,unlock:6,d:'Durante 4 s todos tus golpes hacen 70% más de daño.',up:['','+10% de daño extra','Dura 5 s','+10% de daño extra','Robas 8% de vida durante la furia']}],
+    rec:{fue:2,agi:1,cap:1}},
   polilla:{name:'Polilla',role:'Hechicera',desc:'A distancia. Polvo maldito, fuego frío y enjambres de esporas.',
-    base:{hp:90,mp:100,dmg:13,spd:158,mpReg:6,atkCd:.55},per:{hp:10,mp:7,dmg:2.7},
+    base:{hp:90,mp:100,dmg:13,spd:158,mpReg:6,atkCd:.55},per:{hp:7,mp:5,dmg:1.8},
     stages:['Oruga','Crisálida','Polilla imago'],
     branches:{
       calavera:{name:'Polilla Calavera',desc:'+10% de daño y la maldición del Polvo dura y duele 50% más.'},
       lunar:{name:'Polilla Lunar',desc:'El Fuego frío congela más tiempo y regeneras energía 50% más rápido.'}},
-    skills:[{n:'Polvo maldito',mp:14,cd:4,d:'Cono de polvo que maldice: daño continuo.'},{n:'Fuego frío',mp:20,cd:7,d:'Estallido helado alrededor tuyo que ralentiza.'},{n:'Enjambre',mp:25,cd:9,d:'Siete esporas que persiguen a los enemigos.'}]},
+    skills:[{n:'Polvo maldito',mp:14,cd:4,unlock:1,d:'Cono de polvo que maldice: daño continuo.',up:['','+15% de daño','Cono más amplio','+15% de daño','La maldición dura 2 s más']},
+      {n:'Fuego frío',mp:20,cd:7,unlock:3,d:'Estallido helado alrededor tuyo que ralentiza.',up:['','+15% de daño','Radio 25% mayor','+15% de daño','Congela 1 s']},
+      {n:'Enjambre',mp:25,cd:9,unlock:6,d:'Siete esporas que persiguen a los enemigos.',up:['','+15% de daño','+3 esporas','+15% de daño','Las esporas atraviesan 2 enemigos']}],
+    rec:{esn:2,cap:1,agi:1}},
   escarabajo:{name:'Escarabajo',role:'Guardián',desc:'Caparazón, escudo y golpes que aturden.',locked:true},
   avispa:{name:'Avispa',role:'Cazadora',desc:'Aguijones venenosos a distancia y mucha agilidad.',locked:true}
 };
 const STAGE_LVL=[1,6,12];
+/* Atributos (4 puntos por nivel) y habilidades (1 punto cada 3 niveles, rango máximo 5) */
+const PTS_PER_LVL=4,SKILL_EVERY=3,SKILL_MAX=5;
+const ATTR=[{k:'fue',n:'Fuerza',d:'+0,6 de daño'},{k:'cap',n:'Caparazón',d:'+6 de vida y +0,5 de armadura'},{k:'agi',n:'Agilidad',d:'+1% vel. de ataque, +0,3% crítico, +0,4% velocidad'},{k:'esn',n:'Esencia',d:'+4 de energía, +0,08 de regeneración y +1% de daño de habilidades'}];
 const STAGE_MUL=[1,1.1,1.22];
 
 /* ---------- Datos: objetos ---------- */
@@ -435,13 +469,14 @@ const WORLD={name:'Raíces podridas',num:'I',W:4800,H:3600,entry:{x:420,y:3200},
 const SAVE_KEY='quitina_save_v1';
 let SAVE={chars:[],cur:-1,sound:true};
 try{const s=JSON.parse(PortalSDK.load(SAVE_KEY));if(s&&Array.isArray(s.chars))SAVE=Object.assign(SAVE,s);}catch(e){}
-for(const c of SAVE.chars){if(!c.found){c.found=[];for(let i=0;i<(c.unlocked||1)-1;i++)c.found[i]=true;}}
+for(const c of SAVE.chars){if(!c.found){c.found=[];for(let i=0;i<(c.unlocked||1)-1;i++)c.found[i]=true;}
+  if(!c.attr){c.attr={fue:0,cap:0,agi:0,esn:0};c.pts=(c.lvl-1)*PTS_PER_LVL;c.sp=Math.floor(c.lvl/SKILL_EVERY);c.skl=RACES[c.race].skills.map(k=>c.lvl>=k.unlock?1:0);c.autoPts=false;c.autoI=0;}}
 function persist(){PortalSDK.save(SAVE_KEY,JSON.stringify(SAVE));}
 const CH=()=>SAVE.chars[SAVE.cur];
 function newChar(race){
   const c={id:Date.now(),race,lvl:1,xp:0,stage:0,branch:null,gold:40,potions:3,amber:1,ichorJ:0,
     gear:{arma:makeItem('arma',0,1,race),casco:null,coraza:makeItem('coraza',0,1,race),patas:null,amuleto:null,alas:null},
-    inv:[],found:[],bossKilled:false,pendingStage:false};
+    inv:[],found:[],bossKilled:false,pendingStage:false,attr:{fue:0,cap:0,agi:0,esn:0},pts:0,sp:0,skl:[1,0,0],autoPts:false,autoI:0};
   SAVE.chars.push(c);SAVE.cur=SAVE.chars.length-1;persist();return c;
 }
 const xpNext=l=>Math.floor(30*Math.pow(l,1.95));
@@ -452,13 +487,14 @@ function charStats(c){
   const R=RACES[c.race],L=c.lvl-1,sm=STAGE_MUL[c.stage];
   const s={hp:R.base.hp+R.per.hp*L,mp:R.base.mp+R.per.mp*L,dmg:R.base.dmg+R.per.dmg*L,armor:0,crit:5,spd:0,hpPct:0,dmgPct:0,ls:0,mpReg:R.base.mpReg};
   for(const k of SLOTS){const it=c.gear[k];if(!it)continue;const t=itemStats(it);for(const x in t)s[x]=(s[x]||0)+t[x];}
+  const A=c.attr||{};s.dmg+=.6*(A.fue||0);s.hp+=6*(A.cap||0);s.armor+=.5*(A.cap||0);s.crit+=.3*(A.agi||0);s.spd+=.4*(A.agi||0);s.mp+=4*(A.esn||0);s.mpReg+=.08*(A.esn||0);
   if(c.branch==='segadora')s.dmgPct+=10;
   if(c.branch==='orquidea'){s.crit+=12;s.spd+=10;}
   if(c.branch==='calavera')s.dmgPct+=10;
   if(c.branch==='lunar')s.mpReg*=1.5;
   return {
     hp:Math.round(s.hp*sm*(1+s.hpPct/100)),mp:Math.round(s.mp),dmg:s.dmg*sm*(1+s.dmgPct/100),
-    armor:Math.round(s.armor),crit:Math.min(60,s.crit),spd:R.base.spd*(1+s.spd/100),ls:s.ls,mpReg:s.mpReg,atkCd:R.base.atkCd
+    armor:Math.round(s.armor),crit:Math.min(60,s.crit),spd:R.base.spd*(1+s.spd/100),ls:s.ls,mpReg:s.mpReg,atkCd:R.base.atkCd/(1+Math.min(.6,(A.agi||0)*.01)),skillMul:1+(A.esn||0)*.01
   };
 }
 
@@ -825,13 +861,13 @@ function bossNear(){for(const e of G.foes)if(e.boss&&!e.dead&&(e.aggro||Math.hyp
 
 /* ---------- Combate ---------- */
 const BASIC_MUL=.7; // el golpe simple pega menos que las habilidades
-function rollDmg(base){const crit=Math.random()*100<G.st.crit;return {v:base*(G.P.fury>0?1.7:1)*rand(.9,1.1)*(crit?2:1),crit};}
+function rollDmg(base){const crit=Math.random()*100<G.st.crit;return {v:base*(G.P.fury>0?1+G.P.furyB:1)*rand(.9,1.1)*(crit?2:1),crit};}
 function hurtFoe(e,amt,crit,kx,ky,force){
   if(e.dead)return;
   const v=amt*(100/(100+e.armor));e.hp-=v;e.hit=.1;e.aggro=true;e.returning=false;
   if(force&&!e.boss){const d=Math.hypot(kx,ky)||1;e.kx+=kx/d*force;e.ky+=ky/d*force;}
   if(G.texts.length<70)G.texts.push({x:e.x+rand(-8,8),y:e.y-e.r-6,s:Math.round(v),life:.7,crit,fury:G.P.fury>0});
-  if(G.st.ls)G.P.hp=Math.min(G.st.hp,G.P.hp+v*G.st.ls/100);
+  const ls=G.st.ls+(G.P.fury>0&&G.P.furyLs?8:0);if(ls)G.P.hp=Math.min(G.st.hp,G.P.hp+v*ls/100);
   sfx('hit');
   if(e.hp<=0)killFoe(e);
 }
@@ -866,6 +902,7 @@ function gainXP(v){
   while(c.xp>=xpNext(c.lvl)&&c.lvl<50){c.xp-=xpNext(c.lvl);c.lvl++;G.lvlUps++;const ratio=G.P.hp/G.st.hp;G.st=charStats(c);G.P.hp=G.st.hp;G.P.mp=G.st.mp;sfx('level');
     for(let i=0;i<30;i++){const a=i/30*6.283;G.parts.push({x:G.P.x,y:G.P.y,vx:Math.cos(a)*220,vy:Math.sin(a)*220,life:.7,max:.7,c:'#f0c46a',s:3,rot:0});}
     G.texts.push({x:G.P.x,y:G.P.y-40,s:'¡Nivel '+c.lvl+'!',life:1.6,lvl:true});
+    c.pts+=PTS_PER_LVL;if(c.lvl%SKILL_EVERY===0)c.sp++;if(c.autoPts)autoSpend(c);const un=unlockSkills(c);if(un.length)G.texts.push({x:G.P.x,y:G.P.y-84,s:'Nueva habilidad: '+un.join(', '),life:2.6,lvl:true});G.st=charStats(c);G.P.hp=G.st.hp;G.P.mp=G.st.mp;BAG_DIRTY=true;
     if(STAGE_LVL[c.stage+1]&&c.lvl>=STAGE_LVL[c.stage+1]){c.pendingStage=true;G.texts.push({x:G.P.x,y:G.P.y-62,s:'Metamorfosis lista en la madriguera',life:2.5,lvl:true});}
     persist();}
 }
@@ -900,20 +937,23 @@ function basicAttack(aim){
     sfx('bolt');G.shots.push({k:'bolt',x:P.x+Math.cos(a)*14,y:P.y-10+Math.sin(a)*14,vx:Math.cos(a)*560,vy:Math.sin(a)*560,life:.85,r:7,dmg,pierce:1,hits:new Set()});
   }
 }
+function skillRank(i){return (G.c.skl||[1,0,0])[i]||0;}
+function skillCd(c,i){const S=RACES[c.race].skills[i],r=(c.skl||[])[i]||0;return S.cd-(c.race==='mantis'&&i===0&&r>=5?2:0);}
 function useSkill(i,aim){
-  const P=G.P,R=RACES[G.c.race],S=R.skills[i];if(P.cds[i]>0||P.mp<S.mp||P.dash||G.recall)return false;
-  P.mp-=S.mp;P.cds[i]=S.cd;sfx('skill');const a=aim??aimAngle();P.aim=a;P.face=Math.cos(a)>=0?1:-1;P.anim=1;const dmg=G.st.dmg;
+  const P=G.P,R=RACES[G.c.race],S=R.skills[i],rk=skillRank(i);if(!rk||P.cds[i]>0||P.mp<S.mp||P.dash||G.recall)return false;
+  P.mp-=S.mp;P.cds[i]=skillCd(G.c,i);sfx('skill');const a=aim??aimAngle();P.aim=a;P.face=Math.cos(a)>=0?1:-1;P.anim=1;
+  const rm=(1+.15*((rk>=2)+(rk>=4)))*G.st.skillMul,dmg=G.st.dmg*rm;
   if(G.c.race==='mantis'){
-    if(i===0){const mul=2.6*(G.c.branch==='segadora'?1.3:1),R2=120;G.fx.push({k:'spin',x:P.x,y:P.y,life:.4,max:.4,r:R2});G.shake=5;
+    if(i===0){const mul=2.6*(G.c.branch==='segadora'?1.3:1),R2=rk>=3?156:120;G.fx.push({k:'spin',x:P.x,y:P.y,life:.4,max:.4,r:R2});G.shake=5;
       for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2)){const r=rollDmg(dmg*mul);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,320);}}}
-    if(i===1){P.dash={vx:Math.cos(a)*1250,vy:Math.sin(a)*1250,t:.22,hits:new Set()};}
-    if(i===2){P.fury=4;G.fx.push({k:'furyburst',x:P.x,y:P.y,life:.5,max:.5,r:90});G.shake=4;G.texts.push({x:P.x,y:P.y-44,s:'¡Furia! +70% de daño',life:1.3,fury:true,lvl:true});}
+    if(i===1){P.dash={vx:Math.cos(a)*1250,vy:Math.sin(a)*1250,t:rk>=3?.31:.22,hits:new Set(),dmg:dmg*2.2,stun:rk>=5};}
+    if(i===2){P.fury=rk>=3?5:4;P.furyB=.7+.1*((rk>=2)+(rk>=4));P.furyLs=rk>=5;G.fx.push({k:'furyburst',x:P.x,y:P.y,life:.5,max:.5,r:90});G.shake=4;G.texts.push({x:P.x,y:P.y-44,s:'¡Furia! +'+Math.round(P.furyB*100)+'% de daño',life:1.3,fury:true,lvl:true});}
   }else{
-    if(i===0){const R2=230,cb=G.c.branch==='calavera'?1.5:1;G.fx.push({k:'dust',x:P.x,y:P.y,a,life:.5,max:.5,r:R2});
-      for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2,a,.65)){const r=rollDmg(dmg*.9);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,80);e.curse=3*cb;e.curseD=dmg*.6*cb;e.curseT=.5;}}}
-    if(i===1){const R2=170,sl=G.c.branch==='lunar'?4:2.5;G.fx.push({k:'nova',x:P.x,y:P.y,life:.5,max:.5,r:R2});G.shake=5;
-      for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2)){const r=rollDmg(dmg*2);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,200);e.slow=sl;}}}
-    if(i===2){for(let k=0;k<7;k++){const aa=a+(k-3)*.35;G.shots.push({k:'spore',x:P.x,y:P.y-10,vx:Math.cos(aa)*260,vy:Math.sin(aa)*260,life:2.6,r:6,dmg:dmg*1.2,pierce:1,hits:new Set(),home:true});}}
+    if(i===0){const R2=230,cb=G.c.branch==='calavera'?1.5:1,arc=rk>=3?.9:.65;G.fx.push({k:'dust',x:P.x,y:P.y,a,life:.5,max:.5,r:R2});
+      for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2,a,arc)){const r=rollDmg(dmg*.9);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,80);e.curse=(3+(rk>=5?2:0))*cb;e.curseD=dmg*.6*cb;e.curseT=.5;}}}
+    if(i===1){const R2=rk>=3?212:170,sl=G.c.branch==='lunar'?4:2.5;G.fx.push({k:'nova',x:P.x,y:P.y,life:.5,max:.5,r:R2});G.shake=5;
+      for(const e of G.foes){if(e.dead)continue;if(inArea(e,P.x,P.y,R2)){const r=rollDmg(dmg*2);hurtFoe(e,r.v,r.crit,e.x-P.x,e.y-P.y,200);e.slow=sl;if(rk>=5&&!e.dead)e.stun=1;}}}
+    if(i===2){const n=rk>=3?10:7;for(let k=0;k<n;k++){const aa=a+(k-(n-1)/2)*.3;G.shots.push({k:'spore',x:P.x,y:P.y-10,vx:Math.cos(aa)*260,vy:Math.sin(aa)*260,life:2.6,r:6,dmg:dmg*1.2,pierce:rk>=5?2:1,hits:new Set(),home:true});}}
   }
   return true;
 }
@@ -971,7 +1011,8 @@ addEventListener('keydown',e=>{
     if(e.code==='KeyH')toggleBot();
     if(e.code==='KeyB')startRecall();
     if(e.code==='KeyM')G.bigMap=!G.bigMap;
-    if(e.code==='KeyI'||e.code==='Tab'){toggleBag();e.preventDefault();}
+    if(e.code==='KeyI'||e.code==='Tab'){openPanel('bag');e.preventDefault();}
+    if(e.code==='KeyC')openPanel('pow');
     if(e.code==='KeyJ'||e.code==='Space'){held.atk=true;e.preventDefault();}
     if(e.code==='Escape'){if(G.bagOpen)toggleBag(false);else if(G.bigMap)G.bigMap=false;else pauseGame();}
     if(e.code==='KeyP')pauseGame();
@@ -1004,7 +1045,7 @@ function update(dt){
   if(G.recall){G.recall-=dt;mx=my=0;if(G.recall<=0){G.recall=0;returnHub();return;}}
   if(mx||my)P.aimMove=Math.atan2(my,mx);
   if(P.dash){P.x+=P.dash.vx*dt;P.y+=P.dash.vy*dt;P.dash.t-=dt;G.parts.push({x:P.x,y:P.y,vx:0,vy:0,life:.25,max:.25,c:'rgba(217,160,60,.5)',s:10,rot:0});
-    for(const e of G.foes){if(e.dead||P.dash.hits.has(e))continue;if(inArea(e,P.x,P.y,30)){P.dash.hits.add(e);const r=rollDmg(st.dmg*2.2);hurtFoe(e,r.v,r.crit,P.dash.vx,P.dash.vy,260);}}
+    for(const e of G.foes){if(e.dead||P.dash.hits.has(e))continue;if(inArea(e,P.x,P.y,30)){P.dash.hits.add(e);const r=rollDmg(P.dash.dmg);hurtFoe(e,r.v,r.crit,P.dash.vx,P.dash.vy,260);if(P.dash.stun&&!e.dead)e.stun=1;}}
     if(P.dash.t<=0)P.dash=null;}
   else if(mx||my){P.x+=mx*st.spd*dt;P.y+=my*st.spd*dt;if(Math.abs(mx)>.1&&!(held.atk||mouse.down)&&P.anim<=0)P.face=mx>0?1:-1;P.walk+=dt*10;}
   collideObst(P);
@@ -1026,6 +1067,7 @@ function update(dt){
     if(e.dead)continue;if(e.hit>0)e.hit-=dt;
     if(e.curse>0){e.curse-=dt;e.curseT-=dt;if(e.curseT<=0){e.curseT=.5;hurtFoe(e,e.curseD,false,0,0,0);if(e.dead)continue;}}
     const sm=e.slow>0?.45:1;if(e.slow>0)e.slow-=dt;
+    if(e.stun>0){e.stun-=dt;e.x+=e.kx*dt;e.y+=e.ky*dt;e.kx*=Math.pow(.003,dt);e.ky*=Math.pow(.003,dt);continue;}
     let dx=P.x-e.x,dy=P.y-e.y;const d=Math.hypot(dx,dy)||1;dx/=d;dy/=d;
     if(e.returning){const hx=e.hx-e.x,hy=e.hy-e.y,hl=Math.hypot(hx,hy);e.hp=Math.min(e.max,e.hp+e.max*.5*dt);
       if(hl<20){e.returning=false;}else{const sp=e.spd*1.8;e.x+=hx/hl*sp*dt;e.y+=hy/hl*sp*dt;e.face=hx>0?1:-1;if(e.boss){e.ang=Math.atan2(hy,hx);moveSegs(e);}}continue;}
@@ -1250,6 +1292,7 @@ function render(){
       if(e.hp<e.max||e.elite||Math.hypot(e.x-P.x,e.y-P.y)<170){cx.font='600 '+(11/ZOOM).toFixed(1)+'px "Barlow Semi Condensed",sans-serif';cx.textAlign='center';cx.fillStyle=e.lvl>G.c.lvl+2?'#ff7a5a':e.lvl<G.c.lvl-3?'#8a8070':'#ddd2b8';cx.fillText((e.elite?'Élite · ':'')+'Nv '+e.lvl,e.x,e.y-e.r-19);}
       if(e.hp<e.max){const w=e.elite?46:30;cx.fillStyle='rgba(0,0,0,.75)';cx.fillRect(e.x-w/2-1,e.y-e.r-15,w+2,6);cx.fillStyle=lin(cx,0,e.y-e.r-14,0,e.y-e.r-10,[e.elite?'#ff8a4a':'#d0503a',e.elite?'#a0401a':'#6e1a10']);cx.fillRect(e.x-w/2,e.y-e.r-14,w*e.hp/e.max,4);}
       if(e.curse>0){cx.fillStyle='rgba(150,100,200,.7)';cx.beginPath();cx.arc(e.x+Math.sin(t*6)*5,e.y-e.r-22,2.5,0,7);cx.fill();}
+      if(e.stun>0){for(let k=0;k<3;k++){const a=t*6+k*2.09;cx.fillStyle='#f0d070';cx.beginPath();cx.arc(e.x+Math.cos(a)*e.r*.8,e.y-e.r-8+Math.sin(a)*4,2.4,0,7);cx.fill();}}
       if(e.slow>0){cx.strokeStyle='rgba(160,225,255,.55)';cx.lineWidth=2;cx.beginPath();cx.arc(e.x,e.y,e.r+5,0,7);cx.stroke();}}
     else if(en.k===3)drawCentipede(cx,en.o,t);
     else{if(P.ifr>0&&Math.floor(P.ifr*24)%2)continue;
@@ -1368,6 +1411,7 @@ function drawHUD(cam){
   let ix=W/2;const pills=[];
   if(G.bot.on)pills.push(['CAZA AUTOMÁTICA','#58d2c0']);
   if(P.fury>0)pills.push(['FURIA '+P.fury.toFixed(1)+' s','#ff6a3a']);
+  if(c.pts>0||c.sp>0)pills.push(['PUNTOS PARA REPARTIR'+(IS_TOUCH?'':' · C'),'#f0c46a']);
   if(pills.length){cx.font='700 13px "Barlow Semi Condensed",sans-serif';const ws=pills.map(p=>cx.measureText(p[0]).width+22);let x=W/2-(ws.reduce((a,b)=>a+b,0)+(ws.length-1)*8)/2;const y=top+(b?126:16);
     pills.forEach((p,i)=>{cx.fillStyle='rgba(10,8,6,.8)';cx.fillRect(x,y,ws[i],24);cx.strokeStyle=p[1];cx.lineWidth=1.5;cx.strokeRect(x+.5,y+.5,ws[i]-1,23);cx.fillStyle=p[1];cx.textAlign='center';cx.fillText(p[0],x+ws[i]/2,y+17);x+=ws[i]+8;});}
   // retorno
@@ -1384,9 +1428,10 @@ function drawHUD(cam){
     for(let i=0;i<4;i++){const x=W/2-2*sz-18+i*(sz+12),y=bot-sz-28;cx.fillStyle='#14110d';cx.fillRect(x,y,sz,sz);
       const active=i===2&&P.fury>0;cx.strokeStyle=active?'#ff6a3a':'#4a3c2a';cx.lineWidth=active?2.5:1.5;cx.strokeRect(x,y,sz,sz);
       cx.textAlign='center';cx.font='600 12px "Barlow Semi Condensed",sans-serif';
-      if(i<3){const S=sk[i],cd=P.cds[i];const can=P.mp>=S.mp;cx.fillStyle=cd>0?'rgba(221,210,184,.18)':can?'#ddd2b8':'#6b6355';const ws=S.n.split(' ');ws.forEach((w,j)=>cx.fillText(w,x+sz/2,y+sz/2+4+(j-(ws.length-1)/2)*13));
-        if(cd>0){cx.fillStyle='rgba(0,0,0,.65)';cx.fillRect(x,y+sz*(1-cd/S.cd),sz,sz*cd/S.cd);cx.fillStyle='#f3ead6';cx.font='700 16px "Barlow Semi Condensed",sans-serif';cx.fillText(Math.ceil(cd),x+sz/2,y+sz/2+6);}
-        cx.fillStyle='#d9a03c';cx.font='700 12px "Barlow Semi Condensed",sans-serif';cx.textAlign='left';cx.fillText(String(i+1),x+4,y+13);
+      if(i<3&&!c.skl[i]){const S=sk[i];cx.fillStyle='#5a5246';const ws=S.n.split(' ');ws.forEach((w,j)=>cx.fillText(w,x+sz/2,y+sz/2-2+(j-(ws.length-1)/2)*13));cx.fillStyle='#9c907a';cx.font='600 11px "Barlow Semi Condensed",sans-serif';cx.fillText('Nivel '+S.unlock,x+sz/2,y+sz-6);}
+      else if(i<3){const S=sk[i],cd=P.cds[i];const can=P.mp>=S.mp;cx.fillStyle=cd>0?'rgba(221,210,184,.18)':can?'#ddd2b8':'#6b6355';const ws=S.n.split(' ');ws.forEach((w,j)=>cx.fillText(w,x+sz/2,y+sz/2+4+(j-(ws.length-1)/2)*13));
+        if(cd>0){const fc=Math.min(1,cd/skillCd(c,i));cx.fillStyle='rgba(0,0,0,.65)';cx.fillRect(x,y+sz*(1-fc),sz,sz*fc);cx.fillStyle='#f3ead6';cx.font='700 16px "Barlow Semi Condensed",sans-serif';cx.fillText(Math.ceil(cd),x+sz/2,y+sz/2+6);}
+        cx.fillStyle='#d9a03c';cx.font='700 12px "Barlow Semi Condensed",sans-serif';cx.textAlign='left';cx.fillText(String(i+1),x+4,y+13);cx.fillStyle='#f0c46a';cx.textAlign='right';cx.font='600 11px "Barlow Semi Condensed",sans-serif';cx.fillText('R'+c.skl[i],x+sz-4,y+13);
         cx.fillStyle='#5b9bd8';cx.textAlign='right';cx.font='600 11px "Barlow Semi Condensed",sans-serif';cx.fillText(S.mp,x+sz-4,y+sz-4);}
       else{cx.fillStyle='#9b3322';cx.beginPath();cx.ellipse(x+sz/2,y+sz/2+2,10,13,0,0,7);cx.fill();cx.fillStyle='#f3ead6';cx.font='700 14px "Barlow Semi Condensed",sans-serif';cx.fillText('x'+c.potions,x+sz/2,y+sz-4);cx.fillStyle='#d9a03c';cx.textAlign='left';cx.font='700 12px "Barlow Semi Condensed",sans-serif';cx.fillText('Q',x+4,y+13);}}
   }
@@ -1410,7 +1455,7 @@ function drawBigMap(){
 // cooldowns en los botones táctiles
 function syncTouch(){
   if(!IS_TOUCH||state!=='play')return;const P=G.P,sk=RACES[G.c.race].skills;
-  ['tS1','tS2','tS3'].forEach((id,i)=>{const b=$(id),cd=P.cds[i];const txt=cd>0?String(Math.ceil(cd)):sk[i].n;if(b.textContent!==txt)b.textContent=txt;b.style.opacity=(cd>0||P.mp<sk[i].mp)?.45:1;});
+  ['tS1','tS2','tS3'].forEach((id,i)=>{const b=$(id),cd=P.cds[i],lk=!G.c.skl[i];const txt=lk?'Nv '+sk[i].unlock:cd>0?String(Math.ceil(cd)):sk[i].n;if(b.textContent!==txt)b.textContent=txt;b.style.opacity=lk?.3:(cd>0||P.mp<sk[i].mp)?.45:1;});
   const pt='Poción x'+G.c.potions;if($('tPot').textContent!==pt)$('tPot').textContent=pt;
 }
 /* Fondo animado de menús */
@@ -1469,7 +1514,7 @@ $('pauseBtn').onclick=pauseGame;
 $('soundBtn').onclick=()=>{SAVE.sound=!SAVE.sound;persist();$('soundBtn').textContent='Sonido: '+(SAVE.sound?'sí':'no');};
 $('abandonBtn').onclick=()=>{returnHub();};
 $('botBtn').onclick=()=>{if(state==='play')toggleBot();};
-$('bagBtn').onclick=()=>{if(state==='play')toggleBag();};
+$('bagBtn').onclick=()=>{if(state==='play')openPanel('bag');};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play'&&!G.bot.on)pauseGame();});
 function syncGameBtns(){if(!G)return;$('botBtn').classList.toggle('on',G.bot.on);$('botBtn').textContent=G.bot.on?'Auto: sí':'Auto';$('bagBtn').classList.toggle('on',!!G.bagOpen);}
 
@@ -1479,11 +1524,15 @@ function syncBotForm(){$('botRadius').value=String(BOT.radius);$('botRar').value
 ['botSkills','botHome','botMats'].forEach(id=>$(id).addEventListener('change',()=>{BOT.skills=$('botSkills').checked;BOT.homeNoPots=$('botHome').checked;BOT.mats=$('botMats').checked;saveBot();}));
 
 /* ---------- Bolsa en juego (I / Tab) ---------- */
-let BAG_DIRTY=false,bagSel=null,bagT=0;
-function toggleBag(open){if(!G)return;G.bagOpen=open===undefined?!G.bagOpen:open;$('bag').hidden=!G.bagOpen;if(G.bagOpen){bagSel=null;renderBag();}syncGameBtns();}
+let BAG_DIRTY=false,bagSel=null,bagT=0,bagTab='bag';
+function toggleBag(open){if(!G)return;G.bagOpen=open===undefined?!G.bagOpen:open;$('bag').hidden=!G.bagOpen;if(G.bagOpen){bagSel=null;renderBagTabs();}syncGameBtns();}
+function openPanel(tab){if(!G)return;if(G.bagOpen&&bagTab===tab){toggleBag(false);return;}bagTab=tab;toggleBag(true);}
+function renderBagTabs(){$('bagTabBag').setAttribute('aria-selected',String(bagTab==='bag'));$('bagTabPow').setAttribute('aria-selected',String(bagTab==='pow'));$('bagMain').hidden=bagTab!=='bag';$('bagPowWrap').hidden=bagTab!=='pow';BAG_DIRTY=true;renderBag();}
+$('bagTabBag').onclick=()=>{bagTab='bag';renderBagTabs();};$('bagTabPow').onclick=()=>{bagTab='pow';renderBagTabs();};
 $('bagClose').onclick=()=>toggleBag(false);
 function renderBag(){
   if(!G||!G.bagOpen)return;const c=G.c,sc=$('bag').scrollTop;
+  if(bagTab==='pow'){if(BAG_DIRTY)renderPowers($('bagPowWrap'),'g');$('bag').scrollTop=sc;BAG_DIRTY=false;return;}
   $('bagPurse').innerHTML=`<span><i class="dot gold"></i>${fmt(c.gold)} oro</span><span><i class="dot pot"></i>${c.potions} pociones</span><span><i class="dot amb"></i>${c.amber}</span><span><i class="dot ich"></i>${c.ichorJ}</span>`;
   $('bagEq').innerHTML=SLOTS.map(s=>slotHtml(c.gear[s],s,'bq-'+s,bagSel&&bagSel.where==='eq'&&bagSel.slot===s?'sel':'')).join('');
   $('bagCount').textContent=c.inv.length+' / '+INV_MAX;
@@ -1563,6 +1612,34 @@ $('createBack').onclick=openTitle;
 $('createGo').onclick=()=>{if(!raceSel)return;newChar(raceSel);openHub();toast('Una '+RACES[raceSel].stages[0].toLowerCase()+' despierta bajo las raíces');};
 $('toTitle').onclick=openTitle;
 
+/* ---------- Atributos y habilidades ---------- */
+function pips(l,max){let h='';for(let i=1;i<=max;i++)h+=`<i class="${i<=l?'on':''}"></i>`;return `<div class="pips">${h}</div>`;}
+function unlockSkills(c){const out=[];RACES[c.race].skills.forEach((k,i)=>{if(!c.skl[i]&&c.lvl>=k.unlock){c.skl[i]=1;out.push(k.n);}});return out;}
+function autoSpend(c){const rec=RACES[c.race].rec,seq=[];for(const k in rec)for(let i=0;i<rec[k];i++)seq.push(k);while(c.pts>0){c.attr[seq[c.autoI%seq.length]]++;c.autoI++;c.pts--;}}
+function resetCost(c){return 40*c.lvl;}
+function powersChanged(c){persist();if(state==='hub'){const n=c.pts+c.sp;$('tab-pow').textContent='Poderes'+(n?' ('+n+')':'');}if(G&&G.c===c&&state==='play'){const hr=G.P.hp/G.st.hp;G.st=charStats(c);G.P.hp=Math.min(G.st.hp,Math.max(1,G.st.hp*hr));G.P.mp=Math.min(G.P.mp,G.st.mp);}if(state==='hub')renderSheet();}
+function renderPowers(el,pre){
+  const c=CH(),R=RACES[c.race],st=charStats(c);
+  const attrs=ATTR.map(A=>`<div class="attr"><div style="min-width:0"><b>${A.n}</b><small>${A.d} por punto</small></div><span class="val">${c.attr[A.k]}</span><div class="btns"><button id="${pre}a1-${A.k}" ${c.pts<1?'disabled':''} aria-label="Sumar 1 a ${A.n}">+1</button><button id="${pre}a5-${A.k}" ${c.pts<5?'disabled':''} aria-label="Sumar 5 a ${A.n}">+5</button></div></div>`).join('');
+  const skills=R.skills.map((S,i)=>{const r=c.skl[i]||0,locked=!r;const nx=r<SKILL_MAX?S.up[r]:'';
+    return `<div class="skill ${locked?'locked':''}"><div style="min-width:0"><b>${S.n}</b>${locked?'':pips(r,SKILL_MAX)}<small>${S.d} · ${S.mp} de energía · ${skillCd(c,i)} s</small>
+    ${locked?`<small class="next">Se desbloquea en nivel ${S.unlock}</small>`:nx?`<small class="next">Rango ${r+1}: ${nx}</small>`:'<small class="next">Rango máximo</small>'}</div>
+    ${locked||r>=SKILL_MAX?'':`<button id="${pre}s-${i}" ${c.sp<1?'disabled':''}>Mejorar</button>`}</div>`;}).join('');
+  el.innerHTML=`<div class="ptsbar" style="margin-top:0"><h3>Atributos</h3><span>Puntos libres: <span class="free">${c.pts}</span></span></div>
+  <div class="attrs">${attrs}</div>
+  <div class="row" style="margin-top:10px"><button id="${pre}auto" ${c.pts<1?'disabled':''}>Repartir automáticamente</button><button id="${pre}reset" ${c.gold<resetCost(c)?'disabled':''}>Reiniciar · ${fmt(resetCost(c))} oro</button></div>
+  <label class="chk" style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:15px"><input type="checkbox" id="${pre}autoChk" ${c.autoPts?'checked':''} style="accent-color:var(--amber);width:16px;height:16px"> Repartir solo al subir de nivel (receta para ${R.name}: ${Object.entries(R.rec).map(([k,v])=>v+' '+ATTR.find(a=>a.k===k).n.toLowerCase()).join(', ')})</label>
+  <div class="ptsbar"><h3>Habilidades</h3><span>Puntos de habilidad: <span class="free">${c.sp}</span></span></div>
+  <div class="skills">${skills}</div>
+  <p class="muted" style="font-size:14px;margin-top:10px">Cada nivel da ${PTS_PER_LVL} puntos de atributo. Cada ${SKILL_EVERY} niveles ganas 1 punto de habilidad. Los rangos 3 y 5 cambian cómo funciona la habilidad.</p>`;
+  const again=()=>{powersChanged(c);renderPowers(el,pre);};
+  ATTR.forEach(A=>{const b1=$(pre+'a1-'+A.k),b5=$(pre+'a5-'+A.k);b1.onclick=()=>{if(c.pts<1)return;c.attr[A.k]++;c.pts--;again();};b5.onclick=()=>{if(c.pts<5)return;c.attr[A.k]+=5;c.pts-=5;again();};});
+  $(pre+'auto').onclick=()=>{autoSpend(c);again();};
+  $(pre+'reset').onclick=()=>{const cost=resetCost(c);if(c.gold<cost)return;c.gold-=cost;for(const k in c.attr){c.pts+=c.attr[k];c.attr[k]=0;}c.autoI=0;sfx('forge_fail');again();};
+  $(pre+'autoChk').onchange=e=>{c.autoPts=e.target.checked;if(c.autoPts)autoSpend(c);again();};
+  R.skills.forEach((_,i)=>{const b=$(pre+'s-'+i);if(b)b.onclick=()=>{if(c.sp<1||c.skl[i]>=SKILL_MAX)return;c.skl[i]++;c.sp--;sfx('forge_ok');again();};});
+}
+
 /* ---------- Madriguera ---------- */
 let tab='map',selLevel=0,selItem=null,forgeItem=null;
 function openHub(){
@@ -1577,15 +1654,16 @@ function renderSheet(){
   const nextStage=STAGE_LVL[c.stage+1];
   $('hStage').textContent=R.role+' · Nivel '+c.lvl+(nextStage?' · evoluciona en nivel '+nextStage:'');
   const nx=xpNext(c.lvl);$('hXp').style.width=(c.xp/nx*100)+'%';$('hXpTxt').textContent=fmt(c.xp)+' / '+fmt(nx)+' exp';
-  const rows=[['Vida',fmt(st.hp)],['Energía',fmt(st.mp)],['Daño',fmt(st.dmg)],['Armadura',fmt(st.armor)],['Crítico',Math.round(st.crit)+'%'],['Velocidad',Math.round(st.spd)]];
+  const rows=[['Vida',fmt(st.hp)],['Energía',fmt(st.mp)],['Daño',fmt(st.dmg)],['Armadura',fmt(st.armor)],['Crítico',Math.round(st.crit)+'%'],['Velocidad',Math.round(st.spd)],['Ataques por segundo',(1/st.atkCd).toFixed(2)],['Daño de habilidades','+'+Math.round((st.skillMul-1)*100)+'%']];
   if(st.ls)rows.push(['Robo de vida',st.ls+'%']);
   $('hStats').innerHTML=rows.map(r=>`<span>${r[0]}</span><span>${r[1]}</span>`).join('');
   $('hPurse').innerHTML=`<span><i class="dot gold"></i>${fmt(c.gold)}</span><span><i class="dot pot"></i>${c.potions}</span><span title="Ámbar: refina de +0 a +6"><i class="dot amb"></i>${c.amber}</span><span title="Icor cristalizado: refina de +6 a +9"><i class="dot ich"></i>${c.ichorJ}</span>`;
 }
-['map','gear','forge','shop'].forEach(k=>$('tab-'+k).onclick=()=>{tab=k;selItem=null;renderTab();});
+['map','gear','pow','forge','shop'].forEach(k=>$('tab-'+k).onclick=()=>{tab=k;selItem=null;renderTab();});
 function renderTab(){
-  ['map','gear','forge','shop'].forEach(k=>$('tab-'+k).setAttribute('aria-selected',String(k===tab)));
-  ({map:renderMap,gear:renderGear,forge:renderForge,shop:renderShop})[tab]();
+  ['map','gear','pow','forge','shop'].forEach(k=>$('tab-'+k).setAttribute('aria-selected',String(k===tab)));
+  {const c=CH(),n=c.pts+c.sp;$('tab-pow').textContent='Poderes'+(n?' ('+n+')':'');}
+  ({map:renderMap,gear:renderGear,pow:()=>renderPowers($('pane'),'h'),forge:renderForge,shop:renderShop})[tab]();
 }
 function starStr(n){return [0,1,2].map(i=>`<span class="${i<n?'':'off'}">★</span>`).join('');}
 let selStart=-1;
@@ -1602,7 +1680,7 @@ function renderMap(){
   $('pane').innerHTML=`<div class="region-head"><div><div class="eyebrow">Región ${WORLD.num}</div><h3>${WORLD.name}</h3></div><span class="muted" style="font-size:14px">Próximas regiones: Pantano negro, Cripta bajo el cementerio, Colmena abandonada, Nido de la Reina</span></div>
   <div class="track"><div class="nodes">${nodes}</div></div>
   <div class="levelinfo"><div>${info}</div><button class="main" id="enterBtn">${selStart<0?'Descender':'Viajar y descender'}</button></div>
-  <p class="muted" style="font-size:14px;margin-top:14px">En el mapa: <b>H</b> caza automática · <b>I</b> bolsa · <b>M</b> mapa grande · <b>B</b> volver a la madriguera · <b>Q</b> poción</p>`;
+  <p class="muted" style="font-size:14px;margin-top:14px">En el mapa: <b>H</b> caza automática · <b>I</b> bolsa · <b>C</b> poderes · <b>M</b> mapa grande · <b>B</b> volver a la madriguera · <b>Q</b> poción</p>`;
   $('stE').onclick=()=>{selStart=-1;renderMap();};
   WORLD.zones.forEach((_,i)=>{const n=$('st'+i);if(n&&!n.disabled)n.onclick=()=>{selStart=i;renderMap();};});
   $('enterBtn').onclick=()=>{initAudio();enterWorld(selStart);};
