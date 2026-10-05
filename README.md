@@ -13,7 +13,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 
 El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona sin conexión una vez abierto. Para instalarlo tiene que estar publicado en una dirección HTTPS (por ejemplo GitHub Pages). Desde Chrome en Android: abrir la dirección, menú ⋮ → **Instalar app** (o *Agregar a pantalla principal*). Se abre a pantalla completa y apaisado, sin barra del navegador. Si se juega desde el navegador, al entrar al mundo pide pantalla completa y gira a apaisado cuando el teléfono lo permite.
 
-## Contenido de la versión 0.13
+## Contenido de la versión 0.14
 
 | Sistema | Estado |
 |---|---|
@@ -27,7 +27,13 @@ El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona s
 | Santuarios | 5 santuarios de ámbar (entrada y borde de cada zona): curan, alejan a las criaturas y tienen a Brugo, el artesano: flecha y nombre siempre visibles; se toca o cliquea (si estás lejos, el personaje camina hasta él) o tecla E. Su panel pausa el juego y ofrece Artesano, Equipo, Forja, Depósito y Mercader. |
 | Artesano | Funde las 3 piezas más débiles de un set + oro + ámbar en una pieza nueva de ese set (arma, casco, coraza, patas o amuleto), un nivel por encima de la mejor, con la rareza más alta y 25% de chance de subirla. |
 | Depósito | Baúl de 60 lugares compartido entre santuarios y madriguera. |
-| Caza automática | Estilo MU Helper (tecla H): caza alrededor del punto de activación, usa habilidades, recoge botín según filtros y toma pociones. Se configura en la pausa. |
+| Caza automática | Estilo MU Helper (tecla H): caza alrededor del punto de activación, usa habilidades, recoge botín según filtros y toma pociones. Con la bolsa llena o sin pociones va sola al santuario más cercano, vende comunes y raros peores que lo equipado, compra hasta 10 pociones, guarda en el depósito lo más débil si sigue llena y vuelve al punto de caza. Se configura en la pausa. |
+| Objetos excelentes | Estilo MU: cualquier objeto puede salir **Excelente** (nombre y borde verdes, +15% de atributos base) con 1 o 2 opciones especiales: golpe excelente (daño ×1,6), vida al matar, energía al matar, +oro de criaturas, −daño recibido o +velocidad de ataque. Probabilidad: 2,5% en criaturas, 10% en élites, 30% en jefes. Aviso en pantalla cuando cae uno. La caza automática siempre los recoge; no se funden ni se venden en lote. |
+| Suerte | 12% de los objetos raros o mejores traen Suerte: +5% de crítico y +20% de probabilidad al refinar. |
+| Refinado | Hasta +12. De +0 a +6 con ámbar y sin riesgo; de +6 en adelante con icor (desde +9 cuesta 2) y probabilidad 70/60/50/45/35/25%. Si falla entre +6 y +8 baja un nivel; **desde +9, si falla vuelve a +0**. Se puede proteger un intento viendo un anuncio. |
+| Foso de la Colmena | Evento por horario (estilo Devil Square): abre cada 15 minutos durante 3, desde nivel 6, una vez por apertura. Se entra desde el panel de Brugo. 5 oleadas en 4 minutos; recompensa por oleada y, al ganar, objeto excelente garantizado, icor, ámbar, oro y 25% de un nivel de experiencia. Aviso en pantalla cuando está abierto. Si caes, reaparecer te saca del foso; revivir con anuncio te deja seguir. |
+| Renacer | Estilo reset del MU: desde nivel 30, en la madriguera (pestaña Poderes), vuelves a nivel 1 conservando equipo, metamorfosis y habilidades. Cada renacer da 25 puntos de atributo permanentes y +4% de vida y daño; cuesta 3.000 oro por renacer acumulado. El nombre muestra ✦ y la cantidad. |
+
 | Calidad de imagen | Resolución nativa de la pantalla (hasta 3×) y sprites a 300 px. Modo automático que baja la resolución si no llega a ~45 cuadros por segundo; también máxima y ahorro de batería desde el menú. Zoom más cercano en celulares. |
 | Interfaz | Íconos en lugar de texto: caza automática (flechas en círculo; activa se pone verde azulado y gira, sin cartel en pantalla) y menú (tres líneas, pausa el juego). Los puntos sin repartir se avisan solo con el número sobre la bolsa. El cartel de zona ya no se encima con la barra del jefe. |
 | Celular apaisado | App instalable a pantalla completa y apaisada. HUD compacto: bolsa en la fila de íconos de arriba, minimapa más chico, botones de ataque un poco menores y márgenes para la cámara/muesca. Si se juega vertical aparece un aviso para girar el teléfono (se puede descartar). |
