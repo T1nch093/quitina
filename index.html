@@ -271,7 +271,8 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
   #gameBtns{right:calc(env(safe-area-inset-right,0px) + 70px);top:calc(env(safe-area-inset-top,0px) + 8px)}
   #bagDock .bagtab{top:calc(env(safe-area-inset-top,0px) + 8px);transform:none;height:44px;width:50px;left:-62px;border-right:1.5px solid var(--line);border-radius:6px}
   #bagDock.open .bagtab{left:-58px}
-  #bagDock{width:min(430px,calc(100vw - 70px))}
+  #bagDock{width:clamp(220px,29vw,270px)}
+  #bag .attr small{display:none}
   #touch{transform:scale(.9);transform-origin:right bottom}
   #shrine{padding:6px}
   .shrine-box{max-height:calc(100vh - 12px)}
@@ -441,14 +442,43 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 .shrine-head .eyebrow{display:none}
 .shrine-head h2{font-size:18px!important;color:#ffe2b0;text-align:center;flex:1;letter-spacing:.06em}
 /* muñeco de equipo */
-.doll{display:grid;grid-template-columns:1fr 1.25fr 1fr;grid-template-rows:54px 64px 54px;grid-template-areas:"alas casco amuleto" "arma coraza set" "arma patas set";gap:6px;padding:8px;border:1px solid var(--mu-cellb);background:radial-gradient(ellipse at 50% 55%,rgba(120,80,40,.18),transparent 60%),var(--mu-cell);box-shadow:inset 0 0 18px #000}
+.doll{display:grid;grid-template-columns:1fr 1.15fr 1fr;grid-template-rows:50px 60px 50px;grid-template-areas:"amuleto casco alas" "arma coraza set" "arma patas set";gap:6px;padding:8px;border:1px solid var(--mu-cellb);background:radial-gradient(ellipse at 50% 55%,rgba(120,80,40,.18),transparent 60%),var(--mu-cell);box-shadow:inset 0 0 18px #000}
 .doll>div>.slot{width:100%;height:100%;aspect-ratio:auto;background:linear-gradient(#15100c,#0a0806);border-color:#3a2a1c;box-shadow:inset 0 0 10px #000}
 .doll>div>.slot.empty img{opacity:.35}
-.doll .slot img{width:62%;height:62%}
+.doll .slot img{width:auto;height:70%;max-width:82%;object-fit:contain}
+.doll>div[style*=amuleto]{display:grid;place-items:center}.doll>div[style*=amuleto]>.slot{width:70%;height:80%}
 .doll .slot .lbl{font-size:10px}
 .dset{display:flex;flex-direction:column;justify-content:center;gap:4px;font-size:11.5px;line-height:1.25;color:var(--dim);text-align:center}
 .dset .on{color:#8fd16a}
-@media (orientation:landscape) and (max-height:520px){.doll{grid-template-rows:44px 52px 44px;gap:4px;padding:6px}.doll .slot .lbl{display:none}}
+@media (orientation:landscape) and (max-height:520px){.doll{grid-template-rows:38px 46px 38px;gap:3px;padding:5px}.doll .slot .lbl{display:none}}
+/* bolsa compacta (estilo ventana de inventario del MU) */
+@media (pointer:coarse){.kh{display:none}}
+#bag{font-size:14px}
+#bag .bag-head{padding:3px 4px}
+.bag-tabs button,#bag .bag-head button{font-size:14px;padding:3px 7px}
+#bag .xbtn{width:24px!important;height:24px!important;font-size:13px!important}
+#bag .section-t{margin:8px 0 3px}#bag .section-t .eyebrow{font-size:10.5px;letter-spacing:.16em}#bag .section-t .num{font-size:12px!important}
+#bagPurse{font-size:12.5px;gap:4px 10px;padding:4px 8px}
+#bag .dset{font-size:10.5px}
+#bag .cmp-legend{font-size:11px}
+#bag .sell-row{font-size:13px;padding:6px 8px}
+#bag .recent{font-size:12px}
+#bag .attr{padding:6px 7px;gap:6px}#bag .attr b{font-size:15px}#bag .attr small{font-size:11px}#bag .attr .val{font-size:17px}#bag .attr .btns button{padding:4px 6px;font-size:12.5px}
+#bag .skill{padding:7px 8px;gap:6px}#bag .skill b{font-size:15px}#bag .skill small{font-size:11.5px}#bag .skill button{padding:5px 8px;font-size:13px}
+#bag .ptsbar{margin:10px 0 6px;font-size:13px}#bag .ptsbar h3{font-size:16px}
+#bag .rebirth{padding:7px 8px;gap:6px}#bag .rebirth b{font-size:15px}#bag .rebirth small{font-size:11px}#bag .rebirth button{font-size:12.5px;padding:5px 8px}
+#bag .row button,#bag label.chk{font-size:12.5px!important}
+#bagDetail.pop{width:min(260px,calc(100vw - 290px))}
+#bagDetail .detail{grid-template-columns:38px minmax(0,1fr);gap:8px;padding:9px;font-size:12.5px}
+#bagDetail .detail .ic{width:38px;height:38px}
+#bagDetail .detail .iname{font-size:15.5px;line-height:1.15}
+#bagDetail .detail .muted{font-size:11.5px!important}
+#bagDetail .detail ul{font-size:12.5px;gap:0;margin-top:4px}
+#bagDetail .setinfo{font-size:11px;line-height:1.3;margin-top:5px;padding-top:5px}
+#bagDetail .detail .acts{gap:6px}
+#bagDetail .detail .acts button{padding:5px 8px;font-size:13px}
+#bagDetail .detail .acts button.main{font-size:15px}
+#bagDetail .px{width:22px;height:22px;font-size:12px;top:5px;right:5px}
 /* cuadrícula del inventario */
 #bag .inv,#shrine .inv{gap:0!important;border:1px solid var(--mu-edge);background:var(--mu-cell);box-shadow:inset 0 0 0 1px #000;padding:0}
 #bag .inv .slot,#shrine .inv .slot{border:1px solid var(--mu-cellb);background:linear-gradient(#100c09,#080605);box-shadow:inset 0 0 8px #000}
@@ -482,7 +512,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 <button id="bagBtn" class="bagtab" aria-label="Bolsa" aria-expanded="false" title="Bolsa (I)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7.5V6a3.5 3.5 0 0 1 7 0v1.5"/><path d="M4.8 7.5h14.4l-1.1 11.6a2.2 2.2 0 0 1-2.2 2H8.1a2.2 2.2 0 0 1-2.2-2z"/><path d="M9 12.5h6"/></svg><span class="key">I</span><span class="badge" id="bagBadge" hidden></span></button>
 <div id="bagDetail" class="pop" role="dialog" aria-label="Detalle del objeto"></div>
 <aside id="bag" class="frame" aria-label="Bolsa">
-  <div class="bag-head"><div class="bag-tabs" role="tablist"><button role="tab" id="bagTabBag" aria-selected="true">Bolsa · I</button><button role="tab" id="bagTabPow" aria-selected="false">Poderes · C</button></div><button id="bagClose" class="xbtn" aria-label="Cerrar bolsa">✕</button></div>
+  <div class="bag-head"><div class="bag-tabs" role="tablist"><button role="tab" id="bagTabBag" aria-selected="true">Bolsa<span class="kh"> · I</span></button><button role="tab" id="bagTabPow" aria-selected="false">Poderes<span class="kh"> · C</span></button></div><button id="bagClose" class="xbtn" aria-label="Cerrar bolsa">✕</button></div>
   <div id="bagPowWrap" hidden></div>
   <div id="bagMain">
   <div class="purse" id="bagPurse"></div>
@@ -629,7 +659,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.18 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.19 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -2230,7 +2260,7 @@ $('botBtn').onclick=()=>{if(state==='play')toggleBot();};
 $('bagBtn').onclick=()=>{if(state==='play')openPanel('bag');};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play'&&!G.bot.on)pauseGame();});
 function syncGameBtns(){if(!G)return;$('botBtn').classList.toggle('on',G.bot.on);$('botBtn').setAttribute('aria-pressed',String(G.bot.on));$('bagBtn').setAttribute('aria-expanded',String(!!G.bagOpen));}
-let lastBadge=-1;function syncBadge(){if(!G)return;const n=G.c.pts+G.c.sp;if(n===lastBadge)return;lastBadge=n;$('bagBadge').hidden=!n;$('bagBadge').textContent='▲'+n;$('bagTabPow').innerHTML='Poderes · C'+(n?' <span class="upar">▲</span>':'');}
+let lastBadge=-1;function syncBadge(){if(!G)return;const n=G.c.pts+G.c.sp;if(n===lastBadge)return;lastBadge=n;$('bagBadge').hidden=!n;$('bagBadge').textContent='▲'+n;$('bagTabPow').innerHTML='Poderes<span class="kh"> · C</span>'+(n?' <span class="upar">▲</span>':'');}
 
 /* ---------- Ajustes del asistente de caza ---------- */
 function syncBotForm(){$('botRadius').value=String(BOT.radius);$('botRar').value=String(BOT.minRar);$('botPot').value=String(BOT.potAt);$('botSkills').checked=BOT.skills;$('botHome').checked=BOT.homeNoPots;$('botMats').checked=BOT.mats;$('botSell').checked=BOT.sell!==false;}
@@ -2353,13 +2383,13 @@ function renderPowers(el,pre){
     ${locked||r>=SKILL_MAX?'':`<button id="${pre}s-${i}" class="${c.sp>=1?'can':''}" ${c.sp<1?'disabled':''}>${c.sp>=1?'▲ ':''}Mejorar</button>`}</div>`;}).join('');
   const rs=c.resets||0,canReb=c.lvl>=REBIRTH_LVL&&c.gold>=rebirthCost(c)&&state==='hub';
   const reb=`<div class="rebirth"><div><b>Renacer${rs?' · llevas '+rs:''}</b><small>Desde nivel ${REBIRTH_LVL}: vuelves a nivel 1 y conservas equipo, metamorfosis y habilidades. Cada renacer da ${REBIRTH_PTS} puntos de atributo permanentes y +4% de vida y daño.${state!=='hub'?' Se hace en la madriguera.':c.lvl<REBIRTH_LVL?' Te faltan '+(REBIRTH_LVL-c.lvl)+' niveles.':''}</small></div><button class="${rebirthArm?'danger':''}" id="${pre}reb" ${canReb?'':'disabled'}>${rebirthArm?'¿Seguro? Toca otra vez':'Renacer · '+fmt(rebirthCost(c))+' oro'}</button></div>`;
-  el.innerHTML=`${reb}<div class="ptsbar" style="margin-top:0"><h3>Atributos</h3><span>Puntos libres: <span class="free ${c.pts?'on':''}">${c.pts?'▲ ':''}${c.pts}</span></span></div>
+  el.innerHTML=`<div class="ptsbar" style="margin-top:0"><h3>Atributos</h3><span>Puntos libres: <span class="free ${c.pts?'on':''}">${c.pts?'▲ ':''}${c.pts}</span></span></div>
   <div class="attrs">${attrs}</div>
   <div class="row" style="margin-top:10px"><button id="${pre}auto" ${c.pts<1?'disabled':''}>Repartir automáticamente</button><button id="${pre}reset" ${c.gold<resetCost(c)?'disabled':''}>Reiniciar · ${fmt(resetCost(c))} oro</button></div>
   <label class="chk" style="display:flex;gap:8px;align-items:center;margin-top:10px;font-size:15px"><input type="checkbox" id="${pre}autoChk" ${c.autoPts?'checked':''} style="accent-color:var(--amber);width:16px;height:16px"> Repartir solo al subir de nivel (receta para ${R.name}: ${Object.entries(R.rec).map(([k,v])=>v+' '+ATTR.find(a=>a.k===k).n.toLowerCase()).join(', ')})</label>
   <div class="ptsbar"><h3>Habilidades</h3><span>Puntos de habilidad: <span class="free ${c.sp?'on':''}">${c.sp?'▲ ':''}${c.sp}</span></span></div>
   <div class="skills">${skills}</div>
-  <p class="muted" style="font-size:14px;margin-top:10px">Cada nivel da ${PTS_PER_LVL} puntos de atributo. Cada ${SKILL_EVERY} niveles ganas 1 punto de habilidad. En los rangos 3 y 5 cada habilidad cambia de forma: ataca de otra manera.</p>`;
+  <p class="muted" style="font-size:14px;margin-top:10px">Cada nivel da ${PTS_PER_LVL} puntos de atributo. Cada ${SKILL_EVERY} niveles ganas 1 punto de habilidad. En los rangos 3 y 5 cada habilidad cambia de forma: ataca de otra manera.</p>${reb}`;
   const again=()=>{powersChanged(c);renderPowers(el,pre);};
   ATTR.forEach(A=>{const b1=$(pre+'a1-'+A.k),b5=$(pre+'a5-'+A.k);b1.onclick=()=>{if(c.pts<1)return;c.attr[A.k]++;c.pts--;again();};b5.onclick=()=>{if(c.pts<5)return;c.attr[A.k]+=5;c.pts-=5;again();};});
   $(pre+'auto').onclick=()=>{autoSpend(c);again();};
