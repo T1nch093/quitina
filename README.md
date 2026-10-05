@@ -6,16 +6,19 @@ RPG de acción oscuro para navegador. Criaturas insecto en un reino subterráneo
 
 Abre `index.html` en el navegador. No necesita instalación ni servidor.
 
-- **Teclado y mouse:** WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, Esc pausa.
+- **Teclado y mouse:** WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, I bolsa, H caza automática, M mapa grande, B volver a la madriguera, Esc pausa.
 - **Celular:** arrastra en la mitad izquierda para moverte y usa los botones de la derecha.
 
-## Contenido de la versión 0.2
+## Contenido de la versión 0.3
 
 | Sistema | Estado |
 |---|---|
-| Razas | Mantis (guerrera) y Polilla (hechicera) jugables. Escarabajo y Avispa anunciadas. |
+| Razas | Mantis (guerrera) y Polilla (hechicera) jugables. Escarabajo y Avispa anunciadas. La Mantis tiene Torbellino, Embestida y Furia (+70% de daño por 4 s). El golpe simple hace 70% del daño base. |
 | Metamorfosis | 3 etapas por raza (nivel 6 y 12). En la etapa adulta se elige una de dos ramas. |
-| Región I: Raíces podridas | 5 niveles, élites, jefe final (Ciempiés de Hueso) y 3 estrellas por nivel. |
+| Región I: Raíces podridas | Mapa abierto de 4800 × 3600 con santuario de entrada y 5 zonas por nivel recomendado (1–4 a 13–16). Las criaturas reaparecen a los 9–14 s, las élites al minuto y el jefe (Ciempiés de Hueso) cada 5 minutos. Las zonas descubiertas habilitan el viaje directo. |
+| Caza automática | Estilo MU Helper (tecla H): caza alrededor del punto de activación, usa habilidades, recoge botín según filtros y toma pociones. Se configura en la pausa. |
+| Bolsa en juego | Tecla I o Tab: oro, pociones, materiales, equipo, inventario completo y botín reciente. Permite equipar y tirar objetos sin salir del mapa. |
+| Muerte | Revivir con anuncio sin penalidad, o reaparecer en el santuario perdiendo 10% del nivel en experiencia. |
 | Equipo | 6 slots (arma, casco, coraza, patas, amuleto, alas) y 5 rarezas: Común, Raro, Épico, Legendario y Mítico. |
 | Forja | Refinado de +0 a +6 con ámbar (sin riesgo) y de +6 a +9 con icor (puede fallar). Brillo a partir de +4 y +7. |
 | Fusión | 3 objetos de la misma rareza se funden en uno de rareza superior, hasta Mítico. |
