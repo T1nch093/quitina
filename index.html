@@ -499,6 +499,12 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 .tabs button[aria-selected="true"]{color:#ffe2b0;background:linear-gradient(rgba(106,22,16,.6),rgba(44,8,5,.2));box-shadow:inset 0 -2px 0 #c88a4a}
 .mesa{border-color:var(--mu-edge);box-shadow:inset 0 0 20px #000}
 #bagDetail .detail{border:1px solid var(--mu-edge);box-shadow:inset 0 0 0 3px #120c08,inset 0 0 0 4px #3a2a1a,0 10px 40px rgba(0,0,0,.8)}
+/* Brugo a la izquierda + bolsa a la derecha (como el MU) */
+#shrine.dual{inset:0 auto 0 0!important;width:min(380px,calc(100vw - 300px));animation-name:slideinL}
+@keyframes slideinL{from{transform:translateX(-100%)}}
+#shrine.dual .shrine-box{border-left:0;box-shadow:12px 0 40px rgba(0,0,0,.6)}
+#shrine.dual .tgrid{display:block}
+.dual-hint{font-size:12.5px;color:var(--dim);text-align:center;margin-top:8px}
 </style>
 </head>
 <body>
@@ -659,7 +665,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.19 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.20 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -1423,9 +1429,9 @@ function leaveArena(){
 }
 function renderArenaBox(){
   const el=$('arenaBox');if(!el||!G)return;const c=G.c,sl=arenaSlot();
-  if(c.lvl<ARENA_LVL){el.className='arenabox closed';el.innerHTML=`<span><b>Foso de la Colmena</b><br>Abre cada ${ARENA_EVERY} minutos. Desde nivel ${ARENA_LVL}.</span>`;return;}
-  if(arenaReady(c)){el.className='arenabox open';el.innerHTML=`<span><b>El Foso de la Colmena está abierto</b><br>${ARENA_WAVES.length} oleadas en 4 minutos · botín excelente garantizado · cierra en ${fmtT(sl.left)}</span><button class="main" id="arenaGo">Entrar al foso</button>`;$('arenaGo').onclick=enterArena;return;}
-  el.className='arenabox closed';el.innerHTML=`<span><b>Foso de la Colmena</b><br>${sl.open?'Ya peleaste en esta apertura. ':''}Próxima apertura en ${fmtT(sl.next)}.</span>`;
+  if(c.lvl<ARENA_LVL){el.className='arenabox closed';el.innerHTML=`<span><b>Foso de la Colmena</b><br>cada ${ARENA_EVERY} min · desde nivel ${ARENA_LVL}</span>`;return;}
+  if(arenaReady(c)){el.className='arenabox open';el.innerHTML=`<span><b>Foso de la Colmena abierto</b><br>${ARENA_WAVES.length} oleadas · botín excelente · cierra en ${fmtT(sl.left)}</span><button class="main" id="arenaGo">Entrar</button>`;$('arenaGo').onclick=enterArena;return;}
+  el.className='arenabox closed';el.innerHTML=`<span><b>Foso de la Colmena</b><br>${sl.open?'Ya peleaste en esta apertura · ':''}abre en ${fmtT(sl.next)}</span>`;
 }
 function bossNear(){for(const e of G.foes)if(e.boss&&!e.dead&&(e.aggro||Math.hypot(e.x-G.P.x,e.y-G.P.y)<700))return e;return null;}
 
@@ -2273,14 +2279,14 @@ function toggleBag(open){if(!G)return;G.bagOpen=open===undefined?!G.bagOpen:open
 function openPanel(tab){if(!G)return;if(G.bagOpen&&bagTab===tab){toggleBag(false);return;}bagTab=tab;toggleBag(true);}
 function renderBagTabs(){$('bagTabBag').setAttribute('aria-selected',String(bagTab==='bag'));$('bagTabPow').setAttribute('aria-selected',String(bagTab==='pow'));$('bagMain').hidden=bagTab!=='bag';$('bagPowWrap').hidden=bagTab!=='pow';BAG_DIRTY=true;renderBag();}
 $('bagTabBag').onclick=()=>{bagTab='bag';renderBagTabs();};$('bagTabPow').onclick=()=>{bagTab='pow';renderBagTabs();};
-$('bagClose').onclick=()=>toggleBag(false);
+$('bagClose').onclick=()=>{if(state==='shrine')closeShrine();else toggleBag(false);};
 function renderBag(){
   if(!G||!G.bagOpen)return;const c=G.c,sc=$('bag').scrollTop;
   if(bagTab==='pow'){bagSel=null;$('bagDetail').innerHTML='';if(BAG_DIRTY)renderPowers($('bagPowWrap'),'g');$('bag').scrollTop=sc;BAG_DIRTY=false;return;}
   $('bagPurse').innerHTML=`<span><i class="dot gold"></i>${fmt(c.gold)} oro</span><span><i class="dot pot"></i>${c.potions} pociones</span><span><i class="dot amb"></i>${c.amber}</span><span><i class="dot ich"></i>${c.ichorJ}</span>`;
-  $('bagEq').innerHTML=dollHtml(c,'bq-',s=>bagSel&&bagSel.where==='eq'&&bagSel.slot===s?'sel':'');
+  $('bagEq').innerHTML=dollHtml(c,'bq-',s=>(bagSel&&bagSel.where==='eq'&&bagSel.slot===s?'sel ':'')+(state==='shrine'&&TABLE.items.includes(c.gear[s])?'inmesa':''));
   $('bagCount').textContent=c.inv.length+' / '+INV_MAX;
-  let inv='';for(let i=0;i<INV_MAX;i++)inv+=c.inv[i]?slotHtml(c.inv[i],null,'bi-'+i,bagSel&&bagSel.where==='inv'&&bagSel.i===i?'sel':''):'<div class="slot empty"></div>';
+  let inv='';for(let i=0;i<INV_MAX;i++)inv+=c.inv[i]?slotHtml(c.inv[i],null,'bi-'+i,(bagSel&&bagSel.where==='inv'&&bagSel.i===i?'sel ':'')+(state==='shrine'&&TABLE.items.includes(c.inv[i])?'inmesa':'')):'<div class="slot empty"></div>';
   $('bagInv').innerHTML=inv;
   $('bagCount').innerHTML=c.inv.length+' / '+INV_MAX;if(!$('bagLegend')){const lg=document.createElement('div');lg.id='bagLegend';lg.innerHTML='<div class="cmp-legend"><span><i class="up"></i>Mejor nivel que lo equipado</span><span><i class="down"></i>Peor nivel</span></div>';$('bagInv').after(lg);}
   {const com=c.inv.filter(isJunk),g=com.reduce((a,it)=>a+sellPrice(it),0),here=G.nearShrine>=0;
@@ -2290,12 +2296,13 @@ function renderBag(){
   if(bagSel){const it=bagSel.where==='eq'?c.gear[bagSel.slot]:c.inv[bagSel.i];
     if(it){const cur=bagSel.where==='inv'?c.gear[it.slot]:null,wrong=it.slot==='arma'&&it.race&&it.race!==c.race;
       det=`<div class="detail"><button class="px" id="bgClose" aria-label="Cerrar detalle">✕</button><img class="ic" src="${itemIcon(it.slot,it.race,it.rar,it.set)}" alt=""><div style="min-width:0"><div class="iname c${it.rar}${it.exc?' cexc':''}">${it.name}${it.plus?' +'+it.plus:''}</div><div class="muted" style="font-size:13px">${it.exc?'<span class="cexc">Excelente</span> · ':''}${RAR[it.rar]} · ${SLOT_N[it.slot]} · Nv ${it.ilvl}</div><ul>${statLines(it,cur)}</ul>${setInfo(it,c)}</div>
-      <div class="acts">${bagSel.where==='inv'?`<button class="main" id="bgEquip" ${wrong?'disabled':''}>${wrong?'No es para tu raza':'Equipar'}</button><button id="bgDrop">Tirar al suelo</button>`:'<span class="muted" style="font-size:14px">Equipado</span>'}</div></div>`;}}
+      <div class="acts">${bagSel.where==='inv'?`<button class="main" id="bgEquip" ${wrong?'disabled':''}>${wrong?'No es para tu raza':'Equipar'}</button>${state==='shrine'?`<button id="bgSellOne">Vender · ${fmt(sellPrice(it))} oro</button>`:'<button id="bgDrop">Tirar al suelo</button>'}`:'<span class="muted" style="font-size:14px">Equipado</span>'}</div></div>`;}}
   $('bagDetail').innerHTML=det;
   $('bagRecent').innerHTML=G.recent.length?G.recent.map(r=>`<li><span style="color:${r.col}">${r.txt}</span><span class="muted">hace ${fmtAgo(G.t-r.t)}</span></li>`).join(''):'<li class="muted">Todavía nada.</li>';
-  SLOTS.forEach(s=>{const b=$('bq-'+s);if(b)b.onclick=()=>{if(!c.gear[s])return;bagSel=bagSel&&bagSel.where==='eq'&&bagSel.slot===s?null:{where:'eq',slot:s};renderBag();};});
-  c.inv.forEach((_,i)=>{const b=$('bi-'+i);if(b)b.onclick=()=>{bagSel=bagSel&&bagSel.where==='inv'&&bagSel.i===i?null:{where:'inv',i};renderBag();};});
+  SLOTS.forEach(s=>{const b=$('bq-'+s);if(b)b.onclick=()=>{if(!c.gear[s])return;if(state==='shrine'&&shrineBagTap(c.gear[s],'eq'))return;bagSel=bagSel&&bagSel.where==='eq'&&bagSel.slot===s?null:{where:'eq',slot:s};renderBag();};});
+  c.inv.forEach((_,i)=>{const b=$('bi-'+i);if(b)b.onclick=()=>{if(state==='shrine'&&shrineBagTap(c.inv[i],'inv'))return;bagSel=bagSel&&bagSel.where==='inv'&&bagSel.i===i?null:{where:'inv',i};renderBag();};});
   if($('bgClose'))$('bgClose').onclick=()=>{bagSel=null;renderBag();};
+  if($('bgSellOne'))$('bgSellOne').onclick=()=>{const it=c.inv[bagSel.i];c.gold+=sellPrice(it);c.inv.splice(bagSel.i,1);bagSel=null;persist();sfx('coin');toast('Vendido');renderBag();if(shrineTab==='shop')renderShop();};
   if($('bgEquip'))$('bgEquip').onclick=()=>{const it=c.inv[bagSel.i],old=c.gear[it.slot];c.gear[it.slot]=it;c.inv.splice(bagSel.i,1);if(old)c.inv.push(old);
     G.st=charStats(c);G.P.hp=Math.min(G.P.hp,G.st.hp);G.P.mp=Math.min(G.P.mp,G.st.mp);bagSel=null;persist();sfx('loot');toast('Equipaste '+it.name);renderBag();};
   if($('bgDrop'))$('bgDrop').onclick=()=>{const it=c.inv.splice(bagSel.i,1)[0];G.drops.push({k:'item',it,x:G.P.x+rand(-30,30),y:G.P.y+30,t:-4,vy:0,z:0,life:90});bagSel=null;persist();renderBag();};
@@ -2330,7 +2337,7 @@ const SCREENS=['title','create','hub','result','evolve','pause','shrine'];
 let PANE_ID='pane';const pane=()=>document.getElementById(PANE_ID);
 function showScreen(id){
   for(const s of SCREENS)$(s).hidden=s!==id;
-  const playing=id===null;$('gameBtns').hidden=!playing;$('touch').hidden=!(playing&&IS_TOUCH);$('bagDock').hidden=!playing;if(!playing){if(G)G.bagOpen=false;$('bagDock').classList.remove('open');}else if(G){$('bagDock').classList.toggle('open',!!G.bagOpen);lastBadge=-1;syncGameBtns();}
+  const playing=id===null,dualBag=id==='shrine'&&SHRINE_DUAL;$('gameBtns').hidden=!playing;$('touch').hidden=!(playing&&IS_TOUCH);$('bagDock').hidden=!(playing||dualBag);if(!playing&&!dualBag){if(G)G.bagOpen=false;$('bagDock').classList.remove('open');}else if(G){$('bagDock').classList.toggle('open',!!G.bagOpen);lastBadge=-1;syncGameBtns();}
 }
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
 
@@ -2404,15 +2411,16 @@ const STASH_MAX=60;let shrineTab='table',craftSlot='arma',lastCraft=null;
 function openShrine(){
   if(!G||G.nearShrine<0)return;state='shrine';PortalSDK.gameplayStop();joy=null;held.atk=false;mouse.down=false;toggleBag(false);
   $('pane').innerHTML='';PANE_ID='shrinePane';shrineTab='table';TABLE.last=null;TABLE.lastMsg='';selItem=null;
-  $('shrineName').textContent=WORLD.shrines[G.nearShrine].n;SHRINE_T=performance.now();showScreen('shrine');renderShrine();sfx('forge_ok');
+  $('shrineName').textContent=WORLD.shrines[G.nearShrine].n;SHRINE_T=performance.now();SHRINE_DUAL=innerWidth>=600;$('shrine').classList.toggle('dual',SHRINE_DUAL);bagSel=null;showScreen('shrine');
+  if(SHRINE_DUAL){G.bagOpen=true;bagTab='bag';$('bagDock').classList.add('open');renderBagTabs();}renderShrine();sfx('forge_ok');
 }
 function closeShrine(){
   const c=G.c,hr=G.P.hp/G.st.hp;G.st=charStats(c);G.P.hp=Math.min(G.st.hp,Math.max(1,G.st.hp*hr));G.P.mp=Math.min(G.P.mp,G.st.mp);
-  $('shrinePane').innerHTML='';PANE_ID='pane';persist();state='play';showScreen(null);PortalSDK.gameplayStart();
+  $('shrinePane').innerHTML='';PANE_ID='pane';persist();if(SHRINE_DUAL){G.bagOpen=false;bagSel=null;$('bagDock').classList.remove('open');$('bagDetail').innerHTML='';}SHRINE_DUAL=false;state='play';showScreen(null);PortalSDK.gameplayStart();
 }
 $('shrineClose').onclick=closeShrine;
 ['table','stash','shop'].forEach(k=>$('st-'+k).onclick=()=>{shrineTab=k;selItem=null;renderShrine();});
-let SHRINE_T=0;cv.addEventListener('pointerdown',()=>{if(state==='shrine'&&performance.now()-SHRINE_T>400)closeShrine();});
+let SHRINE_T=0,SHRINE_DUAL=false;cv.addEventListener('pointerdown',()=>{if(state==='shrine'&&performance.now()-SHRINE_T>400)closeShrine();});
 function renderShrine(){
   renderArenaBox();
   ['table','stash','shop'].forEach(k=>$('st-'+k).setAttribute('aria-selected',String(k===shrineTab)));
@@ -2466,6 +2474,14 @@ function tableRecipe(c){
   if(rar){const gold=Math.round(20*Math.max(...its.map(i=>i.ilvl))*(1+its[0].rar));return {k:'fuse',rar:its[0].rar,gold,both:set,ok:c.gold>=gold};}
   return {k:'bad',msg:'Esa combinación no sirve: las 3 piezas tienen que ser del mismo set o de la misma rareza.'};
 }
+function tablePut(it){TABLE.last=null;TABLE.lastMsg='';const i=TABLE.items.indexOf(it);if(i>=0)TABLE.items.splice(i,1);else if(TABLE.items.length<3)TABLE.items.push(it);else{toast('La mesa tiene 3 lugares');return;}sfx('coin');renderTable();if(SHRINE_DUAL)renderBag();}
+/* En la ventana doble, tocar un objeto de la bolsa hace la acción de la pestaña abierta de Brugo */
+function shrineBagTap(it,where){
+  const c=G.c;if(!it)return false;
+  if(shrineTab==='table'){tablePut(it);return true;}
+  if(shrineTab==='stash'){if(where!=='inv')return false;c.stash=c.stash||[];if(c.stash.length>=STASH_MAX){toast('El depósito está lleno');return true;}c.inv.splice(c.inv.indexOf(it),1);c.stash.push(it);persist();sfx('coin');renderStash();renderBag();return true;}
+  return false;
+}
 function craftNoun(c,sl){return sl==='arma'?(c.race==='mantis'?'Guadaña':'Báculo'):{casco:'Yelmo',coraza:'Coraza',patas:'Grebas',amuleto:'Amuleto'}[sl];}
 function renderTable(){
   const c=CH(),r=tableRecipe(c),its=TABLE.items,el=pane();
@@ -2489,13 +2505,14 @@ function renderTable(){
   if(r.k==='none'&&!TABLE.last)extra='<ul class="mlist"><li><b>1 objeto</b>: refinar +1 (ámbar hasta +6, icor desde +6).</li><li><b>3 piezas del mismo set</b>: pieza nueva del set, un nivel más.</li><li><b>3 de la misma rareza</b>: un objeto de rareza superior.</li></ul>';
   const eq=SLOTS.filter(sl=>c.gear[sl]).map(sl=>slotHtml(c.gear[sl],null,'mq-'+sl,its.includes(c.gear[sl])?'inmesa':'')).join('');
   const inv=c.inv.map((it,i)=>slotHtml(it,null,'mi-'+i,its.includes(it)?'inmesa':'')).join('');
+  const dual=state==='shrine'&&SHRINE_DUAL;if(dual&&r.k==='none'&&!TABLE.last)hint='Toca un objeto de tu bolsa (a la derecha) para ponerlo en la mesa. Tócalo de nuevo para sacarlo.';
   el.innerHTML=`<div class="tgrid"><div><div class="mesa"><div class="mesa-row">${slotBtn(0)}${slotBtn(1)}${slotBtn(2)}<span class="marrow" aria-hidden="true">→</span>${res}</div>
-    <div class="mrecipe">${title}</div>${hint?`<div class="mhint">${hint}</div>`:''}${chips}${req?`<div class="mreq">${req}</div>`:''}${btn?`<div class="mgo">${btn}</div>`:''}${extra}</div></div><div>
+    <div class="mrecipe">${title}</div>${hint?`<div class="mhint">${hint}</div>`:''}${chips}${req?`<div class="mreq">${req}</div>`:''}${btn?`<div class="mgo">${btn}</div>`:''}${extra}</div></div><div ${dual?'hidden':''}>
     <div class="purse" style="margin:0 0 6px"><span><i class="dot gold"></i>${fmt(c.gold)}</span><span><i class="dot amb"></i>${c.amber}</span><span><i class="dot ich"></i>${c.ichorJ}</span></div>
     <div class="eyebrow" style="margin-top:8px">Equipado</div><div class="inv">${eq}</div>
     <div class="section-t" style="margin-top:10px"><span class="eyebrow">Bolsa</span><span class="muted num" style="font-size:13px">${c.inv.length} / ${INV_MAX}</span></div>
     ${c.inv.length?`<div class="inv">${inv}</div>`:'<p class="muted">Vacía.</p>'}</div></div>`;
-  const put=it=>{TABLE.last=null;TABLE.lastMsg='';const i=TABLE.items.indexOf(it);if(i>=0)TABLE.items.splice(i,1);else if(TABLE.items.length<3)TABLE.items.push(it);else{toast('La mesa tiene 3 lugares');return;}sfx('coin');renderTable();};
+  const put=tablePut;
   for(let i=0;i<3;i++){const b=$('ms-'+i);if(b)b.onclick=()=>{if(its[i])put(its[i]);};}
   SLOTS.forEach(sl=>{const b=$('mq-'+sl);if(b)b.onclick=()=>put(c.gear[sl]);});
   c.inv.forEach((it,i)=>{const b=$('mi-'+i);if(b)b.onclick=()=>put(it);});
@@ -2519,14 +2536,14 @@ function renderTable(){
 }
 function renderStash(){
   const c=CH();c.stash=c.stash||[];
-  const inv=c.inv.map((it,i)=>slotHtml(it,null,'xi-'+i)).join(''),st=c.stash.map((it,i)=>slotHtml(it,null,'xd-'+i)).join('');
-  pane().innerHTML=`<p class="muted" style="font-size:14px;margin-top:0">Toca un objeto para pasarlo de la bolsa al depósito o al revés. El depósito es el mismo en todos los santuarios y en la madriguera.</p>
-  <div class="section-t"><h3>Bolsa</h3><span class="muted num" style="font-size:14px">${c.inv.length} / ${INV_MAX}</span></div>
-  ${c.inv.length?`<div class="inv">${inv}</div>`:'<p class="muted">Vacía.</p>'}
+  const dual=state==='shrine'&&SHRINE_DUAL,inv=dual?'':c.inv.map((it,i)=>slotHtml(it,null,'xi-'+i)).join(''),st=c.stash.map((it,i)=>slotHtml(it,null,'xd-'+i)).join('');
+  pane().innerHTML=`<p class="muted" style="font-size:14px;margin-top:0">${dual?'Toca un objeto de tu bolsa (a la derecha) para guardarlo; toca uno del depósito para sacarlo.':'Toca un objeto para pasarlo de la bolsa al depósito o al revés.'} El depósito es el mismo en todos los santuarios y en la madriguera.</p>
+  ${dual?'':`<div class="section-t"><h3>Bolsa</h3><span class="muted num" style="font-size:14px">${c.inv.length} / ${INV_MAX}</span></div>
+  ${c.inv.length?`<div class="inv">${inv}</div>`:'<p class="muted">Vacía.</p>'}`}
   <div class="section-t"><h3>Depósito</h3><span class="muted num" style="font-size:14px">${c.stash.length} / ${STASH_MAX}</span></div>
   ${c.stash.length?`<div class="inv">${st}</div>`:'<p class="muted">Vacío.</p>'}`;
-  c.inv.forEach((_,i)=>$('xi-'+i).onclick=()=>{if(c.stash.length>=STASH_MAX){toast('El depósito está lleno');return;}c.stash.push(c.inv.splice(i,1)[0]);persist();renderStash();});
-  c.stash.forEach((_,i)=>$('xd-'+i).onclick=()=>{if(c.inv.length>=INV_MAX){toast('La bolsa está llena');return;}c.inv.push(c.stash.splice(i,1)[0]);persist();renderStash();});
+  if(!dual)c.inv.forEach((_,i)=>$('xi-'+i).onclick=()=>{if(c.stash.length>=STASH_MAX){toast('El depósito está lleno');return;}c.stash.push(c.inv.splice(i,1)[0]);persist();renderStash();});
+  c.stash.forEach((_,i)=>$('xd-'+i).onclick=()=>{if(c.inv.length>=INV_MAX){toast('La bolsa está llena');return;}c.inv.push(c.stash.splice(i,1)[0]);persist();renderStash();if(dual)renderBag();});
 }
 
 /* ---------- Madriguera ---------- */
