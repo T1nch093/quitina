@@ -4,15 +4,16 @@ RPG de acción oscuro para navegador. Criaturas insecto en un reino subterráneo
 
 ## Cómo jugar
 
-Abre `index.html` en el navegador. No necesita instalación ni servidor.
+Abre `index.html` en el navegador. No necesita instalación ni servidor. La carpeta `assets/` tiene el arte conceptual que usa la portada.
 
 - **Teclado y mouse:** WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, I bolsa, C poderes, H caza automática, M mapa grande, B volver a la madriguera, Esc pausa.
 - **Celular:** arrastra en la mitad izquierda para moverte y usa los botones de la derecha.
 
-## Contenido de la versión 0.5
+## Contenido de la versión 0.6
 
 | Sistema | Estado |
 |---|---|
+| Personaje | Nombre propio al crear la criatura, placa con nombre y barras de vida y energía sobre la cabeza, y círculo de selección bajo los pies. La Mantis es una guerrera humanoide (hombreras, brazales con hebillas, cinturón, bolso y capa en la forma adulta) basada en el arte conceptual. |
 | Razas | Mantis (guerrera) y Polilla (hechicera) jugables. Escarabajo y Avispa anunciadas. La Mantis tiene Torbellino, Embestida y Furia (+70% de daño por 4 s). El golpe simple hace 70% del daño base. |
 | Metamorfosis | 3 etapas por raza (nivel 6 y 12). En la etapa adulta se elige una de dos ramas. |
 | Región I: Raíces podridas | Mapa abierto de 4800 × 3600 con santuario de entrada y 5 zonas por nivel recomendado (1–4 a 13–16). Las criaturas reaparecen a los 9–14 s, las élites al minuto y el jefe (Ciempiés de Hueso) cada 5 minutos. Las zonas descubiertas habilitan el viaje directo. |
