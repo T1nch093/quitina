@@ -198,9 +198,22 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 #tS3{width:58px;height:58px;right:22px;bottom:110px}
 #tPot{width:46px;height:46px;right:150px;bottom:120px;border-color:var(--rust)!important}
 #gameBtns{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:4;display:flex;gap:8px}
-#gameBtns button{padding:8px 12px;background:rgba(20,17,13,.78)}
-#gameBtns button.on{border-color:var(--biolum);color:var(--biolum)}
-#bag{position:fixed;right:16px;top:calc(env(safe-area-inset-top,0px) + 60px);bottom:calc(env(safe-area-inset-bottom,0px) + 16px);width:min(380px,calc(100% - 32px));z-index:6;overflow-y:auto;padding:16px;background:rgba(28,24,19,.96)}
+button.icon{width:44px;height:44px;padding:0;display:grid;place-items:center;background:rgba(20,17,13,.8)}
+button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#botBtn.on{border-color:var(--biolum);color:var(--biolum);box-shadow:0 0 12px rgba(88,210,192,.35)}
+#botBtn.on svg{animation:spin 2.4s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* Bolsa: cajón lateral con pestaña */
+#bagDock{position:fixed;top:0;right:0;bottom:0;width:min(390px,calc(100vw - 52px));z-index:6;transform:translateX(100%);transition:transform .22s ease-out;pointer-events:none}
+#bagDock.open{transform:translateX(0)}
+#bagDock .bagtab{position:absolute;left:-52px;top:50%;transform:translateY(-50%);width:52px;height:64px;padding:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;border-right:0;background:rgba(28,24,19,.92);pointer-events:auto;border-radius:6px 0 0 6px}
+#bagDock .bagtab .key{font-size:11px;color:var(--dim);font-weight:700;letter-spacing:.1em}
+#bagDock.open .bagtab{border-color:var(--amber);color:var(--amber-hi)}
+#bagDock .badge{position:absolute;top:-6px;left:-6px;min-width:20px;height:20px;padding:0 5px;border-radius:10px;background:var(--amber);color:#1a120a;font-size:12px;font-weight:700;display:grid;place-items:center}
+#bag{position:absolute;inset:0;overflow-y:auto;padding:16px;padding-block:calc(env(safe-area-inset-top,0px) + 16px) calc(env(safe-area-inset-bottom,0px) + 16px);background:rgba(28,24,19,.97);border-right:0;pointer-events:auto;box-shadow:-12px 0 40px rgba(0,0,0,.6)}
+#bagDock:not(.open) #bag{visibility:hidden;transition:visibility 0s .22s}
+@media (pointer:coarse){#bagDock .bagtab .key{display:none}}
+@media (prefers-reduced-motion:reduce){#bagDock{transition:none}#botBtn.on svg{animation:none}}
 #bag .bag-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
 #bag .bag-head button{padding:6px 10px;font-size:14px}
 .bag-tabs{display:flex;gap:4px}
@@ -250,8 +263,10 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 
 <canvas id="cv" aria-label="Quitina"></canvas>
 <div id="safe"></div>
-<div id="gameBtns" hidden><button id="bagBtn" title="Bolsa (I)">Bolsa</button><button id="botBtn" title="Caza automática (H)">Auto</button><button id="pauseBtn" aria-label="Pausa" title="Pausa (Esc)">Pausa</button></div>
-<aside id="bag" class="frame" hidden aria-label="Bolsa">
+<div id="gameBtns" hidden><button id="botBtn" class="icon" aria-label="Caza automática" aria-pressed="false" title="Caza automática (H)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9"/><path d="M4 3.5V8h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.9"/><path d="M20 20.5V16h-4.5"/></svg></button><button id="pauseBtn" class="icon" aria-label="Menú y pausa" title="Menú (Esc)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button></div>
+<div id="bagDock" hidden>
+<button id="bagBtn" class="bagtab" aria-label="Bolsa" aria-expanded="false" title="Bolsa (I)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7.5V6a3.5 3.5 0 0 1 7 0v1.5"/><path d="M4.8 7.5h14.4l-1.1 11.6a2.2 2.2 0 0 1-2.2 2H8.1a2.2 2.2 0 0 1-2.2-2z"/><path d="M9 12.5h6"/></svg><span class="key">I</span><span class="badge" id="bagBadge" hidden></span></button>
+<aside id="bag" class="frame" aria-label="Bolsa">
   <div class="bag-head"><div class="bag-tabs" role="tablist"><button role="tab" id="bagTabBag" aria-selected="true">Bolsa · I</button><button role="tab" id="bagTabPow" aria-selected="false">Poderes · C</button></div><button id="bagClose" aria-label="Cerrar">Cerrar</button></div>
   <div id="bagPowWrap" hidden></div>
   <div id="bagMain">
@@ -263,6 +278,7 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
   <div class="eyebrow" style="margin:16px 0 6px">Botín reciente</div><ul class="recent" id="bagRecent"></ul>
   </div>
 </aside>
+</div>
 <div id="touch" hidden>
   <button id="tPot" aria-label="Poción">Poción</button>
   <button id="tS3">3</button>
@@ -355,7 +371,8 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 <!-- PAUSA -->
 <section class="screen center dim-bg modal" id="pause" hidden>
   <div class="frame box">
-    <h2>En pausa</h2>
+    <div class="eyebrow">Juego en pausa</div>
+    <h2 style="margin-top:4px">Menú</h2>
     <div class="stack" style="margin-top:18px">
       <button class="main" id="resumeBtn">Continuar</button>
       <button id="soundBtn">Sonido: sí</button>
@@ -379,7 +396,7 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.8 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.9 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -1565,7 +1582,7 @@ function render(){
 let MINIMAP=true;
 function drawMinimap(){
   if(!MINIMAP||!G)return;
-  const mw=IS_TOUCH?128:184,mh=mw*G.H/G.W,x=W-mw-16,y=SAFE_T+62,s=mw/G.W,P=G.P;
+  const mw=W<600?110:IS_TOUCH?128:184,mh=mw*G.H/G.W,x=W-mw-16,y=SAFE_T+66,s=mw/G.W,P=G.P;
   cx.save();
   cx.fillStyle='rgba(10,8,6,.82)';cx.fillRect(x-4,y-4,mw+8,mh+8);cx.strokeStyle='#6b5434';cx.lineWidth=1.5;cx.strokeRect(x-4.5,y-4.5,mw+9,mh+9);
   cx.fillStyle='#d9a03c';for(const [a,b] of [[x-6,y-6],[x+mw+2,y-6],[x-6,y+mh+2],[x+mw+2,y+mh+2]])cx.fillRect(a,b,4,4);
@@ -1595,20 +1612,21 @@ function drawHUD(cam){
   const P=G.P,st=G.st,c=G.c,top=SAFE_T,bot=H-SAFE_B;
   cx.textBaseline='alphabetic';
   const z=G.zone>=0?WORLD.zones[G.zone]:null,inSafe=Math.hypot(P.x-WORLD.entry.x,P.y-WORLD.entry.y)<150;
-  cx.font='400 20px "IM Fell English SC",serif';cx.textAlign='left';cx.fillStyle='#ddd2b8';
-  cx.fillText(inSafe?'Santuario de ámbar':z?z.name:WORLD.name,16,top+30);
-  cx.font='600 15px "Barlow Semi Condensed",sans-serif';cx.fillStyle=z&&c.lvl<z.lv[0]?'#e2806a':'#9c907a';
-  cx.fillText(inSafe?'Recuperas vida y energía':z?'Nivel recomendado '+z.lv.join('–')+(c.lvl<z.lv[0]?' · peligroso':''):'Tierra de paso',16,top+52);
-  cx.fillStyle='#9c907a';cx.fillText('Expedición '+fmtT(G.t)+'  ·  '+G.kills+' criaturas',16,top+72);
+  const NARROW=W<600,tw=NARROW?W-110-56:420,topLine=Math.min(tw,W-140);
+  cx.font='400 '+(NARROW?18:20)+'px "IM Fell English SC",serif';cx.textAlign='left';cx.fillStyle='#ddd2b8';
+  cx.fillText(inSafe?'Santuario de ámbar':z?z.name:WORLD.name,16,top+30,topLine);
+  cx.font='600 '+(NARROW?14:15)+'px "Barlow Semi Condensed",sans-serif';cx.fillStyle=z&&c.lvl<z.lv[0]?'#e2806a':'#9c907a';
+  cx.fillText(inSafe?'Recuperas vida y energía':z?'Nivel recomendado '+z.lv.join('–')+(c.lvl<z.lv[0]?' · peligroso':''):'Tierra de paso',16,top+52,tw);
+  cx.fillStyle='#9c907a';cx.fillText('Expedición '+fmtT(G.t)+'  ·  '+G.kills+' criaturas',16,top+72,tw);
   // jefe
-  const b=bossNear();if(b){const bw=Math.min(460,W-40),bx=(W-bw)/2,by=top+100;cx.fillStyle='#0d0b09';cx.fillRect(bx-2,by-2,bw+4,14);cx.fillStyle='#9b3322';cx.fillRect(bx,by,bw*Math.max(0,b.hp/b.max),10);cx.strokeStyle='#6b5434';cx.strokeRect(bx-2,by-2,bw+4,14);
+  const b=bossNear();if(b){const bw=Math.min(460,W-40),bx=(W-bw)/2,by=top+(NARROW?190:100);cx.fillStyle='#0d0b09';cx.fillRect(bx-2,by-2,bw+4,14);cx.fillStyle='#9b3322';cx.fillRect(bx,by,bw*Math.max(0,b.hp/b.max),10);cx.strokeStyle='#6b5434';cx.strokeRect(bx-2,by-2,bw+4,14);
     cx.font='400 18px "IM Fell English SC",serif';cx.textAlign='center';cx.fillStyle='#ddd2b8';cx.fillText(FOES.ciempies.n+' · Nv '+b.lvl,W/2,by-8);}
   // indicadores de estado
   let ix=W/2;const pills=[];
   if(G.bot.on)pills.push(['CAZA AUTOMÁTICA','#58d2c0']);
   if(P.fury>0)pills.push(['FURIA '+P.fury.toFixed(1)+' s','#ff6a3a']);
   if(c.pts>0||c.sp>0)pills.push(['PUNTOS PARA REPARTIR'+(IS_TOUCH?'':' · C'),'#f0c46a']);
-  if(pills.length){cx.font='700 13px "Barlow Semi Condensed",sans-serif';const ws=pills.map(p=>cx.measureText(p[0]).width+22);let x=W/2-(ws.reduce((a,b)=>a+b,0)+(ws.length-1)*8)/2;const y=top+(b?126:16);
+  if(pills.length){cx.font='700 13px "Barlow Semi Condensed",sans-serif';const ws=pills.map(p=>cx.measureText(p[0]).width+22);let x=W/2-(ws.reduce((a,b)=>a+b,0)+(ws.length-1)*8)/2;const y=NARROW?top+(b?214:162):top+(b?126:16);
     pills.forEach((p,i)=>{cx.fillStyle='rgba(10,8,6,.8)';cx.fillRect(x,y,ws[i],24);cx.strokeStyle=p[1];cx.lineWidth=1.5;cx.strokeRect(x+.5,y+.5,ws[i]-1,23);cx.fillStyle=p[1];cx.textAlign='center';cx.fillText(p[0],x+ws[i]/2,y+17);x+=ws[i]+8;});}
   // retorno
   if(G.recall){const w=220,x=W/2-w/2,y=H*.62;cx.fillStyle='rgba(10,8,6,.85)';cx.fillRect(x-2,y-2,w+4,14);cx.fillStyle='#d9a03c';cx.fillRect(x,y,w*(1-G.recall/2.5),10);cx.font='600 14px "Barlow Semi Condensed",sans-serif';cx.textAlign='center';cx.fillStyle='#ddd2b8';cx.fillText('Volviendo a la madriguera',W/2,y-8);}
@@ -1714,7 +1732,8 @@ $('abandonBtn').onclick=()=>{returnHub();};
 $('botBtn').onclick=()=>{if(state==='play')toggleBot();};
 $('bagBtn').onclick=()=>{if(state==='play')openPanel('bag');};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play'&&!G.bot.on)pauseGame();});
-function syncGameBtns(){if(!G)return;$('botBtn').classList.toggle('on',G.bot.on);$('botBtn').textContent=G.bot.on?'Auto: sí':'Auto';$('bagBtn').classList.toggle('on',!!G.bagOpen);}
+function syncGameBtns(){if(!G)return;$('botBtn').classList.toggle('on',G.bot.on);$('botBtn').setAttribute('aria-pressed',String(G.bot.on));$('bagBtn').setAttribute('aria-expanded',String(!!G.bagOpen));}
+let lastBadge=-1;function syncBadge(){if(!G)return;const n=G.c.pts+G.c.sp;if(n===lastBadge)return;lastBadge=n;$('bagBadge').hidden=!n;$('bagBadge').textContent=n;}
 
 /* ---------- Ajustes del asistente de caza ---------- */
 function syncBotForm(){$('botRadius').value=String(BOT.radius);$('botRar').value=String(BOT.minRar);$('botPot').value=String(BOT.potAt);$('botSkills').checked=BOT.skills;$('botHome').checked=BOT.homeNoPots;$('botMats').checked=BOT.mats;}
@@ -1723,7 +1742,7 @@ function syncBotForm(){$('botRadius').value=String(BOT.radius);$('botRar').value
 
 /* ---------- Bolsa en juego (I / Tab) ---------- */
 let BAG_DIRTY=false,bagSel=null,bagT=0,bagTab='bag';
-function toggleBag(open){if(!G)return;G.bagOpen=open===undefined?!G.bagOpen:open;$('bag').hidden=!G.bagOpen;if(G.bagOpen){bagSel=null;renderBagTabs();}syncGameBtns();}
+function toggleBag(open){if(!G)return;G.bagOpen=open===undefined?!G.bagOpen:open;$('bagDock').classList.toggle('open',G.bagOpen);if(G.bagOpen){bagSel=null;renderBagTabs();}syncGameBtns();}
 function openPanel(tab){if(!G)return;if(G.bagOpen&&bagTab===tab){toggleBag(false);return;}bagTab=tab;toggleBag(true);}
 function renderBagTabs(){$('bagTabBag').setAttribute('aria-selected',String(bagTab==='bag'));$('bagTabPow').setAttribute('aria-selected',String(bagTab==='pow'));$('bagMain').hidden=bagTab!=='bag';$('bagPowWrap').hidden=bagTab!=='pow';BAG_DIRTY=true;renderBag();}
 $('bagTabBag').onclick=()=>{bagTab='bag';renderBagTabs();};$('bagTabPow').onclick=()=>{bagTab='pow';renderBagTabs();};
@@ -1779,7 +1798,7 @@ function checkEvolve(after){
 const SCREENS=['title','create','hub','result','evolve','pause'];
 function showScreen(id){
   for(const s of SCREENS)$(s).hidden=s!==id;
-  const playing=id===null;$('gameBtns').hidden=!playing;$('touch').hidden=!(playing&&IS_TOUCH);if(!playing){$('bag').hidden=true;if(G)G.bagOpen=false;}else if(G){$('bag').hidden=!G.bagOpen;syncGameBtns();}
+  const playing=id===null;$('gameBtns').hidden=!playing;$('touch').hidden=!(playing&&IS_TOUCH);$('bagDock').hidden=!playing;if(!playing){if(G)G.bagOpen=false;$('bagDock').classList.remove('open');}else if(G){$('bagDock').classList.toggle('open',!!G.bagOpen);lastBadge=-1;syncGameBtns();}
 }
 function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}
 
@@ -1977,7 +1996,7 @@ function renderShop(){
 let last=performance.now(),portraitT=0;
 function frame(now){
   const dt=Math.min(.05,(now-last)/1000);last=now;
-  if(state==='play'&&G){update(dt);if(G&&G.bagOpen){bagT+=dt;if(BAG_DIRTY&&bagT>.3||bagT>1){bagT=0;renderBag();}}}
+  if(state==='play'&&G){syncBadge();update(dt);if(G&&G.bagOpen){bagT+=dt;if(BAG_DIRTY&&bagT>.3||bagT>1){bagT=0;renderBag();}}}
   render();syncTouch();
   if(state==='hub'){portraitT+=dt;if(portraitT>.06){portraitT=0;const c=CH();if(c)drawPortrait($('portrait'),c,null,null,3);}}
   requestAnimationFrame(frame);

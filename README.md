@@ -9,7 +9,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 - **Teclado y mouse:** WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, I bolsa, C poderes, H caza automática, M mapa grande, B volver a la madriguera, Esc pausa.
 - **Celular:** arrastra en la mitad izquierda para moverte y usa los botones de la derecha.
 
-## Contenido de la versión 0.8
+## Contenido de la versión 0.9
 
 | Sistema | Estado |
 |---|---|
@@ -21,8 +21,9 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 | Atributos | 4 puntos por nivel para Fuerza, Caparazón, Agilidad y Esencia. Reparto automático con receta por raza y reinicio pagando oro. |
 | Habilidades | Rango 1 a 5, con 1 punto cada 3 niveles. La habilidad 2 se desbloquea en nivel 3 y la 3 en nivel 6. Los rangos 3 y 5 cambian el funcionamiento (radio, aturdimiento, duración, robo de vida). |
 | Caza automática | Estilo MU Helper (tecla H): caza alrededor del punto de activación, usa habilidades, recoge botín según filtros y toma pociones. Se configura en la pausa. |
+| Interfaz | Íconos en lugar de texto: caza automática (flechas en círculo, gira mientras está activa) y menú (tres líneas, pausa el juego). Textos, minimapa e indicadores se reacomodan en pantallas angostas. |
 | Comparación rápida | En las miniaturas del inventario, flecha verde si el objeto es de mejor nivel que lo equipado en ese casillero (nivel, luego rareza, luego refinado) y roja si es peor. Los atributos los decide el jugador con el detalle comparativo. |
-| Bolsa en juego | Tecla I o Tab: oro, pociones, materiales, equipo, inventario completo y botín reciente. Permite equipar y tirar objetos sin salir del mapa. |
+| Bolsa en juego | Cajón que se despliega desde una pestaña con ícono en el borde derecho (o con la tecla I / Tab), con aviso de puntos sin repartir: oro, pociones, materiales, equipo, inventario completo y botín reciente. Permite equipar y tirar objetos sin salir del mapa. |
 | Muerte | Revivir con anuncio sin penalidad, o reaparecer en el santuario perdiendo 10% del nivel en experiencia. |
 | Equipo | 6 slots (arma, casco, coraza, patas, amuleto, alas) y 5 rarezas: Común, Raro, Épico, Legendario y Mítico. |
 | Sets | 5 sets (Quitina, Ámbar, Hierro negro, Viuda negra, Ciempiés de Hueso) que se ven sobre el personaje. 3 piezas dan un bono propio; 5 piezas reducen el enfriamiento de habilidades (10% a 25%). El set del Ciempiés solo cae del jefe. |
