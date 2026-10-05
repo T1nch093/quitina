@@ -9,16 +9,19 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor.
 - **Teclado y mouse:** WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, Esc pausa.
 - **Celular:** arrastra en la mitad izquierda para moverte y usa los botones de la derecha.
 
-## Contenido de la versión 0.1
+## Contenido de la versión 0.2
 
 | Sistema | Estado |
 |---|---|
 | Razas | Mantis (guerrera) y Polilla (hechicera) jugables. Escarabajo y Avispa anunciadas. |
 | Metamorfosis | 3 etapas por raza (nivel 6 y 12). En la etapa adulta se elige una de dos ramas. |
 | Región I: Raíces podridas | 5 niveles, élites, jefe final (Ciempiés de Hueso) y 3 estrellas por nivel. |
-| Equipo | 6 slots (arma, casco, coraza, patas, amuleto, alas) y 4 rarezas. |
+| Equipo | 6 slots (arma, casco, coraza, patas, amuleto, alas) y 5 rarezas: Común, Raro, Épico, Legendario y Mítico. |
 | Forja | Refinado de +0 a +6 con ámbar (sin riesgo) y de +6 a +9 con icor (puede fallar). Brillo a partir de +4 y +7. |
-| Fusión | 3 objetos de la misma rareza se funden en uno de rareza superior. |
+| Fusión | 3 objetos de la misma rareza se funden en uno de rareza superior, hasta Mítico. |
+| Botín | Nombre y nivel del objeto en el suelo, con color por rareza. Tabla de probabilidades en el objeto `DROP` y visible en el Mercader. |
+| Minimapa | Enemigos, élites, jefe, botín y portal. Tecla M para ocultarlo. |
+| Gráficos | Sprites sombreados, suelo y obstáculos detallados, iluminación a resolución completa. |
 | Mercader | Pociones, ámbar e icor. Venta de objetos. |
 | Guardado | `localStorage` del navegador. |
 
