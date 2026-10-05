@@ -9,7 +9,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 - **Teclado y mouse:** WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, I bolsa, C poderes, H caza automática, M mapa grande, B volver a la madriguera, Esc pausa.
 - **Celular:** arrastra en la mitad izquierda para moverte y usa los botones de la derecha.
 
-## Contenido de la versión 0.10
+## Contenido de la versión 0.11
 
 | Sistema | Estado |
 |---|---|
@@ -24,6 +24,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 | Artesano | Funde las 3 piezas más débiles de un set + oro + ámbar en una pieza nueva de ese set (arma, casco, coraza, patas o amuleto), un nivel por encima de la mejor, con la rareza más alta y 25% de chance de subirla. |
 | Depósito | Baúl de 60 lugares compartido entre santuarios y madriguera. |
 | Caza automática | Estilo MU Helper (tecla H): caza alrededor del punto de activación, usa habilidades, recoge botín según filtros y toma pociones. Se configura en la pausa. |
+| Calidad de imagen | Resolución nativa de la pantalla (hasta 3×) y sprites a 300 px. Modo automático que baja la resolución si no llega a ~45 cuadros por segundo; también máxima y ahorro de batería desde el menú. Zoom más cercano en celulares. |
 | Interfaz | Íconos en lugar de texto: caza automática (flechas en círculo, gira mientras está activa) y menú (tres líneas, pausa el juego). Textos, minimapa e indicadores se reacomodan en pantallas angostas. |
 | Comparación rápida | En las miniaturas del inventario, flecha verde si el objeto es de mejor nivel que lo equipado en ese casillero (nivel, luego rareza, luego refinado) y roja si es peor. Los atributos los decide el jugador con el detalle comparativo. |
 | Bolsa en juego | Cajón que se despliega desde una pestaña con ícono en el borde derecho (o con la tecla I / Tab), con aviso de puntos sin repartir: oro, pociones, materiales, equipo, inventario completo y botín reciente. Permite equipar y tirar objetos sin salir del mapa. |

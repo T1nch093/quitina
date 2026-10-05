@@ -211,7 +211,7 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 .slotpick button[aria-pressed="true"]{border-color:var(--amber);color:var(--amber-hi)}
 .crafted{margin-top:12px;padding:12px;border:1px solid var(--amber);background:rgba(217,160,60,.08)}
 .talk{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 128px);z-index:4;font-family:var(--f-display);font-size:18px;font-weight:400;padding:10px 18px;border-color:var(--amber);color:var(--amber-hi);background:rgba(28,24,19,.9);box-shadow:0 0 16px rgba(217,160,60,.3)}
-@media (pointer:coarse){.talk .k{display:none}.talk{bottom:calc(env(safe-area-inset-bottom,0px) + 236px)}}
+@media (pointer:coarse){.talk .k{display:none}.talk{bottom:calc(env(safe-area-inset-bottom,0px) + 236px);font-size:15px;padding:7px 14px}}
 #gameBtns{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:4;display:flex;gap:8px}
 button.icon{width:44px;height:44px;padding:0;display:grid;place-items:center;background:rgba(20,17,13,.8)}
 button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -408,6 +408,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
       <button class="main" id="resumeBtn">Continuar</button>
       <button id="soundBtn">Sonido: sí</button>
       <button id="artBtn">Mantis: arte</button>
+      <button id="qualBtn">Calidad: automática</button>
       <button class="danger" id="abandonBtn">Volver a la madriguera</button>
     </div>
     <div class="botset">
@@ -427,7 +428,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.10 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.11 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -599,12 +600,14 @@ function charStats(c){
 /* ---------- Canvas ---------- */
 const cv=$('cv'),cx=cv.getContext('2d');
 let W=0,H=0,DPR=1,DD=1,ZOOM=1,SAFE_T=0,SAFE_B=0;
+/* Calidad de imagen: resolución nativa de la pantalla (hasta 3x); en modo automático baja si el equipo no llega a ~45 cuadros por segundo */
+const QUAL={mode:SAVE.quality||'auto',cap:SAVE.quality==='low'?1.5:3,scale:1,acc:0,n:0,cool:0};
 const dark=document.createElement('canvas'),dx=dark.getContext('2d');
 function resize(){
-  DPR=Math.min(2,window.devicePixelRatio||1);W=innerWidth;H=innerHeight;
+  DPR=Math.min(QUAL.cap,window.devicePixelRatio||1)*QUAL.scale;W=innerWidth;H=innerHeight;
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
-  DD=DPR;dark.width=cv.width;dark.height=cv.height;
-  ZOOM=Math.max(.6,Math.min(1.05,Math.min(W,H)/640));
+  DD=Math.max(1,DPR*.5);dark.width=Math.round(W*DD);dark.height=Math.round(H*DD); // la sombra es un degradado suave: media resolución alcanza
+  ZOOM=Math.max(.74,Math.min(1.1,Math.min(W,H)/560));
   const sf=getComputedStyle($('safe'));SAFE_T=parseFloat(sf.paddingTop)||0;SAFE_B=parseFloat(sf.paddingBottom)||0;
 }
 addEventListener('resize',resize);resize();
@@ -896,7 +899,7 @@ function drawPolilla(g,stage,branch,t,anim,glow,wings,gear){
   g.restore();
 }
 /* --- Sprites de la Mantis (arte de Martin): atlas WebP + metadatos [x,y,ancho,alto,pieX,pieY] --- */
-const SPR={meta:{"ref":200,"anims":{"idle":[[2,2,136,207,43,203],[140,2,131,208,42,204],[273,2,132,205,39,201],[407,2,130,210,36,206]],"walk":[[2,214,131,203,94,199],[135,214,130,207,62,203],[267,214,127,200,57,196],[396,214,124,198,69,194],[522,214,133,197,100,193],[657,214,124,195,45,191],[783,214,131,202,45,198],[916,214,125,200,66,196]],"atk1":[[2,423,148,199,33,193],[152,423,176,200,42,193],[330,423,229,201,44,194],[561,423,227,194,40,187],[790,423,189,196,46,190],[981,423,181,204,38,197]],"atk2":[[2,629,138,192,19,185],[142,629,173,169,38,162],[317,629,171,192,106,185],[490,629,148,220,29,214],[640,629,171,195,28,188],[813,629,161,197,32,190]],"atk3":[[2,851,145,177,42,171],[149,851,191,176,74,169],[342,851,209,173,82,166],[553,851,217,163,102,156],[772,851,218,164,96,157],[992,851,204,162,135,155],[1198,851,154,181,42,174]],"hit":[[2,1034,166,177,46,168],[170,1034,159,182,40,173]],"death":[[2,1218,146,149,44,142],[150,1218,148,132,50,125],[300,1218,187,146,109,139],[489,1218,218,111,166,104],[709,1218,208,101,148,95],[919,1218,218,75,149,68],[1139,1218,206,66,139,59]]}},img:new Image(),ok:false};
+const SPR={meta:{"ref":300,"anims":{"idle":[[2,2,203,311,65,305],[207,2,197,313,64,307],[406,2,198,308,59,302],[606,2,195,315,55,309]],"walk":[[2,319,196,305,141,300],[200,319,195,310,93,305],[397,319,190,300,87,295],[589,319,186,297,104,292],[777,319,200,295,151,289],[979,319,186,293,67,287],[1167,319,196,302,68,297],[1365,319,187,300,98,294]],"atk1":[[2,631,222,299,50,290],[226,631,265,301,63,292],[493,631,345,303,66,293],[840,631,341,291,60,281],[1183,631,284,295,70,286],[1469,631,272,307,58,297]],"atk2":[[2,940,207,289,29,279],[211,940,261,255,57,245],[474,940,257,289,160,279],[733,940,222,332,44,323],[957,940,257,293,42,283],[1216,940,242,297,48,287]],"atk3":[[2,1274,219,266,64,257],[223,1274,288,265,111,255],[513,1274,314,261,123,251],[829,1274,326,245,154,235],[1157,1274,328,247,144,237],[1487,1274,307,243,205,233],[1796,1274,232,272,64,262]],"hit":[[2,1548,249,266,70,253],[253,1548,240,273,61,260]],"death":[[2,1823,220,224,66,214],[224,1823,222,199,76,188],[448,1823,282,220,164,210],[732,1823,328,167,250,157],[1062,1823,312,151,223,142],[1376,1823,328,113,225,103],[1706,1823,311,100,209,90]]}},img:new Image(),ok:false};
 SPR.img.onload=()=>{SPR.ok=true;};SPR.img.src='assets/mantis-sprites.webp';
 const SPR_FPS={idle:6,walk:12,hit:10,death:9},SPR_H=128; // altura en el mundo de la Mantis adulta
 function useMantisArt(c){return c.race==='mantis'&&SPR.ok&&SAVE.mantisArt!==false;}
@@ -915,7 +918,7 @@ function drawMantisSprite(g,P,c,fy){
   else{name='idle';f=Math.floor(G.t*SPR_FPS.idle)%A.idle.length;}
   const fr=A[name][f];if(!fr)return;
   const [x,y,w,h,ax,ay]=fr,s=SPR_H/SPR.meta.ref*[.8,.9,1][c.stage];
-  g.save();g.scale(P.face,1);
+  g.save();g.scale(P.face,1);g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
   const gl=heroGlow(c);if(gl){g.shadowColor=gl[0];g.shadowBlur=gl[1];}
   g.drawImage(SPR.img,x,y,w,h,-ax*s,fy-ay*s,w*s,h*s);g.shadowBlur=0;
   if(P.ifr>.3&&!G.dead){g.globalCompositeOperation='lighter';g.globalAlpha=.45;g.drawImage(SPR.img,x,y,w,h,-ax*s,fy-ay*s,w*s,h*s);g.globalAlpha=1;g.globalCompositeOperation='source-over';}
@@ -1069,7 +1072,7 @@ function buildWorld(){ // determinístico: el mismo mapa en cada expedición
 function enterWorld(start){
   const c=CH(),st=charStats(c);if(!WORLD_CACHE)WORLD_CACHE=buildWorld();const wd=WORLD_CACHE;
   wd.spawns.forEach(s=>{s.mob=null;s.timer=0;});
-  let sx=WORLD.entry.x+70,sy=WORLD.entry.y-40;
+  let sx=WORLD.entry.x-70,sy=WORLD.entry.y+70;
   if(start>=0){const z=WORLD.zones[start];sx=z.x-z.r*.75;sy=z.y+z.r*.35;}
   G={c,st,t:0,W:WORLD.W,H:WORLD.H,obst:wd.obst,spawns:wd.spawns,decor:wd.decor,foes:[],shots:[],eshots:[],fx:[],parts:[],decals:[],texts:[],drops:[],
     P:{x:sx,y:sy,r:16,hp:st.hp,mp:st.mp,face:1,aim:0,atkCd:0,anim:0,cds:[0,0,0],fury:0,ifr:0,dash:null,potCd:0,walk:0,aimMove:0},
@@ -1761,7 +1764,7 @@ function drawBackdrop(){
 /* ======================================================================
    PAUSA, MUERTE, RETORNO Y BOLSA
    ====================================================================== */
-function pauseGame(){if(state!=='play')return;state='pause';PortalSDK.gameplayStop();$('soundBtn').textContent='Sonido: '+(SAVE.sound?'sí':'no');syncArtBtn();syncBotForm();showScreen('pause');$('resumeBtn').focus();}
+function pauseGame(){if(state!=='play')return;state='pause';PortalSDK.gameplayStop();$('soundBtn').textContent='Sonido: '+(SAVE.sound?'sí':'no');syncArtBtn();syncQualBtn();syncBotForm();showScreen('pause');$('resumeBtn').focus();}
 function resumeGame(){state='play';showScreen(null);PortalSDK.gameplayStart();}
 let resultMode='summary';
 function die(){
@@ -1791,7 +1794,7 @@ function returnHub(){
   showScreen('result');setTimeout(()=>$('rHub').focus(),50);
 }
 $('rNext').onclick=()=>{ // reaparecer en el santuario
-  if(resultMode!=='dead')return;applyPenalty();const P=G.P;G.dead=false;P.hp=G.st.hp;P.mp=G.st.mp;P.x=WORLD.entry.x+70;P.y=WORLD.entry.y-40;P.ifr=2;G.eshots=[];
+  if(resultMode!=='dead')return;applyPenalty();const P=G.P;G.dead=false;P.hp=G.st.hp;P.mp=G.st.mp;P.x=WORLD.entry.x-70;P.y=WORLD.entry.y+70;P.ifr=2;G.eshots=[];
   persist();state='play';showScreen(null);PortalSDK.gameplayStart();banner('Santuario de ámbar','Vuelves a respirar');};
 $('rHub').onclick=()=>{if(resultMode==='dead'){applyPenalty();persist();returnHub();return;}PortalSDK.commercialBreak(()=>{G=null;if(!checkEvolve())openHub();});};
 $('rRevive').onclick=()=>PortalSDK.rewardedBreak(ok=>{if(!ok)return;G.dead=false;G.penalty=0;G.P.hp=G.st.hp*.6;G.P.ifr=2.5;
@@ -1800,6 +1803,8 @@ $('rRevive').onclick=()=>PortalSDK.rewardedBreak(ok=>{if(!ok)return;G.dead=false
 $('resumeBtn').onclick=resumeGame;
 $('pauseBtn').onclick=pauseGame;
 $('artBtn').onclick=()=>{SAVE.mantisArt=SAVE.mantisArt===false;persist();syncArtBtn();};
+function syncQualBtn(){$('qualBtn').textContent='Calidad: '+({auto:'automática',high:'máxima',low:'ahorro de batería'})[QUAL.mode];}
+$('qualBtn').onclick=()=>{QUAL.mode=QUAL.mode==='auto'?'high':QUAL.mode==='high'?'low':'auto';QUAL.cap=QUAL.mode==='low'?1.5:3;QUAL.scale=1;SAVE.quality=QUAL.mode;persist();syncQualBtn();resize();};
 function syncArtBtn(){$('artBtn').textContent='Mantis: '+(SAVE.mantisArt===false?'dibujo clásico':'arte');}
 $('soundBtn').onclick=()=>{SAVE.sound=!SAVE.sound;persist();$('soundBtn').textContent='Sonido: '+(SAVE.sound?'sí':'no');};
 $('abandonBtn').onclick=()=>{returnHub();};
@@ -2129,7 +2134,10 @@ function renderShop(){
    ====================================================================== */
 let last=performance.now(),portraitT=0;
 function frame(now){
-  const dt=Math.min(.05,(now-last)/1000);last=now;
+  const raw=(now-last)/1000,dt=Math.min(.05,raw);last=now;
+  if(state==='play'&&QUAL.mode==='auto'){QUAL.acc+=raw;QUAL.n++;QUAL.cool-=raw;if(QUAL.n>=90){const avg=QUAL.acc/QUAL.n;QUAL.acc=0;QUAL.n=0;
+    if(avg>1/45&&QUAL.scale>.6&&QUAL.cool<=0){QUAL.scale=Math.max(.6,QUAL.scale-.15);QUAL.cool=3;resize();}
+    else if(avg<1/57&&QUAL.scale<1&&QUAL.cool<=0){QUAL.scale=Math.min(1,QUAL.scale+.1);QUAL.cool=6;resize();}}}
   {const show=state==='play'&&G&&G.nearShrine>=0;if($('talkBtn').hidden===show)$('talkBtn').hidden=!show;}
   if(state==='play'&&G){syncBadge();update(dt);if(G&&G.bagOpen){bagT+=dt;if(BAG_DIRTY&&bagT>.3||bagT>1){bagT=0;renderBag();}}}
   render();syncTouch();

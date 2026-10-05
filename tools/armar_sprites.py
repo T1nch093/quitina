@@ -21,7 +21,7 @@ from PIL import Image
 from scipy import ndimage
 
 NOMBRE = "mantis"
-ALTURA_REF = 200  # alto en píxeles de la caminata en el atlas
+ALTURA_REF = 300  # alto en píxeles de la caminata en el atlas
 # (archivo, x mínima para ignorar etiquetas de texto, [(animación, y_desde, y_hasta, escala_extra)])
 HOJAS = [
     ("hojas/mantis-quieto-caminar.png", 0, [("idle", 0, 388, 1), ("walk", 388, 10000, 1)]),
