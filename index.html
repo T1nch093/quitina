@@ -557,6 +557,12 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 .swatches{display:flex;gap:8px;align-items:center;margin-top:6px}
 .sw{width:28px;height:28px;padding:0;border-radius:50%;background:var(--sw);border:2px solid #2a2017}
 .sw[aria-pressed="true"]{border-color:#ffe2b0;box-shadow:0 0 0 2px var(--amber)}
+/* detalle con comparación: lo equipado a la izquierda, lo elegido a la derecha */
+#bagDetail.pop{width:auto!important;max-width:calc(100vw - 290px)}
+.dpair{display:flex;gap:8px;align-items:stretch}
+.dpair .detail{width:240px;flex-shrink:1;min-width:0}
+.dpair .detail.cur{opacity:.92;border-color:var(--line)!important}
+@media (max-width:699px){.dpair{flex-direction:column}.dpair .detail{width:auto}#bagDetail.pop{max-width:none}}
 </style>
 </head>
 <body>
@@ -721,7 +727,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.24 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.25 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -824,7 +830,7 @@ function makeItem(slot,rar,ilvl,race,set){
   if(slot==='coraza'){b.hp=Math.round((18+ilvl*8)*m);b.armor=Math.round((4+ilvl*1.3)*m);}
   if(slot==='patas'){b.armor=Math.round((2+ilvl*.7)*m);b.spd=4+rar*2;}
   if(slot==='amuleto'){b.mp=Math.round((8+ilvl*3)*m);b.crit=2+rar*2;}
-  if(slot==='alas'){b.dmgPct=10;b.hpPct=10;b.spd=8;}
+  if(slot==='alas'){b.dmgPct=Math.round(5+rar*2.5+ilvl*.2);b.hpPct=Math.round(5+rar*2.5+ilvl*.2);b.spd=Math.round(4+rar*1.5);}
   const ex=[];const pool=AFFIX.slice();
   for(let i=0;i<rar&&slot!=='alas';i++){const a=pool.splice((Math.random()*pool.length)|0,1)[0];ex.push({k:a[0],v:Math.round(rand(a[1],a[2])*(1+ilvl*.08))});}
   const key=slot==='arma'?'arma_'+race:slot;
@@ -888,7 +894,7 @@ const WORLD={name:'Raíces podridas',num:'I',W:4800,H:3600,entry:{x:420,y:3200},
 const SAVE_KEY='quitina_save_v1';
 let SAVE={chars:[],cur:-1,sound:true};
 try{const s=JSON.parse(PortalSDK.load(SAVE_KEY));if(s&&Array.isArray(s.chars))SAVE=Object.assign(SAVE,s);}catch(e){}
-for(const c of SAVE.chars){if(!c.name)c.name=RACES[c.race].name;for(const it of [...Object.values(c.gear),...c.inv])if(it&&it.slot!=='alas'&&!it.set)it.set='quitina';
+for(const c of SAVE.chars){if(!c.name)c.name=RACES[c.race].name;for(const it of [c.gear.alas,...c.inv,...(c.stash||[])])if(it&&it.slot==='alas'&&it.b&&it.b.dmgPct===10&&it.b.spd===8){it.b.dmgPct=it.b.hpPct=Math.round(5+it.rar*2.5+it.ilvl*.2);it.b.spd=Math.round(4+it.rar*1.5);}for(const it of [...Object.values(c.gear),...c.inv])if(it&&it.slot!=='alas'&&!it.set)it.set='quitina';
   if(!c.found){c.found=[];for(let i=0;i<(c.unlocked||1)-1;i++)c.found[i]=true;}
   if(!c.attr){c.attr={fue:0,cap:0,agi:0,esn:0};c.pts=(c.lvl-1)*PTS_PER_LVL;c.sp=Math.floor(c.lvl/SKILL_EVERY);c.skl=RACES[c.race].skills.map(k=>c.lvl>=k.unlock?1:0);c.autoPts=false;c.autoI=0;}}
 function persist(){PortalSDK.save(SAVE_KEY,JSON.stringify(SAVE));}
@@ -2491,13 +2497,16 @@ function renderBag(){
   let det='';
   if(bagSel){const it=bagSel.where==='eq'?c.gear[bagSel.slot]:c.inv[bagSel.i];
     if(it){const cur=bagSel.where==='inv'?c.gear[it.slot]:null,wrong=it.slot==='arma'&&it.race&&it.race!==c.race;
-      det=`<div class="detail"><button class="px" id="bgClose" aria-label="Cerrar detalle">✕</button><img class="ic" src="${itemIcon(it.slot,it.race,it.rar,it.set)}" alt=""><div style="min-width:0"><div class="iname c${it.rar}${it.exc?' cexc':''}">${it.name}${it.plus?' +'+it.plus:''}</div><div class="muted" style="font-size:13px">${it.exc?'<span class="cexc">Excelente</span> · ':''}${RAR[it.rar]} · ${SLOT_N[it.slot]} · Nv ${it.ilvl}</div><ul>${statLines(it,cur)}</ul>${setInfo(it,c)}</div>
-      <div class="acts">${bagSel.where==='inv'?`<button class="main" id="bgEquip" ${wrong?'disabled':''}>${wrong?'No es para tu raza':'Equipar'}</button>${state==='shrine'||G.nearShrine>=0?`<button id="bgSellOne">Vender · ${fmt(sellPrice(it))} oro</button>`:'<button id="bgDrop">Tirar al suelo</button>'}`:'<span class="muted" style="font-size:14px">Equipado</span>'}</div></div>`;}}
+      const curCard=cur?`<div class="detail cur"><img class="ic" src="${itemIcon(cur.slot,cur.race,cur.rar,cur.set)}" alt=""><div style="min-width:0"><div class="eyebrow" style="font-size:10px">Equipado ahora</div><div class="iname c${cur.rar}${cur.exc?' cexc':''}">${cur.name}${cur.plus?' +'+cur.plus:''}</div><div class="muted" style="font-size:13px">${RAR[cur.rar]} · Nv ${cur.ilvl}</div><ul>${statLines(cur)}</ul>${setInfo(cur,c)}</div></div>`:'';
+      det=`<div class="dpair">${curCard}<div class="detail"><button class="px" id="bgClose" aria-label="Cerrar detalle">✕</button><img class="ic" src="${itemIcon(it.slot,it.race,it.rar,it.set)}" alt=""><div style="min-width:0"><div class="iname c${it.rar}${it.exc?' cexc':''}">${it.name}${it.plus?' +'+it.plus:''}</div><div class="muted" style="font-size:13px">${it.exc?'<span class="cexc">Excelente</span> · ':''}${RAR[it.rar]} · ${SLOT_N[it.slot]} · Nv ${it.ilvl}</div><ul>${statLines(it,cur)}</ul>${setInfo(it,c)}</div>
+      <div class="acts">${bagSel.where==='inv'?`<button class="main" id="bgEquip" ${wrong?'disabled':''}>${wrong?'No es para tu raza':'Equipar'}</button>${state==='shrine'||G.nearShrine>=0?`<button id="bgSellOne">Vender · ${fmt(sellPrice(it))} oro</button>`:'<button id="bgDrop">Tirar al suelo</button>'}`:`<button id="bgUnequip">Quitar</button><span class="muted" style="font-size:13px;align-self:center">Equipado</span>`}</div></div></div>`;}}
   $('bagDetail').innerHTML=det;
   $('bagRecent').innerHTML=G.recent.length?G.recent.map(r=>`<li><span style="color:${r.col}">${r.txt}</span><span class="muted">hace ${fmtAgo(G.t-r.t)}</span></li>`).join(''):'<li class="muted">Todavía nada.</li>';
   SLOTS.forEach(s=>{const b=$('bq-'+s);if(b)b.onclick=()=>{if(!c.gear[s])return;if(state==='shrine'&&shrineBagTap(c.gear[s],'eq'))return;bagSel=bagSel&&bagSel.where==='eq'&&bagSel.slot===s?null:{where:'eq',slot:s};renderBag();};});
   c.inv.forEach((_,i)=>{const b=$('bi-'+i);if(b)b.onclick=()=>{if(state==='shrine'&&shrineBagTap(c.inv[i],'inv'))return;bagSel=bagSel&&bagSel.where==='inv'&&bagSel.i===i?null:{where:'inv',i};renderBag();};});
   if($('bgClose'))$('bgClose').onclick=()=>{bagSel=null;renderBag();};
+  if($('bgUnequip'))$('bgUnequip').onclick=()=>{const sl=bagSel.slot,it=c.gear[sl];if(!it)return;if(sl==='arma'){toast('No puedes quedarte sin arma: equipa otra');return;}if(c.inv.length>=INV_MAX){toast('La bolsa está llena');return;}
+    c.gear[sl]=null;c.inv.push(it);G.st=charStats(c);G.P.hp=Math.min(G.P.hp,G.st.hp);G.P.mp=Math.min(G.P.mp,G.st.mp);bagSel=null;persist();sfx('loot');renderBag();};
   if($('bgSellOne'))$('bgSellOne').onclick=()=>{const it=c.inv[bagSel.i];c.gold+=sellPrice(it);c.inv.splice(bagSel.i,1);bagSel=null;persist();sfx('coin');toast('Vendido');renderBag();if(state==='shrine'&&shrineTab==='shop')renderShop();};
   if($('bgEquip'))$('bgEquip').onclick=()=>{const it=c.inv[bagSel.i],old=c.gear[it.slot];c.gear[it.slot]=it;c.inv.splice(bagSel.i,1);if(old)c.inv.push(old);
     G.st=charStats(c);G.P.hp=Math.min(G.P.hp,G.st.hp);G.P.mp=Math.min(G.P.mp,G.st.mp);bagSel=null;persist();sfx('loot');toast('Equipaste '+it.name);renderBag();};
@@ -2824,7 +2833,7 @@ function compareTier(it,c){
   if(!c||!c.gear)return 0;
   if(it.slot==='arma'&&it.race&&it.race!==c.race)return 0;
   const cur=c.gear[it.slot];if(cur===it)return 0;if(!cur)return 1;
-  const d=tierScore(it)-tierScore(cur);return d>0?1:d<0?-1:0;
+  const a=itemPower(it),b=itemPower(cur),d=a-b;if(Math.abs(d)<=Math.max(1,b*.03))return 0;return d>0?1:-1;
 }
 function slotHtml(it,slot,id,extra){
   if(!it)return `<button class="slot empty" id="${id}"><img src="${itemIcon(slot,CH().race,0)}" alt=""><span class="lbl">${SLOT_N[slot]}</span></button>`;
