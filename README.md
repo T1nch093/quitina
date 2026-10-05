@@ -9,7 +9,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor.
 - **Teclado y mouse:** WASD para moverte, clic o J para atacar, 1 · 2 · 3 habilidades, Q poción, I bolsa, C poderes, H caza automática, M mapa grande, B volver a la madriguera, Esc pausa.
 - **Celular:** arrastra en la mitad izquierda para moverte y usa los botones de la derecha.
 
-## Contenido de la versión 0.4
+## Contenido de la versión 0.5
 
 | Sistema | Estado |
 |---|---|
@@ -22,6 +22,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor.
 | Bolsa en juego | Tecla I o Tab: oro, pociones, materiales, equipo, inventario completo y botín reciente. Permite equipar y tirar objetos sin salir del mapa. |
 | Muerte | Revivir con anuncio sin penalidad, o reaparecer en el santuario perdiendo 10% del nivel en experiencia. |
 | Equipo | 6 slots (arma, casco, coraza, patas, amuleto, alas) y 5 rarezas: Común, Raro, Épico, Legendario y Mítico. |
+| Sets | 5 sets (Quitina, Ámbar, Hierro negro, Viuda negra, Ciempiés de Hueso) que se ven sobre el personaje. 3 piezas dan un bono propio; 5 piezas reducen el enfriamiento de habilidades (10% a 25%). El set del Ciempiés solo cae del jefe. |
 | Forja | Refinado de +0 a +6 con ámbar (sin riesgo) y de +6 a +9 con icor (puede fallar). Brillo a partir de +4 y +7. |
 | Fusión | 3 objetos de la misma rareza se funden en uno de rareza superior, hasta Mítico. |
 | Botín | Nombre y nivel del objeto en el suelo, con color por rareza. Tabla de probabilidades en el objeto `DROP` y visible en el Mercader. |
