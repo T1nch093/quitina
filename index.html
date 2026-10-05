@@ -3,6 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0a09">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
 <title>Quitina</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,7 +30,7 @@ html{height:100%;box-sizing:border-box}
 *,*::before,*::after{box-sizing:inherit}
 body{height:100%;margin:0;overflow:hidden;background:var(--void);color:var(--bone);font-family:var(--f-ui);font-size:16px;-webkit-user-select:none;user-select:none}
 #cv{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none}
-#safe{position:fixed;top:0;left:0;width:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none}
+#safe{position:fixed;top:0;left:0;width:0;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);padding-left:env(safe-area-inset-left,0px);padding-right:env(safe-area-inset-right,0px);visibility:hidden;pointer-events:none}
 button{font-family:var(--f-ui);font-weight:600;font-size:16px;letter-spacing:.04em;color:var(--bone);background:linear-gradient(#2a2219,#1a150f);border:1px solid var(--line);padding:10px 16px;cursor:pointer;transition:border-color .15s,background .15s}
 button:hover{border-color:var(--amber)}
 button:focus-visible{outline:2px solid var(--amber-hi);outline-offset:2px}
@@ -233,9 +240,15 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 #gameBtns{position:fixed;top:calc(env(safe-area-inset-top,0px) + 12px);right:12px;z-index:4;display:flex;gap:8px}
 button.icon{width:44px;height:44px;padding:0;display:grid;place-items:center;background:rgba(20,17,13,.8)}
 button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-#botBtn.on{border-color:var(--biolum);color:var(--biolum);box-shadow:0 0 12px rgba(88,210,192,.35)}
+#botBtn.on{border-color:var(--biolum);color:var(--biolum);background:rgba(30,70,64,.85);box-shadow:0 0 14px rgba(88,210,192,.45)}
 #botBtn.on svg{animation:spin 2.4s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+#gameBtns{right:calc(env(safe-area-inset-right,0px) + 12px)}
+.sell-row{margin:10px 0 0;width:100%;font-size:15px}
+#rotate{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 70px);transform:translateX(-50%);z-index:8;display:flex;align-items:center;gap:12px;padding:10px 12px 10px 14px;background:rgba(20,17,13,.94);border:1.5px solid var(--amber);border-radius:8px;width:max-content;max-width:calc(100vw - 24px);font-size:15px}
+#rotate svg{width:30px;height:30px;flex-shrink:0;fill:none;stroke:var(--amber-hi);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;animation:tilt 2.2s ease-in-out infinite}
+@keyframes tilt{0%,30%{transform:rotate(0)}60%,100%{transform:rotate(-90deg)}}
+#rotate button{padding:6px 10px;font-size:14px}
 /* Bolsa: cajón lateral con pestaña */
 #bagDock{position:fixed;top:0;right:0;bottom:0;width:min(390px,calc(100vw - 52px));z-index:6;transform:translateX(100%);transition:transform .22s ease-out;pointer-events:none}
 #bagDock.open{transform:translateX(0)}
@@ -247,6 +260,14 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 #bagDock:not(.open) #bag{visibility:hidden;transition:visibility 0s .22s}
 @media (pointer:coarse){#bagDock .bagtab .key{display:none}}
 @media (prefers-reduced-motion:reduce){#bagDock{transition:none}#botBtn.on svg{animation:none}}
+/* Celular apaisado: la bolsa pasa a la fila de iconos de arriba para no chocar con los botones de ataque */
+@media (orientation:landscape) and (max-height:520px){
+  #gameBtns{right:calc(env(safe-area-inset-right,0px) + 70px);top:calc(env(safe-area-inset-top,0px) + 8px)}
+  #bagDock .bagtab{top:calc(env(safe-area-inset-top,0px) + 8px);transform:none;height:44px;width:50px;left:-62px;border-right:1.5px solid var(--line);border-radius:6px}
+  #bagDock.open .bagtab{left:-58px}
+  #bagDock{width:min(430px,calc(100vw - 70px))}
+  #touch{transform:scale(.9);transform-origin:right bottom}
+}
 #bag .bag-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
 #bag .bag-head button{padding:6px 10px;font-size:14px}
 .bag-tabs{display:flex;gap:4px}
@@ -296,6 +317,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 
 <canvas id="cv" aria-label="Quitina"></canvas>
 <div id="safe"></div>
+<div id="rotate" hidden role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/></svg><span>Gira el teléfono: Quitina se juega apaisado</span><button id="rotateOk">Seguir así</button></div>
 <div id="gameBtns" hidden><button id="botBtn" class="icon" aria-label="Caza automática" aria-pressed="false" title="Caza automática (H)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 0 0-14.3-4.9"/><path d="M4 3.5V8h4.5"/><path d="M4 13a8 8 0 0 0 14.3 4.9"/><path d="M20 20.5V16h-4.5"/></svg></button><button id="pauseBtn" class="icon" aria-label="Menú y pausa" title="Menú (Esc)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></svg></button></div>
 <div id="bagDock" hidden>
 <button id="bagBtn" class="bagtab" aria-label="Bolsa" aria-expanded="false" title="Bolsa (I)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.5 7.5V6a3.5 3.5 0 0 1 7 0v1.5"/><path d="M4.8 7.5h14.4l-1.1 11.6a2.2 2.2 0 0 1-2.2 2H8.1a2.2 2.2 0 0 1-2.2-2z"/><path d="M9 12.5h6"/></svg><span class="key">I</span><span class="badge" id="bagBadge" hidden></span></button>
@@ -307,6 +329,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
   <div class="eyebrow" style="margin:14px 0 6px">Equipado</div><div id="bagEq"></div>
   <div class="section-t"><span class="eyebrow">Inventario</span><span class="muted num" id="bagCount"></span></div>
   <div class="inv" id="bagInv"></div>
+  <div id="bagSellRow"></div>
   <div id="bagDetail"></div>
   <div class="eyebrow" style="margin:16px 0 6px">Botín reciente</div><ul class="recent" id="bagRecent"></ul>
   </div>
@@ -445,7 +468,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.12 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.13 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -616,7 +639,7 @@ function charStats(c){
 
 /* ---------- Canvas ---------- */
 const cv=$('cv'),cx=cv.getContext('2d');
-let W=0,H=0,DPR=1,DD=1,ZOOM=1,SAFE_T=0,SAFE_B=0;
+let W=0,H=0,DPR=1,DD=1,ZOOM=1,SAFE_T=0,SAFE_B=0,SAFE_L=0,SAFE_R=0,LAND=false;
 /* Calidad de imagen: resolución nativa de la pantalla (hasta 3x); en modo automático baja si el equipo no llega a ~45 cuadros por segundo */
 const QUAL={mode:SAVE.quality||'auto',cap:SAVE.quality==='low'?1.5:3,scale:1,acc:0,n:0,cool:0};
 const dark=document.createElement('canvas'),dx=dark.getContext('2d');
@@ -625,7 +648,8 @@ function resize(){
   cv.width=Math.round(W*DPR);cv.height=Math.round(H*DPR);
   DD=Math.max(1,DPR*.5);dark.width=Math.round(W*DD);dark.height=Math.round(H*DD); // la sombra es un degradado suave: media resolución alcanza
   ZOOM=Math.max(.74,Math.min(1.1,Math.min(W,H)/560));
-  const sf=getComputedStyle($('safe'));SAFE_T=parseFloat(sf.paddingTop)||0;SAFE_B=parseFloat(sf.paddingBottom)||0;
+  const sf=getComputedStyle($('safe'));SAFE_T=parseFloat(sf.paddingTop)||0;SAFE_B=parseFloat(sf.paddingBottom)||0;SAFE_L=parseFloat(sf.paddingLeft)||0;SAFE_R=parseFloat(sf.paddingRight)||0;
+  LAND=W>H&&H<520; // celular apaisado
 }
 addEventListener('resize',resize);resize();
 const IS_TOUCH=matchMedia('(pointer:coarse)').matches;
@@ -1086,7 +1110,16 @@ function buildWorld(){ // determinístico: el mismo mapa en cada expedición
   });
   return {obst,spawns,decor:genDecor(rng,MW,MH,1050)};
 }
+/* ---------- App en el celular: pantalla completa y apaisado ---------- */
+let ROT_OK=false;
+function goImmersive(){
+  if(!IS_TOUCH)return;const lock=()=>{try{const p=screen.orientation&&screen.orientation.lock&&screen.orientation.lock('landscape');if(p&&p.catch)p.catch(()=>{});}catch(e){}};
+  const standalone=matchMedia('(display-mode: fullscreen), (display-mode: standalone)').matches,d=document.documentElement;
+  if(!standalone&&!document.fullscreenElement&&d.requestFullscreen){try{d.requestFullscreen({navigationUI:'hide'}).then(lock,()=>{});}catch(e){}}else lock();
+}
+function syncRotate(){const el=$('rotate');if(!el||typeof IS_TOUCH==='undefined')return;let on=false;try{on=IS_TOUCH&&!ROT_OK&&state==='play'&&innerHeight>innerWidth;}catch(e){}if(el.hidden===on)el.hidden=!on;}
 function enterWorld(start){
+  goImmersive();
   const c=CH(),st=charStats(c);if(!WORLD_CACHE)WORLD_CACHE=buildWorld();const wd=WORLD_CACHE;
   wd.spawns.forEach(s=>{s.mob=null;s.timer=0;});
   let sx=WORLD.entry.x-70,sy=WORLD.entry.y+70;
@@ -1227,7 +1260,7 @@ function startRecall(){if(!G||G.recall||G.dead)return;G.recall=2.5;G.texts.push(
 /* ---------- Asistente de caza (estilo "MU Helper") ---------- */
 function toggleBot(on){
   if(!G)return;const B=G.bot;B.on=on===undefined?!B.on:on;B.ax=G.P.x;B.ay=G.P.y;
-  G.texts.push({x:G.P.x,y:G.P.y-48,s:B.on?'Caza automática: activada':'Caza automática: desactivada',life:1.4,lvl:true});sfx(B.on?'forge_ok':'bolt');syncGameBtns();
+  sfx(B.on?'forge_ok':'bolt');syncGameBtns();
 }
 function wantDrop(d){if(d.k==='gold')return BOT.gold;if(d.k==='amber'||d.k==='ichor')return BOT.mats;return BOT.minRar<5&&d.it.rar>=BOT.minRar;}
 function botThink(dt){
@@ -1384,7 +1417,8 @@ function update(dt){
       else if(d.k==='ichor'){G.c.ichorJ+=d.v;G.ichorGot+=d.v;d.got=1;sfx('loot');G.texts.push({x:d.x,y:d.y-10,s:'+'+d.v+' icor cristalizado',life:1,heal:true});}
       else if(d.k==='item'){if(G.c.inv.length<INV_MAX){G.c.inv.push(d.it);G.loot.push(d.it);d.got=1;sfx('loot');G.texts.push({x:d.x,y:d.y-14,s:d.it.name+' · Nv '+d.it.ilvl,life:1.4,rar:d.it.rar});if(d.it.slot==='alas')G.c.bossKilled=true;}
         else if(!d.warned){d.warned=1;G.texts.push({x:d.x,y:d.y-14,s:'Inventario lleno',life:1.2,hurt:true});}}
-      if(d.got){G.recent.unshift({txt,col,t:G.t});if(G.recent.length>12)G.recent.pop();BAG_DIRTY=true;}
+      if(d.got){const r0=G.recent[0];if(d.k==='gold'&&r0&&r0.gold!==undefined&&G.t-r0.t<20){r0.gold+=d.v;r0.txt='Oro ×'+r0.gold;r0.t=G.t;}
+        else{G.recent.unshift({txt,col,t:G.t,gold:d.k==='gold'?d.v:undefined});if(G.recent.length>12)G.recent.pop();}BAG_DIRTY=true;}
     }
   }
   G.drops=G.drops.filter(d=>!d.got&&d.life>0);
@@ -1676,13 +1710,13 @@ function render(){
   // viñeta
   const vg=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.35,W/2,H/2,Math.max(W,H)*.75);vg.addColorStop(0,'rgba(0,0,0,0)');vg.addColorStop(1,'rgba(0,0,0,.55)');cx.fillStyle=vg;cx.fillRect(0,0,W,H);
   if(G.hurtFx>0){const gr=cx.createRadialGradient(W/2,H/2,Math.min(W,H)*.3,W/2,H/2,Math.max(W,H)*.7);gr.addColorStop(0,'rgba(140,20,10,0)');gr.addColorStop(1,'rgba(140,20,10,'+(G.hurtFx*1.5)+')');cx.fillStyle=gr;cx.fillRect(0,0,W,H);}
-  drawHUD(cam);drawMinimap();if(G.bigMap)drawBigMap();
+  {const W0=W;cx.save();cx.translate(SAFE_L,0);W=W0-SAFE_L-SAFE_R;drawHUD(cam);drawMinimap();W=W0;cx.restore();}if(G.bigMap)drawBigMap();
   if(joy){cx.strokeStyle='rgba(221,210,184,.3)';cx.lineWidth=2;cx.beginPath();cx.arc(joy.ox,joy.oy,48,0,7);cx.stroke();const ddx=joy.x-joy.ox,ddy=joy.y-joy.oy,l=Math.hypot(ddx,ddy),m=Math.min(l,48)/(l||1);cx.fillStyle='rgba(217,160,60,.5)';cx.beginPath();cx.arc(joy.ox+ddx*m,joy.oy+ddy*m,20,0,7);cx.fill();}
 }
 let MINIMAP=true;
 function drawMinimap(){
   if(!MINIMAP||!G)return;
-  const mw=W<600?110:IS_TOUCH?128:184,mh=mw*G.H/G.W,x=W-mw-16,y=SAFE_T+66,s=mw/G.W,P=G.P;
+  const mw=W<600?110:LAND?118:IS_TOUCH?128:184,mh=mw*G.H/G.W,x=W-mw-16,y=SAFE_T+66,s=mw/G.W,P=G.P;
   cx.save();
   cx.fillStyle='rgba(10,8,6,.82)';cx.fillRect(x-4,y-4,mw+8,mh+8);cx.strokeStyle='#6b5434';cx.lineWidth=1.5;cx.strokeRect(x-4.5,y-4.5,mw+9,mh+9);
   cx.fillStyle='#d9a03c';for(const [a,b] of [[x-6,y-6],[x+mw+2,y-6],[x-6,y+mh+2],[x+mw+2,y+mh+2]])cx.fillRect(a,b,4,4);
@@ -1712,21 +1746,19 @@ function drawHUD(cam){
   const P=G.P,st=G.st,c=G.c,top=SAFE_T,bot=H-SAFE_B;
   cx.textBaseline='alphabetic';
   const z=G.zone>=0?WORLD.zones[G.zone]:null,inSafe=G.nearShrine>=0;
-  const NARROW=W<600,tw=NARROW?W-110-56:420,topLine=Math.min(tw,W-140);
+  const NARROW=W<600,tw=NARROW?W-110-56:LAND?Math.min(420,W/2-90):420,topLine=Math.min(tw,W-140);
   cx.font='400 '+(NARROW?18:20)+'px "IM Fell English SC",serif';cx.textAlign='left';cx.fillStyle='#ddd2b8';
   cx.fillText(inSafe?WORLD.shrines[G.nearShrine].n:z?z.name:WORLD.name,16,top+30,topLine);
   cx.font='600 '+(NARROW?14:15)+'px "Barlow Semi Condensed",sans-serif';cx.fillStyle=z&&c.lvl<z.lv[0]?'#e2806a':'#9c907a';
   cx.fillText(inSafe?'Te curas · el artesano está aquí':z?'Nivel recomendado '+z.lv.join('–')+(c.lvl<z.lv[0]?' · peligroso':''):'Tierra de paso',16,top+52,tw);
-  cx.fillStyle='#9c907a';cx.fillText('Expedición '+fmtT(G.t)+'  ·  '+G.kills+' criaturas',16,top+72,tw);
+  cx.fillStyle='#9c907a';if(!LAND)cx.fillText('Expedición '+fmtT(G.t)+'  ·  '+G.kills+' criaturas',16,top+72,tw);
   // jefe
-  const b=bossNear();if(b){const bw=Math.min(460,W-40),bx=(W-bw)/2,by=top+(NARROW?190:100);cx.fillStyle='#0d0b09';cx.fillRect(bx-2,by-2,bw+4,14);cx.fillStyle='#9b3322';cx.fillRect(bx,by,bw*Math.max(0,b.hp/b.max),10);cx.strokeStyle='#6b5434';cx.strokeRect(bx-2,by-2,bw+4,14);
+  const b=bossNear();if(b){const bw=Math.min(460,W-40),bx=(W-bw)/2,by=top+(NARROW?190:LAND?84:100);cx.fillStyle='#0d0b09';cx.fillRect(bx-2,by-2,bw+4,14);cx.fillStyle='#9b3322';cx.fillRect(bx,by,bw*Math.max(0,b.hp/b.max),10);cx.strokeStyle='#6b5434';cx.strokeRect(bx-2,by-2,bw+4,14);
     cx.font='400 18px "IM Fell English SC",serif';cx.textAlign='center';cx.fillStyle='#ddd2b8';cx.fillText(FOES.ciempies.n+' · Nv '+b.lvl,W/2,by-8);}
   // indicadores de estado
   let ix=W/2;const pills=[];
-  if(G.bot.on)pills.push(['CAZA AUTOMÁTICA','#58d2c0']);
   if(P.fury>0)pills.push(['FURIA '+P.fury.toFixed(1)+' s','#ff6a3a']);
-  if(c.pts>0||c.sp>0)pills.push(['PUNTOS PARA REPARTIR'+(IS_TOUCH?'':' · C'),'#f0c46a']);
-  if(pills.length){cx.font='700 13px "Barlow Semi Condensed",sans-serif';const ws=pills.map(p=>cx.measureText(p[0]).width+22);let x=W/2-(ws.reduce((a,b)=>a+b,0)+(ws.length-1)*8)/2;const y=NARROW?top+(b?214:162):top+(b?126:16);
+  if(pills.length){cx.font='700 13px "Barlow Semi Condensed",sans-serif';const ws=pills.map(p=>cx.measureText(p[0]).width+22);let x=W/2-(ws.reduce((a,b)=>a+b,0)+(ws.length-1)*8)/2;const y=NARROW?top+(b?214:162):LAND?top+(b?104:16):top+(b?126:16);
     pills.forEach((p,i)=>{cx.fillStyle='rgba(10,8,6,.8)';cx.fillRect(x,y,ws[i],24);cx.strokeStyle=p[1];cx.lineWidth=1.5;cx.strokeRect(x+.5,y+.5,ws[i]-1,23);cx.fillStyle=p[1];cx.textAlign='center';cx.fillText(p[0],x+ws[i]/2,y+17);x+=ws[i]+8;});}
   // retorno
   if(G.recall){const w=220,x=W/2-w/2,y=H*.62;cx.fillStyle='rgba(10,8,6,.85)';cx.fillRect(x-2,y-2,w+4,14);cx.fillStyle='#d9a03c';cx.fillRect(x,y,w*(1-G.recall/2.5),10);cx.font='600 14px "Barlow Semi Condensed",sans-serif';cx.textAlign='center';cx.fillStyle='#ddd2b8';cx.fillText('Volviendo a la madriguera',W/2,y-8);}
@@ -1749,8 +1781,9 @@ function drawHUD(cam){
         cx.fillStyle='#5b9bd8';cx.textAlign='right';cx.font='600 11px "Barlow Semi Condensed",sans-serif';cx.fillText(S.mp,x+sz-4,y+sz-4);}
       else{cx.fillStyle='#9b3322';cx.beginPath();cx.ellipse(x+sz/2,y+sz/2+2,10,13,0,0,7);cx.fill();cx.fillStyle='#f3ead6';cx.font='700 14px "Barlow Semi Condensed",sans-serif';cx.fillText('x'+c.potions,x+sz/2,y+sz-4);cx.fillStyle='#d9a03c';cx.textAlign='left';cx.font='700 12px "Barlow Semi Condensed",sans-serif';cx.fillText('Q',x+4,y+13);}}
   }
-  if(G.banner){const bn=G.banner,a=Math.min(1,bn.life,(3.2-bn.life)*3);cx.globalAlpha=a;cx.textAlign='center';cx.font='400 '+(W<520?26:36)+'px "IM Fell English SC",serif';cx.fillStyle='#000';cx.fillText(bn.t,W/2+2,H*.28+2);cx.fillStyle='#f0c46a';cx.fillText(bn.t,W/2,H*.28);
-    cx.font='500 16px "Barlow Semi Condensed",sans-serif';cx.fillStyle='#c3b79e';cx.fillText(bn.sub||'',W/2,H*.28+28);cx.globalAlpha=1;}
+  if(G.banner){const bn=G.banner,a=Math.min(1,bn.life,(3.2-bn.life)*3),by=NARROW?Math.max(H*.28,top+(b?280:230)):LAND?(b?H*.7:top+104):Math.max(H*.28,top+(b?190:130));
+    cx.globalAlpha=a;cx.textAlign='center';cx.font='400 '+(W<520?24:LAND?28:36)+'px "IM Fell English SC",serif';cx.fillStyle='#000';cx.fillText(bn.t,W/2+2,by+2,W-40);cx.fillStyle='#f0c46a';cx.fillText(bn.t,W/2,by,W-40);
+    cx.font='500 16px "Barlow Semi Condensed",sans-serif';cx.fillStyle='#c3b79e';cx.fillText(bn.sub||'',W/2,by+26,W-40);cx.globalAlpha=1;}
 }
 function drawBigMap(){
   const pad=40,s=Math.min((W-pad*2)/G.W,(H-pad*2-30)/G.H),mw=G.W*s,mh=G.H*s,x=(W-mw)/2,y=(H-mh)/2+10,P=G.P,c=G.c;
@@ -1825,6 +1858,7 @@ $('rRevive').onclick=()=>PortalSDK.rewardedBreak(ok=>{if(!ok)return;G.dead=false
   state='play';showScreen(null);PortalSDK.gameplayStart();banner('Vuelves de la oscuridad','');});
 $('resumeBtn').onclick=resumeGame;
 $('pauseBtn').onclick=pauseGame;
+$('rotateOk').onclick=()=>{ROT_OK=true;syncRotate();};
 $('artBtn').onclick=()=>{SAVE.mantisArt=SAVE.mantisArt===false;persist();syncArtBtn();};
 function syncQualBtn(){$('qualBtn').textContent='Calidad: '+({auto:'automática',high:'máxima',low:'ahorro de batería'})[QUAL.mode];}
 $('qualBtn').onclick=()=>{QUAL.mode=QUAL.mode==='auto'?'high':QUAL.mode==='high'?'low':'auto';QUAL.cap=QUAL.mode==='low'?1.5:3;QUAL.scale=1;SAVE.quality=QUAL.mode;persist();syncQualBtn();resize();};
@@ -1858,6 +1892,9 @@ function renderBag(){
   let inv='';for(let i=0;i<INV_MAX;i++)inv+=c.inv[i]?slotHtml(c.inv[i],null,'bi-'+i,bagSel&&bagSel.where==='inv'&&bagSel.i===i?'sel':''):'<div class="slot empty"></div>';
   $('bagInv').innerHTML=inv;
   $('bagCount').innerHTML=c.inv.length+' / '+INV_MAX;if(!$('bagLegend')){const lg=document.createElement('div');lg.id='bagLegend';lg.innerHTML='<div class="cmp-legend"><span><i class="up"></i>Mejor nivel que lo equipado</span><span><i class="down"></i>Peor nivel</span></div>';$('bagInv').after(lg);}
+  {const com=c.inv.filter(it=>it.rar===0),g=com.reduce((a,it)=>a+sellPrice(it),0),here=G.nearShrine>=0;
+    $('bagSellRow').innerHTML=com.length?(here?`<button id="bagSell" class="sell-row">Vender ${com.length} comunes por ${fmt(g)} oro</button>`:`<p class="muted sell-row">${com.length} objetos comunes · se venden en un santuario</p>`):'';
+    if($('bagSell'))$('bagSell').onclick=()=>{c.gold+=g;c.inv=c.inv.filter(it=>it.rar!==0);bagSel=null;persist();sfx('coin');BAG_DIRTY=true;renderBag();};}
   let det='';
   if(bagSel){const it=bagSel.where==='eq'?c.gear[bagSel.slot]:c.inv[bagSel.i];
     if(it){const cur=bagSel.where==='inv'?c.gear[it.slot]:null,wrong=it.slot==='arma'&&it.race&&it.race!==c.race;
@@ -2160,7 +2197,7 @@ function frame(now){
   if(state==='play'&&QUAL.mode==='auto'){QUAL.acc+=raw;QUAL.n++;QUAL.cool-=raw;if(QUAL.n>=90){const avg=QUAL.acc/QUAL.n;QUAL.acc=0;QUAL.n=0;
     if(avg>1/45&&QUAL.scale>.6&&QUAL.cool<=0){QUAL.scale=Math.max(.6,QUAL.scale-.15);QUAL.cool=3;resize();}
     else if(avg<1/57&&QUAL.scale<1&&QUAL.cool<=0){QUAL.scale=Math.min(1,QUAL.scale+.1);QUAL.cool=6;resize();}}}
-  if(state==='play'&&G){syncBadge();update(dt);if(G&&G.bagOpen){bagT+=dt;if(BAG_DIRTY&&bagT>.3||bagT>1){bagT=0;renderBag();}}}
+  syncRotate();if(state==='play'&&G){syncBadge();update(dt);if(G&&G.bagOpen){bagT+=dt;if(BAG_DIRTY&&bagT>.3||bagT>1){bagT=0;renderBag();}}}
   render();syncTouch();
   if(state==='hub'){portraitT+=dt;if(portraitT>.06){portraitT=0;const c=CH();if(c)drawPortrait($('portrait'),c,null,null,3);}}
   requestAnimationFrame(frame);
@@ -2170,5 +2207,9 @@ window.__QUITINA__={get G(){return G;},drawPortrait,SETS,charStats,enterWorld,ne
 })();
 </script>
 
+<script>
+/* App instalable: guarda el juego para abrirlo sin conexión */
+if('serviceWorker' in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
 </body>
 </html>
