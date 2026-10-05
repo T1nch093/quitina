@@ -138,6 +138,13 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 .slot.glow2{box-shadow:0 0 14px var(--gl,#d9a03c) inset,0 0 12px var(--gl,#d9a03c);animation:pulse 1.6s ease-in-out infinite}
 @keyframes pulse{50%{box-shadow:0 0 22px var(--gl,#d9a03c) inset,0 0 20px var(--gl,#d9a03c)}}
 .slot.sel{outline:2px solid var(--bone);outline-offset:1px}
+.slot .cmp{position:absolute;top:4px;left:4px;width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;filter:drop-shadow(0 0 2px rgba(0,0,0,.9))}
+.slot .cmp.up{border-bottom:9px solid #5fd35a}
+.slot .cmp.down{border-top:9px solid #e0503a}
+.cmp-legend{display:flex;gap:14px;font-size:13px;color:var(--dim);margin-top:6px}
+.cmp-legend span{display:inline-flex;align-items:center;gap:6px}
+.cmp-legend i{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;display:inline-block}
+.cmp-legend i.up{border-bottom:8px solid #5fd35a}.cmp-legend i.down{border-top:8px solid #e0503a}
 .slot.empty img{opacity:.18}
 .inv{display:grid;grid-template-columns:repeat(auto-fill,minmax(58px,1fr));gap:6px;margin-top:8px}
 .section-t{display:flex;justify-content:space-between;align-items:baseline;margin:18px 0 4px;gap:10px}
@@ -371,7 +378,7 @@ p{line-height:1.45;color:#c3b79e;margin:6px 0}
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.6 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.7 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -1696,6 +1703,7 @@ function renderBag(){
   $('bagCount').textContent=c.inv.length+' / '+INV_MAX;
   let inv='';for(let i=0;i<INV_MAX;i++)inv+=c.inv[i]?slotHtml(c.inv[i],null,'bi-'+i,bagSel&&bagSel.where==='inv'&&bagSel.i===i?'sel':''):'<div class="slot empty"></div>';
   $('bagInv').innerHTML=inv;
+  $('bagCount').innerHTML=c.inv.length+' / '+INV_MAX;if(!$('bagLegend')){const lg=document.createElement('div');lg.id='bagLegend';lg.innerHTML='<div class="cmp-legend"><span><i class="up"></i>Mejor nivel que lo equipado</span><span><i class="down"></i>Peor nivel</span></div>';$('bagInv').after(lg);}
   let det='';
   if(bagSel){const it=bagSel.where==='eq'?c.gear[bagSel.slot]:c.inv[bagSel.i];
     if(it){const cur=bagSel.where==='inv'?c.gear[it.slot]:null,wrong=it.slot==='arma'&&it.race&&it.race!==c.race;
@@ -1845,10 +1853,19 @@ function renderMap(){
 }
 function setInfo(it,c){if(!it||!it.set)return '';const S=SETS[it.set],n=setCount(c)[it.set]||0;return `<div class="setinfo"><b>Set ${S.n}</b> · ${n}/5 equipadas<br><span class="${n>=3?'on':''}">3 piezas: ${S.d3}</span><br><span class="${n>=5?'on':''}">5 piezas: ${S.d5}</span></div>`;}
 function setSummary(c){const sc=setCount(c);const parts=Object.entries(sc).filter(([,n])=>n>=2).map(([id,n])=>{const S=SETS[id];return `<span class="setpill ${n>=3?'on':''}">${S.n} ${n}/5${n>=5?' · '+S.d5:n>=3?' · '+S.d3:''}</span>`;});return parts.length?`<div class="setsum">${parts.join('')}</div>`:'';}
+/* Flecha en la miniatura: compara el nivel del objeto (nivel, rareza y refinado) con lo equipado en ese casillero */
+function tierScore(it){return it.ilvl*100+it.rar*10+it.plus;}
+function compareTier(it,c){
+  if(!c||!c.gear)return 0;
+  if(it.slot==='arma'&&it.race&&it.race!==c.race)return 0;
+  const cur=c.gear[it.slot];if(cur===it)return 0;if(!cur)return 1;
+  const d=tierScore(it)-tierScore(cur);return d>0?1:d<0?-1:0;
+}
 function slotHtml(it,slot,id,extra){
   if(!it)return `<button class="slot empty" id="${id}"><img src="${itemIcon(slot,CH().race,0)}" alt=""><span class="lbl">${SLOT_N[slot]}</span></button>`;
   const gl=it.plus>=7?'glow2':it.plus>=4?'glow1':'';
-  return `<button class="slot r${it.rar} ${gl} ${extra||''}" id="${id}" style="--gl:${glowCol(it.plus)}" aria-label="${it.name}"><img src="${itemIcon(it.slot,it.race,it.rar,it.set)}" alt="">${it.plus?`<span class="plus">+${it.plus}</span>`:''}${slot?`<span class="lbl">${SLOT_N[slot]}</span>`:`<span class="lbl">Nv ${it.ilvl}</span>`}</button>`;
+  const cmp=slot?0:compareTier(it,CH()),cmpTxt=cmp>0?' · mejor nivel que lo equipado':cmp<0?' · peor nivel que lo equipado':'';
+  return `<button class="slot r${it.rar} ${gl} ${extra||''}" id="${id}" style="--gl:${glowCol(it.plus)}" aria-label="${it.name}${cmpTxt}" title="${it.name}${cmpTxt}"><img src="${itemIcon(it.slot,it.race,it.rar,it.set)}" alt="">${cmp?`<span class="cmp ${cmp>0?'up':'down'}" aria-hidden="true"></span>`:''}${it.plus?`<span class="plus">+${it.plus}</span>`:''}${slot?`<span class="lbl">${SLOT_N[slot]}</span>`:`<span class="lbl">Nv ${it.ilvl}</span>`}</button>`;
 }
 function statLines(it,cmp){
   const s=itemStats(it),o=cmp?itemStats(cmp):{},keys=new Set([...Object.keys(s),...Object.keys(o)]);
@@ -1865,7 +1882,7 @@ function renderGear(){
       <div class="acts">${selItem.where==='inv'?`<button class="main" id="dEquip" ${wrong?'disabled':''}>${wrong?'No es para tu raza':'Equipar'}</button><button id="dSell">Vender por ${sellPrice(it)} oro</button>`:`<button id="dUnequip">Quitar</button>`}<button id="dForge">Llevar a la forja</button></div></div>`;}}
   $('pane').innerHTML=`${setSummary(c)}<div class="section-t" style="margin-top:0"><h3>Equipado</h3><span class="muted" style="font-size:14px">Toca un objeto para ver detalles</span></div><div class="equip">${eq}</div>
   <div class="section-t"><h3>Inventario</h3><span class="muted num" style="font-size:14px">${c.inv.length} / ${INV_MAX}</span></div>
-  ${c.inv.length?`<div class="inv">${inv}</div>`:'<p class="muted">Vacío. Los enemigos sueltan equipo al morir; los de élite y los jefes siempre.</p>'}${det}`;
+  ${c.inv.length?`<div class="inv">${inv}</div><div class="cmp-legend"><span><i class="up"></i>Mejor nivel que lo equipado</span><span><i class="down"></i>Peor nivel</span></div>`:'<p class="muted">Vacío. Los enemigos sueltan equipo al morir; los de élite y los jefes siempre.</p>'}${det}`;
   SLOTS.forEach(s=>{$('eq-'+s).onclick=()=>{if(!c.gear[s])return;selItem={where:'eq',slot:s};renderGear();};});
   c.inv.forEach((_,i)=>$('iv-'+i).onclick=()=>{selItem={where:'inv',i};renderGear();});
   if($('dEquip'))$('dEquip').onclick=()=>{const it=c.inv[selItem.i];const old=c.gear[it.slot];c.gear[it.slot]=it;c.inv.splice(selItem.i,1);if(old)c.inv.push(old);selItem={where:'eq',slot:it.slot};persist();renderSheet();renderGear();};
