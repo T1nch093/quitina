@@ -729,7 +729,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.29 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.30 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -1308,7 +1308,7 @@ function drawBladeTrail(g,P){const hs=P.bladeHist;if(!hs||!hs.length)return;cons
    Atlas armado con tools/armar_mantis_sets.py desde videos de Flow (caminata de frente y espalda) y hojas de Nano Banana.
    Lo que falta en un set se anima por código sobre su caminata (ataques, golpe, muerte).
    Los sets sin arte propio usan el dibujo de otro set con un filtro de color. */
-const MS={meta:{"ref":250,"sets":{"ambar":{"walkF":[[2,2,329,289,110,288],[333,2,330,285,110,284],[665,2,329,289,110,288],[996,2,329,290,110,289],[1327,2,328,290,110,289],[1657,2,326,292,110,291],[1985,2,323,290,110,289],[2310,2,320,287,110,286],[2632,2,319,280,110,279],[2953,2,321,278,110,277],[3276,2,324,278,110,277],[3602,2,327,281,110,280]],"walkB":[[2,296,310,289,126,288],[314,296,309,293,126,292],[625,296,307,294,126,293],[934,296,305,293,126,292],[1241,296,303,290,126,289],[1546,296,305,292,126,291],[1853,296,306,289,126,288],[2161,296,306,282,126,281],[2469,296,306,276,126,275],[2777,296,308,280,126,279],[3087,296,310,281,126,280],[3399,296,310,284,126,283]]},"ciempies":{"walkF":[[3711,296,321,338,134,337],[2,636,323,334,134,333],[327,636,324,333,134,332],[653,636,324,332,134,331],[979,636,323,334,134,333],[1304,636,322,340,134,339],[1628,636,320,339,134,338],[1950,636,318,347,134,346],[2270,636,318,345,134,344],[2590,636,318,344,134,343],[2910,636,318,343,134,342],[3230,636,319,342,134,341]],"walkB":[[3551,636,295,306,189,305],[2,985,293,306,189,305],[297,985,293,302,189,301],[592,985,295,300,189,299],[889,985,298,307,189,306],[1189,985,301,312,189,311],[1492,985,302,321,189,320],[1796,985,303,325,189,324],[2101,985,303,323,189,322],[2406,985,303,314,189,313],[2711,985,299,310,189,309],[3012,985,297,305,189,304]],"atk1":[[3311,985,326,275,50,274],[3639,985,311,312,34,311],[2,1312,312,310,23,309],[316,1312,329,307,23,306]],"atk2":[[647,1312,326,275,50,274],[975,1312,342,311,90,310],[1319,1312,308,300,68,299],[1629,1312,307,302,69,301]],"atk3":[[1938,1312,342,311,90,310],[2282,1312,329,319,61,318],[2613,1312,308,300,68,299],[2923,1312,329,319,61,318],[3254,1312,329,304,24,303]],"hit":[[3585,1312,240,310,21,309],[3827,1312,240,310,21,309]],"death":[[2,1633,311,200,196,199],[315,1633,334,178,169,177],[651,1633,330,146,176,145],[983,1633,333,146,177,145]]}}},img:new Image(),ok:false,data:null,blade:{}},MS_H=104; // alto del cuerpo en el mundo (adulta)
+const MS={meta:{"ref":250,"sets":{"ambar":{"walkF":[[2,2,329,289,110,288],[333,2,330,285,110,284],[665,2,329,289,110,288],[996,2,329,290,110,289],[1327,2,328,290,110,289],[1657,2,326,292,110,291],[1985,2,323,290,110,289],[2310,2,320,287,110,286],[2632,2,319,280,110,279],[2953,2,321,278,110,277],[3276,2,324,278,110,277],[3602,2,327,281,110,280]],"walkB":[[2,296,310,289,126,288],[314,296,309,293,126,292],[625,296,307,294,126,293],[934,296,305,293,126,292],[1241,296,303,290,126,289],[1546,296,305,292,126,291],[1853,296,306,289,126,288],[2161,296,306,282,126,281],[2469,296,306,276,126,275],[2777,296,308,280,126,279],[3087,296,310,281,126,280],[3399,296,310,284,126,283]]},"ciempies":{"walkF":[[3711,296,321,338,134,337],[2,636,323,334,134,333],[327,636,324,333,134,332],[653,636,324,332,134,331],[979,636,323,334,134,333],[1304,636,322,340,134,339],[1628,636,320,339,134,338],[1950,636,318,347,134,346],[2270,636,318,345,134,344],[2590,636,318,344,134,343],[2910,636,318,343,134,342],[3230,636,319,342,134,341]],"walkB":[[3551,636,295,306,189,305],[2,985,293,306,189,305],[297,985,293,302,189,301],[592,985,295,300,189,299],[889,985,298,307,189,306],[1189,985,301,312,189,311],[1492,985,302,321,189,320],[1796,985,303,325,189,324],[2101,985,303,323,189,322],[2406,985,303,314,189,313],[2711,985,299,310,189,309],[3012,985,297,305,189,304]],"atk1":[[3311,985,326,275,50,274],[3639,985,311,312,34,311],[2,1312,312,310,23,309],[316,1312,329,307,23,306]],"atk2":[[647,1312,326,275,50,274],[975,1312,342,311,90,310],[1319,1312,308,300,68,299],[1629,1312,307,302,69,301]],"atk3":[[1938,1312,342,311,90,310],[2282,1312,329,319,61,318],[2613,1312,308,300,68,299],[2923,1312,329,319,61,318],[3254,1312,329,304,24,303]],"hit":[[3585,1312,240,310,21,309],[3827,1312,240,310,21,309]],"death":[[2,1633,311,200,196,199],[315,1633,334,178,169,177],[651,1633,330,146,176,145],[983,1633,333,146,177,145]]},"dorado":{"walkF":[[1318,1633,344,335,165,334],[1664,1633,343,335,165,334],[2009,1633,342,332,165,331],[2353,1633,342,332,165,331],[2697,1633,343,330,165,329],[3042,1633,345,325,165,324],[3389,1633,345,322,165,321],[3736,1633,345,319,165,318],[2,1970,343,321,165,320],[347,1970,341,324,165,323],[690,1970,341,333,165,332],[1033,1970,344,327,165,326]]}}},img:new Image(),ok:false,data:null,blade:{}},MS_H=104; // alto del cuerpo en el mundo (adulta)
 MS.img.onload=()=>{MS.ok=true;try{const cv=document.createElement('canvas');cv.width=MS.img.width;cv.height=MS.img.height;const g=cv.getContext('2d',{willReadFrequently:true});g.drawImage(MS.img,0,0);MS.data=g.getImageData(0,0,cv.width,cv.height);}catch(e){MS.data=null;}};MS.img.src='assets/mantis-sets.webp';
 const MS_LOOK={ // set -> [arte, filtro]
   ambar:['ambar','none'],ciempies:['ciempies','none'],
@@ -1317,16 +1317,17 @@ const MS_LOOK={ // set -> [arte, filtro]
   viuda:['ambar','grayscale(1) sepia(1) hue-rotate(-50deg) saturate(2.2) brightness(.38) contrast(1.6)']};
 function heroLook(c){const sc=c&&c.gear?setCount(c):{};let id=null;for(const k in sc)if(sc[k]>=3&&(!id||sc[k]>sc[id]))id=k;
   if(!id&&c&&c.gear&&c.gear.coraza&&c.gear.coraza.set)id=c.gear.coraza.set;if(!id||!MS_LOOK[id])id='quitina';
+  if(MS.meta.sets.dorado&&c&&c.gear&&['arma','casco','coraza','patas'].every(sl=>c.gear[sl]&&c.gear[sl].plus>=15))return {id,art:'dorado',f:'none',wings:true}; // set +15: el guerrero dorado
   const L=MS_LOOK[id];let f=L[1];if(id==='quitina'){const tf=tintFilter(c);if(tf!=='none')f=tf;}return {id,art:L[0],f};}
 function useNewArt(c){return c&&c.race==='mantis'&&MS.ok&&SAVE.mantisArt!==false;}
 function msBladeLayer(art,an,f){ // capa con los píxeles de la hoja de la guadaña, para los brillos de refinado
   const key=art+an+f;if(MS.blade[key]!==undefined)return MS.blade[key];if(!MS.data)return MS.blade[key]=null;
   const [x,y,w,h]=MS.meta.sets[art][an][f],D=MS.data,cv=document.createElement('canvas');cv.width=w;cv.height=h;const g=cv.getContext('2d'),out=g.createImageData(w,h),o=out.data;
-  const sheet=!an.startsWith('walk');let cx=w/2;
-  if(sheet){let sx=0,sn=0;for(let j=Math.floor(h*.35);j<h*.8;j++)for(let i=0;i<w;i++){if(D.data[((y+j)*D.width+x+i)*4+3]>100){sx+=i;sn++;}}if(sn)cx=sx/sn;}
+  const sheet=!an.startsWith('walk'),dor=art==='dorado';let cx=w/2;
+  if(sheet||dor){let sx=0,sn=0;for(let j=Math.floor(h*.35);j<h*.8;j++)for(let i=0;i<w;i++){if(D.data[((y+j)*D.width+x+i)*4+3]>100){sx+=i;sn++;}}if(sn)cx=sx/sn;}
   const P3=['#f4e8ff','#9a6bff','#2a1080'].map(rgbOf),pts=[];let n=0;
   for(let j=0;j<h;j++)for(let i=0;i<w;i++){const si=((y+j)*D.width+(x+i))*4,a=D.data[si+3];if(a<60)continue;const r=D.data[si],gg=D.data[si+1],b=D.data[si+2],[hh,sa,v]=hsv(r,gg,b);
-    let k=false;if(sheet)k=Math.abs(i-cx)>h*.3&&j<h*.9&&v>.35;else if(art==='ciempies')k=sa<.16&&v>.12&&v<.5;else k=sa<.2&&v>.22;
+    let k=false;if(dor)k=sa<.22&&v>.45&&j<h*.4&&i<cx-h*.08;else if(sheet)k=Math.abs(i-cx)>h*.3&&j<h*.9&&v>.35;else if(art==='ciempies')k=sa<.16&&v>.12&&v<.5;else k=sa<.2&&v>.22;
     if(!k)continue;n++;if(Math.random()<.05&&pts.length<60)pts.push([i,j]);
     const L=Math.min(1,(.3*r+.59*gg+.11*b)/255*1.35);let c0,c1,t;if(L<.5){c0=P3[2];c1=P3[1];t=L/.5;}else{c0=P3[1];c1=P3[0];t=(L-.5)/.5;}
     const di=(j*w+i)*4;o[di]=c0[0]+(c1[0]-c0[0])*t;o[di+1]=c0[1]+(c1[1]-c0[1])*t;o[di+2]=c0[2]+(c1[2]-c0[2])*t;o[di+3]=a*.9;}
@@ -1364,7 +1365,7 @@ function wingSprite(rar){
   g.fillStyle='rgba('+col+',.85)';g.beginPath();g.ellipse(L*.84,-Wd*.42,7,3,-.15,0,7);g.fill();
   return WING_CACHE[rar]=cv;}
 function msWings(g,c,fy,bh,t,back,P){
-  const it=c.gear.alas;if(!it)return;const rar=it.rar|0,W=wingSprite(rar),k=bh*(.0031+rar*.0005),beat=Math.sin(t*(P&&P.moving?7:3.2)),col=RAR_COL[rar];
+  const it=c.gear.alas;if(!it||heroLook(c).wings)return;const rar=it.rar|0,W=wingSprite(rar),k=bh*(.0031+rar*.0005),beat=Math.sin(t*(P&&P.moving?7:3.2)),col=RAR_COL[rar];
   const rx=back?-bh*.02:-bh*.1,ry=fy-bh*(back?.66:.7),pairs=rar>=2?2:1;
   g.save();g.translate(rx,ry);g.globalCompositeOperation='lighter';g.globalAlpha=back?.45:.62;g.shadowColor=col;g.shadowBlur=10;
   for(let p=0;p<pairs;p++){const base=p?.15:-.55,len=p?.78:1;
@@ -1401,8 +1402,9 @@ function bandPass(g,src,X,Y,W2,H2,ph,width,alpha,col){
 function armorPlus(c){let s=0;for(const sl of ['casco','coraza','patas']){const it=c.gear[sl];s+=it?it.plus|0:0;}return s/3;}
 function drawMirrorShine(g,c,art,an,f,X,Y,W2,H2,t){
   const L=msShineLayers(art,an,f);if(!L)return;const ap=armorPlus(c),wp=c.gear.arma?c.gear.arma.plus|0:0;
-  if(ap>=7){const k=Math.min(1,(ap-6)/4),tint=ap>=15?'#ff9ae8':ap>=13?'#e4d0ff':null;
-    g.save();g.globalCompositeOperation='lighter';g.globalAlpha=.08+.1*k;g.drawImage(L.hl,X,Y,W2,H2);g.restore();
+  const dor=art==='dorado';
+  if(ap>=7){const k=Math.min(1,(ap-6)/4)*(dor?.55:1),tint=dor?'#ffd27a':ap>=15?'#ff9ae8':ap>=13?'#e4d0ff':null;
+    g.save();g.globalCompositeOperation='lighter';g.globalAlpha=dor?0:.08+.1*k;g.drawImage(L.hl,X,Y,W2,H2);g.restore();
     const ph=(t/2.4)%1;bandPass(g,L.hl,X,Y,W2,H2,ph,W2*.1,.7+.3*k,tint);bandPass(g,L.hl,X,Y,W2,H2,ph,W2*.1,.5*k,tint);
     if(ap>=10)bandPass(g,L.hl,X,Y,W2,H2,(ph+.5)%1,W2*.07,.5,tint);}
   if(wp>=7&&L.edge){const k=Math.min(1,(wp-6)/4);

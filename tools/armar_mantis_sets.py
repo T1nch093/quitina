@@ -28,6 +28,7 @@ ALTURA_REF = 250
 VIDEOS = {  # set: {anim: archivo}
     "ambar": {"walkF": "hojas/videos/ambar-frente.mp4", "walkB": "hojas/videos/ambar-espalda.mp4"},
     "ciempies": {"walkF": "hojas/videos/ciempies-frente.mp4", "walkB": "hojas/videos/ciempies-espalda.mp4"},
+    "dorado": {"walkF": "hojas/videos/dorado-frente.mp4"},  # aspecto del set completo +15 (Gemini)
 }
 # Hoja de combate: 6 columnas x 5 filas. (anim, [(fila, columna), ...])
 HOJA = ("hojas/ciempies-combate.jpg", "ciempies", 6, 5, [
@@ -39,7 +40,7 @@ HOJA = ("hojas/ciempies-combate.jpg", "ciempies", 6, 5, [
 ])
 CUADROS_LOOP = 12
 # Ajuste fino a ojo (la medición automática se confunde con el mango de la guadaña cruzando el cuerpo)
-AJUSTE = {("ciempies", "walkF"): 1.32, ("ciempies", "walkB"): 1.0,
+AJUSTE = {("dorado", "walkF"): 1.3, ("ciempies", "walkF"): 1.32, ("ciempies", "walkB"): 1.0,
           **{("ciempies", a): 1.24 for a in ("atk1", "atk2", "atk3", "hit", "death")}}
 
 
@@ -155,6 +156,13 @@ def main():
                     f = c[..., :3].astype(float)
                     f[..., 2] = np.minimum(f[..., 2], f[..., 1] * .9)
                     f[..., 0] = np.minimum(f[..., 0], f[..., 1] * 1.18 + 8)
+                    c[..., :3] = f.clip(0, 255).astype(np.uint8)
+                if st == "dorado":  # las alas translúcidas dejan pasar el magenta: tonos salmón -> dorado
+                    c = c.copy()
+                    f = c[..., :3].astype(float)
+                    calido = (f[..., 0] - f[..., 1]) > 28
+                    f[..., 2] = np.where(calido, np.minimum(f[..., 2], f[..., 1] * .55), f[..., 2])
+                    f[..., 1] = np.where(calido, np.minimum(255, f[..., 1] * 1.06), f[..., 1])
                     c[..., :3] = f.clip(0, 255).astype(np.uint8)
                 im = Image.fromarray(c)
                 im = im.resize((max(1, round(im.width * s)), max(1, round(im.height * s))), Image.LANCZOS)
