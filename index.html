@@ -709,7 +709,6 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
       <button id="artBtn">Mantis: arte</button>
       <button id="qualBtn">Calidad: automática</button>
       <button id="uiBtn">Tamaño de la interfaz: 100%</button>
-      <button id="testSetBtn">Prueba: equipar set completo +10</button>
       <button class="danger" id="abandonBtn">Volver a la madriguera</button>
     </div>
     <div class="botset">
@@ -730,7 +729,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.28 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.29 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -906,7 +905,7 @@ function cleanName(v){return String(v||'').replace(/[^\p{L}\p{N} _-]/gu,'').trim
 function newChar(race,name,type,tint){
   const c={id:Date.now(),race,lvl:1,xp:0,stage:0,branch:null,gold:40,potions:3,amber:1,ichorJ:0,
     gear:{arma:makeItem('arma',0,1,race,'quitina'),casco:null,coraza:makeItem('coraza',0,1,race,'quitina'),patas:null,amuleto:null,alas:null},
-    name:RACES[race].name,inv:[],stash:[],found:[],bossKilled:false,pendingStage:false,attr:{fue:0,cap:0,agi:0,esn:0},pts:0,sp:0,skl:[1,0,0],autoPts:false,autoI:0};
+    name:RACES[race].name,inv:[],stash:[],found:[],gift15:true,bossKilled:false,pendingStage:false,attr:{fue:0,cap:0,agi:0,esn:0},pts:0,sp:0,skl:[1,0,0],autoPts:false,autoI:0};
   if(name)c.name=cleanName(name)||c.name;
   const T=(TYPES[race]||[]).find(x=>x.id===type);if(T){c.type=T.id;c.rec=T.rec;c.attr[T.main]+=3;}c.tint=tint|0;SAVE.chars.push(c);SAVE.cur=SAVE.chars.length-1;persist();return c;
 }
@@ -1672,6 +1671,7 @@ function drawFog(g,x,y,s,mw,mh){const cw=Math.ceil(WORLD.W/FOG_CELL),ch=Math.cei
 WORLD.npcs=WORLD.npcs||[];const QUESTS={};
 function enterWorld(start){
   goImmersive();
+  {const c0=CH();if(c0&&!c0.gift15&&grantGift(c0)){persist();setTimeout(()=>toast('Regalo: set Ciempiés de Hueso +15 con todas las opciones en tu bolsa'),900);}}
   const c=CH(),st=charStats(c);if(!WORLD_CACHE)WORLD_CACHE=buildWorld();const wd=WORLD_CACHE;
   wd.spawns.forEach(s=>{s.mob=null;s.timer=0;});
   let sx=WORLD.entry.x-70,sy=WORLD.entry.y+70;
@@ -2596,11 +2596,19 @@ $('rotateOk').onclick=()=>{ROT_OK=true;syncRotate();};
 $('artBtn').onclick=()=>{SAVE.mantisArt=SAVE.mantisArt===false;persist();syncArtBtn();};
 function syncQualBtn(){$('qualBtn').textContent='Calidad: '+({auto:'automática',high:'máxima',low:'ahorro de batería'})[QUAL.mode];}
 /* Tamaño de la interfaz (80–130%): escala bolsa, Brugo, botones y HUD */
+/* Regalo único para los personajes existentes: set Ciempiés de Hueso completo +15 con todas las opciones */
+function fullOptSet(c){const lv=Math.max(c.lvl||1,20),out=[];
+  for(const sl of ['arma','casco','coraza','patas','amuleto']){const it=makeItem(sl,4,lv,c.race,'ciempies');it.plus=15;it.luck=true;
+    it.ex=AFFIX.map(a=>({k:a[0],v:Math.round(a[2]*(1+lv*.08))}));
+    it.exc=EXC_OPT.map(o=>({k:o.k,v:o.r[1]}));for(const k in it.b)if(k!=='spd'&&k!=='crit')it.b[k]=Math.round(it.b[k]*1.15);out.push(it);}
+  return out;}
+function grantGift(c){
+  if(c.gift15)return false;c.stash=c.stash||[];const set=fullOptSet(c);
+  const order=c.inv.slice().sort((a,b)=>itemPower(a)-itemPower(b));let i=0;
+  while(c.inv.length>INV_MAX-set.length&&i<order.length){const it=order[i++];c.inv.splice(c.inv.indexOf(it),1);if(c.stash.length<STASH_MAX)c.stash.push(it);else c.gold=(c.gold||0)+sellPrice(it);}
+  c.inv.push(...set);c.gift15=true;return true;}
 const UI_STEPS=[.8,.9,1,1.1,1.2,1.3];let UI=UI_STEPS.includes(SAVE.ui)?SAVE.ui:1;
 function applyUI(){document.documentElement.style.setProperty('--ui',UI);$('uiBtn').textContent='Tamaño de la interfaz: '+Math.round(UI*100)+'%';}
-$('testSetBtn').onclick=()=>{if(!G)return;const c=G.c;c.stash=c.stash||[];
-  for(const sl of SLOTS){const old=c.gear[sl];if(old){if(c.inv.length<INV_MAX)c.inv.push(old);else c.stash.push(old);}const it=makeItem(sl,3,Math.max(c.lvl,15),c.race,sl==='alas'?null:'ciempies');if(sl!=='alas')it.plus=10;c.gear[sl]=it;}
-  G.st=charStats(c);G.P.hp=G.st.hp;G.P.mp=G.st.mp;persist();BAG_DIRTY=true;resumeGame();toast('Set Ciempiés de Hueso +10 equipado (prueba)');};
 $('uiBtn').onclick=()=>{UI=UI_STEPS[(UI_STEPS.indexOf(UI)+1)%UI_STEPS.length];SAVE.ui=UI;persist();applyUI();};applyUI();
 $('qualBtn').onclick=()=>{QUAL.mode=QUAL.mode==='auto'?'high':QUAL.mode==='high'?'low':'auto';QUAL.cap=QUAL.mode==='low'?1.5:3;QUAL.scale=1;SAVE.quality=QUAL.mode;persist();syncQualBtn();resize();};
 function syncArtBtn(){$('artBtn').textContent='Mantis: '+(SAVE.mantisArt===false?'dibujo clásico':'arte');}

@@ -13,7 +13,7 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 
 El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona sin conexión una vez abierto. Para instalarlo tiene que estar publicado en una dirección HTTPS (por ejemplo GitHub Pages). Desde Chrome en Android: abrir la dirección, menú ⋮ → **Instalar app** (o *Agregar a pantalla principal*). Se abre a pantalla completa y apaisado, sin barra del navegador. Si se juega desde el navegador, al entrar al mundo pide pantalla completa y gira a apaisado cuando el teléfono lo permite.
 
-## Contenido de la versión 0.28
+## Contenido de la versión 0.29
 
 | Sistema | Estado |
 |---|---|
@@ -42,7 +42,8 @@ El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona s
 | Crear criatura | Linaje, **tipo** (Mantis: Segadora, Acechadora, Coracera; Polilla: Bruja, Ceniza, Capullo; +3 al atributo principal y receta de reparto propia), **color del caparazón** (Musgo, Ámbar, Ceniza, Sangre, Noche) y nombre. |
 | Niebla de guerra | El mapa arranca oscuro y se descubre al recorrerlo (se guarda por criatura). Minimapa y mapa grande muestran santuarios, botín y enemigos solo en lo descubierto (enemigos cercanos). Los viajes solo llevan a lugares ya descubiertos. |
 | Mapas del reino | Ícono de mapa (tecla V): viajar con oro a los 5 santuarios y 5 zonas. Se puede ir desde 3 niveles por debajo del recomendado; si estás por debajo, aparece «(nivel sugerido N)» en rojo. Regiones II–V anunciadas. |
-| Set completo +10 | Dos destellos dorados giran alrededor del cuerpo dejando estela. El arma +10 suma lenguas violetas que giran sobre las guadañas. En el menú hay un botón de prueba para equipar el set Ciempiés +10. |
+| Set completo +10 | Dos destellos dorados giran alrededor del cuerpo dejando estela. El arma +10 suma lenguas violetas que giran sobre las guadañas. |
+| Regalo +15 | Los personajes creados antes de la versión 0.29 reciben una sola vez el set Ciempiés de Hueso completo (arma, casco, coraza, patas y amuleto) en +15, mítico, excelente con las 6 opciones, las 6 propiedades al máximo y Suerte. Llega a la bolsa al entrar al mundo; si está llena, lo más débil pasa al depósito. Ya no está el botón de prueba del menú. |
 | Íconos pintados | Hojas generadas con IA (fondo magenta, 3×2) en `hojas/iconos-*.jpg`; `python3 tools/armar_iconos.py` arma `assets/iconos.webp`. Sets con íconos: Ciempiés de Hueso y Hierro negro, más alas, ámbar, icor, poción y oro (también en el suelo y en los contadores). Los sets sin hoja usan el ícono dibujado. |
 | Equipo montado | El sprite de la Mantis se separa por color y altura en guadañas, cabeza, torso y patas; cada pieza equipada repinta su zona con la paleta del set (Hierro negro acero, Ámbar dorado, Viuda negra rojo oscuro, Ciempiés hueso). Las alas se ven detrás y el amuleto brilla en el pecho. También en la bitácora y la madriguera. Quitina es el aspecto natural. |
 | Armas +10 a +15 | Fuego violeta solo sobre las guadañas (estilo Lineage): llamas y rayos que salen del filo, tajos violetas. +12: más capas y núcleo blanco; +13: estela de ecos del filo al moverse o atacar; +14: chispas doradas; +15: fuego violeta-rosa con más partículas. Desde +4 el filo brilla con el color del refinado. En la bolsa el casillero arde en violeta. |
