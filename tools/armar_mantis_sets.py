@@ -39,8 +39,12 @@ HOJA = ("hojas/ciempies-combate.jpg", "ciempies", 6, 5, [
     ("death", [(4, 2), (4, 3), (4, 4), (4, 5)]),
 ])
 CUADROS_LOOP = 12
+# Hojas en grilla con bordes (cuadros en orden de lectura): (archivo, set, anim, xs, ys)
+GRILLAS = [("hojas/dorado-espalda.jpg", "dorado", "walkB",
+            [(7, 457), (463, 915), (921, 1373), (1379, 1831), (1837, 2288), (2295, 2730)],
+            [(1, 502), (508, 1009), (1016, 1483)])]
 # Ajuste fino a ojo (la medición automática se confunde con el mango de la guadaña cruzando el cuerpo)
-AJUSTE = {("dorado", "walkF"): 1.3, ("ciempies", "walkF"): 1.32, ("ciempies", "walkB"): 1.0,
+AJUSTE = {("dorado", "walkF"): 1.3, ("dorado", "walkB"): 1.3, ("ciempies", "walkF"): 1.32, ("ciempies", "walkB"): 1.0,
           **{("ciempies", a): 1.24 for a in ("atk1", "atk2", "atk3", "hit", "death")}}
 
 
@@ -137,6 +141,9 @@ def main():
                 cache[(fi, co)] = recortar(a[fi * H // nf:(fi + 1) * H // nf, co * W // nc:(co + 1) * W // nc])
             out.append(cache[(fi, co)])
         crudos[st][an] = out
+    for ruta_g, st_g, an_g, xs, ys in GRILLAS:
+        a_g = np.asarray(Image.open(ruta_g).convert("RGB")).astype(float)
+        crudos[st_g][an_g] = [recortar(a_g[y0 + 4:y1 - 4, x0 + 4:x1 - 4]) for (y0, y1) in ys for (x0, x1) in xs]
     # escala: la caminata de frente de cada set define el alto del cuerpo
     anims = {}
     for st, d in crudos.items():
