@@ -730,7 +730,7 @@ button.icon svg,.bagtab svg{width:24px;height:24px;fill:none;stroke:currentColor
 (() => {
 'use strict';
 /* =====================================================================
-   QUITINA v0.27 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
+   QUITINA v0.28 — RPG de acción con insectos, mundo abierto (región I: Raíces podridas)
    ===================================================================== */
 
 /* ---------- Integración con portales (Poki / CrazyGames) ----------
@@ -1348,19 +1348,83 @@ function msPick(P,look,t){
   if(P.moving){f=Math.floor((P.walkPh||0)*.85)%wk.length;return {an,f,pose};}
   f=0;pose.sy=1+.014*Math.sin(t*2.6);pose.sx=1-.006*Math.sin(t*2.6);return {an,f,pose};}
 function msPose(g,pose,fy){g.translate(pose.dx,fy+pose.dy);g.rotate(pose.rot);g.scale(pose.sx,pose.sy);g.translate(0,-fy);}
-function msWings(g,c,fy,bh,t,back){
-  if(!c.gear.alas||!ICONS.ok)return;const pos=iconPos('extras','alas');if(!pos)return;const T=ICONS.meta.tam,flap=1+Math.sin(t*7)*.08,sz=bh*.62;
-  g.save();g.globalAlpha=back?.95:.8;g.translate(-bh*.05,fy-bh*.66);for(const sx of [-1,1]){g.save();g.scale(sx*flap,1);g.rotate(-.25);g.drawImage(ICONS.img,pos[0],pos[1],T,T,-4,-sz*.75,sz,sz);g.restore();}g.restore();}
+/* Alas equipadas: no se pega otro par de alas encima del arte (la mantis ya tiene las suyas).
+   Se dibujan alas de luz translúcidas, del color de la rareza, que nacen de los hombros y laten suave;
+   cuanto mayor la rareza, más grandes, más pares y más polvo brillante. */
+const WING_CACHE={};
+function wingSprite(rar){
+  if(WING_CACHE[rar])return WING_CACHE[rar];const col=rgbOf(RAR_COL[rar]||'#b4ad9c'),L=200,Wd=46,cv=document.createElement('canvas');cv.width=L+8;cv.height=Wd*2+8;const g=cv.getContext('2d');g.translate(4,Wd+4);
+  const shape=()=>{g.beginPath();g.moveTo(0,0);g.bezierCurveTo(L*.25,-Wd*1.05,L*.78,-Wd*.95,L,-Wd*.12);g.bezierCurveTo(L*.86,Wd*.55,L*.35,Wd*.5,0,0);};
+  const gr=g.createLinearGradient(0,0,L,0);gr.addColorStop(0,'rgba('+col+',.62)');gr.addColorStop(.55,'rgba('+col+',.28)');gr.addColorStop(1,'rgba(255,255,255,.08)');
+  shape();g.fillStyle=gr;g.fill();
+  g.save();shape();g.clip();g.strokeStyle='rgba(255,255,255,.28)';g.lineWidth=1.2;g.beginPath();
+  for(let k=1;k<12;k++){const x=L*k/12;g.moveTo(x*.9,-Wd*.05);g.quadraticCurveTo(x+6,-Wd*.5,x+14,-Wd);g.moveTo(x*.9,0);g.quadraticCurveTo(x+4,Wd*.3,x+10,Wd*.6);}
+  g.moveTo(2,-2);g.bezierCurveTo(L*.3,-Wd*.55,L*.7,-Wd*.5,L-6,-Wd*.14);g.stroke();
+  const eg=g.createLinearGradient(0,0,L,0);eg.addColorStop(0,'rgba(255,255,255,.1)');eg.addColorStop(1,'rgba(255,255,255,.55)');g.restore();
+  shape();g.strokeStyle=eg;g.lineWidth=2;g.stroke();
+  g.fillStyle='rgba('+col+',.85)';g.beginPath();g.ellipse(L*.84,-Wd*.42,7,3,-.15,0,7);g.fill();
+  return WING_CACHE[rar]=cv;}
+function msWings(g,c,fy,bh,t,back,P){
+  const it=c.gear.alas;if(!it)return;const rar=it.rar|0,W=wingSprite(rar),k=bh*(.0031+rar*.0005),beat=Math.sin(t*(P&&P.moving?7:3.2)),col=RAR_COL[rar];
+  const rx=back?-bh*.02:-bh*.1,ry=fy-bh*(back?.66:.7),pairs=rar>=2?2:1;
+  g.save();g.translate(rx,ry);g.globalCompositeOperation='lighter';g.globalAlpha=back?.45:.62;g.shadowColor=col;g.shadowBlur=10;
+  for(let p=0;p<pairs;p++){const base=p?.15:-.55,len=p?.78:1;
+    for(const sd of (back?[-1,1]:[-1,.55])){g.save();g.scale(sd<0?-1:1,1);g.rotate(base+beat*.09*(p?1:-1)-(back?0:(sd<0?.1:.35)));g.scale(k*len*Math.abs(sd)*(1+beat*.03),k*len);g.drawImage(W,-4,-W.height/2);g.restore();}}
+  g.restore();
+  if(rar>=2&&P&&Math.random()<(rar-1)*.12&&G.parts){const tx=P.x+(Math.random()<.5?-1:1)*bh*.75*P.face,ty=P.y+ry-bh*.25+rand(-12,12);G.parts.push({x:tx,y:ty,vx:rand(-8,8),vy:rand(4,20),life:.8,max:.8,c:col,s:rand(1.2,2.4),rot:0});}
+}
+/* Brillo espejado del equipo refinado: capa de reflejos (los píxeles claros del dibujo, en blanco) y el filo de la guadaña */
+function msShineLayers(art,an,f){
+  const key='S'+art+an+f;if(MS.blade[key]!==undefined)return MS.blade[key];if(!MS.data)return MS.blade[key]=null;
+  const [x,y,w,h]=MS.meta.sets[art][an][f],D=MS.data,mk=()=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c;};
+  const hl=mk(),hg=hl.getContext('2d'),ho=hg.createImageData(w,h),o=ho.data;
+  for(let j=0;j<h;j++)for(let i=0;i<w;i++){const si=((y+j)*D.width+(x+i))*4,a=D.data[si+3];if(a<120)continue;const L=(.3*D.data[si]+.59*D.data[si+1]+.11*D.data[si+2])/255,v=Math.max(0,(L-.56)/.38);if(v<=0)continue;
+    const di=(j*w+i)*4;o[di]=o[di+1]=o[di+2]=255;o[di+3]=Math.min(255,Math.pow(v,1.8)*255*(a/255));}
+  hg.putImageData(ho,0,0);
+  let edge=null;const B=msBladeLayer(art,an,f);
+  if(B){const bd=B.getContext('2d').getImageData(0,0,w,h).data,eg=mk(),ec=eg.getContext('2d'),eo=ec.createImageData(w,h),q=eo.data,pts=[];
+    const al=(i,j)=>i<0||j<0||i>=w||j>=h?0:bd[(j*w+i)*4+3];
+    for(let j=0;j<h;j++)for(let i=0;i<w;i++){if(al(i,j)<60)continue;const si=((y+j)*D.width+(x+i))*4;
+      if(al(i-2,j)<30||al(i+2,j)<30||al(i,j-2)<30||al(i,j+2)<30){if(D.data[si+3]<60)continue;
+        // borde de la hoja que da al vacío del dibujo, no al cuerpo
+        if(D.data[((y+Math.max(0,j-3))*D.width+x+i)*4+3]>80&&D.data[((y+Math.min(h-1,j+3))*D.width+x+i)*4+3]>80&&D.data[((y+j)*D.width+x+Math.max(0,i-3))*4+3]>80&&D.data[((y+j)*D.width+x+Math.min(w-1,i+3))*4+3]>80)continue;
+        const di=(j*w+i)*4;q[di]=q[di+1]=q[di+2]=255;q[di+3]=235;if(Math.random()<.08&&pts.length<40)pts.push([i,j]);}}
+    ec.putImageData(eo,0,0);edge=eg;edge.pts=pts;}
+  return MS.blade[key]={hl,edge};}
+const SHINE={cv:document.createElement('canvas'),stars:[]};
+function bandPass(g,src,X,Y,W2,H2,ph,width,alpha,col){
+  const cv=SHINE.cv,w=Math.ceil(W2),h=Math.ceil(H2);if(cv.width<w||cv.height<h){cv.width=Math.max(cv.width,w);cv.height=Math.max(cv.height,h);}
+  const e=cv.getContext('2d');e.setTransform(1,0,0,1,0,0);e.globalCompositeOperation='source-over';e.clearRect(0,0,cv.width,cv.height);e.drawImage(src,0,0,w,h);
+  e.globalCompositeOperation='destination-in';const d=(w+h)*1.4,cx=-h*.4+ph*d,lg=e.createLinearGradient(cx-width,0,cx+width,h*.6);
+  lg.addColorStop(0,'rgba(255,255,255,0)');lg.addColorStop(.5,'rgba(255,255,255,1)');lg.addColorStop(1,'rgba(255,255,255,0)');e.fillStyle=lg;e.fillRect(0,0,w,h);
+  if(col){e.globalCompositeOperation='source-atop';e.globalAlpha=.45;e.fillStyle=col;e.fillRect(0,0,w,h);e.globalAlpha=1;}
+  g.save();g.globalCompositeOperation='lighter';g.globalAlpha=alpha;g.drawImage(cv,0,0,w,h,X,Y,W2,H2);g.restore();}
+function armorPlus(c){let s=0;for(const sl of ['casco','coraza','patas']){const it=c.gear[sl];s+=it?it.plus|0:0;}return s/3;}
+function drawMirrorShine(g,c,art,an,f,X,Y,W2,H2,t){
+  const L=msShineLayers(art,an,f);if(!L)return;const ap=armorPlus(c),wp=c.gear.arma?c.gear.arma.plus|0:0;
+  if(ap>=7){const k=Math.min(1,(ap-6)/4),tint=ap>=15?'#ff9ae8':ap>=13?'#e4d0ff':null;
+    g.save();g.globalCompositeOperation='lighter';g.globalAlpha=.08+.1*k;g.drawImage(L.hl,X,Y,W2,H2);g.restore();
+    const ph=(t/2.4)%1;bandPass(g,L.hl,X,Y,W2,H2,ph,W2*.1,.7+.3*k,tint);bandPass(g,L.hl,X,Y,W2,H2,ph,W2*.1,.5*k,tint);
+    if(ap>=10)bandPass(g,L.hl,X,Y,W2,H2,(ph+.5)%1,W2*.07,.5,tint);}
+  if(wp>=7&&L.edge){const k=Math.min(1,(wp-6)/4);
+    g.save();g.globalCompositeOperation='lighter';g.shadowColor='#ffffff';g.shadowBlur=8+8*k;g.globalAlpha=(.5+.4*k)*(.8+.2*Math.sin(t*9));g.drawImage(L.edge,X,Y,W2,H2);g.globalAlpha*=.6;g.drawImage(L.edge,X,Y,W2,H2);g.restore();
+    bandPass(g,L.edge,X,Y,W2,H2,(t/1.1)%1,W2*.12,1,null);
+    if(wp>=10&&L.edge.pts.length&&Math.random()<.06)SHINE.stars.push({p:L.edge.pts[(Math.random()*L.edge.pts.length)|0],t:0});
+    for(const st of SHINE.stars){const sx=X+st.p[0]*W2/L.edge.width,sy=Y+st.p[1]*H2/L.edge.height,a=Math.sin(Math.min(1,st.t/.3)*Math.PI),r=(5+4*k)*a;
+      g.save();g.globalCompositeOperation='lighter';g.globalAlpha=a;g.fillStyle='#fff';g.shadowColor='#fff';g.shadowBlur=8;g.beginPath();g.moveTo(sx-r,sy);g.lineTo(sx,sy-r*.18);g.lineTo(sx+r,sy);g.lineTo(sx,sy+r*.18);g.closePath();g.fill();g.beginPath();g.moveTo(sx,sy-r);g.lineTo(sx+r*.18,sy);g.lineTo(sx,sy+r);g.lineTo(sx-r*.18,sy);g.closePath();g.fill();g.restore();}}
+  for(const st of SHINE.stars)st.t+=1/60;SHINE.stars=SHINE.stars.filter(s=>s.t<.3);
+}
 function drawMantisSets(g,P,c,fy){
   const look=heroLook(c),t=G.t,{an,f,pose}=msPick(P,look,t),fr=MS.meta.sets[look.art][an][f];if(!fr)return;
   const [x,y,w,h,ax,ay]=fr,s=MS_H/MS.meta.ref*[.8,.9,1][c.stage],bh=MS_H*[.8,.9,1][c.stage];
   if(!G.dead)drawBladeTrail(g,P);
   g.save();g.scale(P.face,1);msPose(g,pose,fy);g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';
   const X=-ax*s,Y=fy-ay*s,W2=w*s,H2=h*s,en=enchantLvl(c);
-  if(!G.dead&&P.back)msWings(g,c,fy,bh,t,true);
+  if(!G.dead&&!P.back)msWings(g,c,fy,bh,t,false,P);
   if(look.f!=='none')g.filter=look.f+(pose.dark?' brightness('+(1-pose.dark)+')':'');else if(pose.dark)g.filter='brightness('+(1-pose.dark)+')';
   g.drawImage(MS.img,x,y,w,h,X,Y,W2,H2);g.filter='none';
-  if(!G.dead&&!P.back)msWings(g,c,fy,bh,t,false);
+  if(!G.dead)drawMirrorShine(g,c,look.art,an,f,X,Y,W2,H2,t);
+  if(!G.dead&&P.back)msWings(g,c,fy,bh,t,true,P);
   const wp=c.gear.arma;if(wp&&wp.plus>=4&&!G.dead){const L=msBladeLayer(look.art,an,f);if(L){
     const tt=performance.now()/1000,col=glowCol(wp.plus);g.save();g.globalCompositeOperation='lighter';
     if(en){const n=en>=12?4:3,sc=en>=15?'#ff4ad0':en>=12?'#b08aff':'#8a5cff';if(en>=15)g.filter='hue-rotate(45deg) saturate(1.4)';
@@ -1377,7 +1441,7 @@ function drawMantisSets(g,P,c,fy){
 function drawMantisSetsPortrait(g,c,w,h){
   const look=heroLook(c),S=MS.meta.sets[look.art],fr=S.walkF[0],[x,y,fw,fh,ax,ay]=fr,k=Math.min(w*.86/fw,h*.88/fh),t=performance.now()/1000,br=1+.014*Math.sin(t*2.6);
   g.save();softShadow(g,w/2,h*.93,w*.22,h*.04,.6);g.translate(w/2,h*.93);g.scale(1/br*1.006,br);
-  const bh=MS.meta.ref*k;msWings(g,c,0,bh,t,false);g.filter=look.f;g.drawImage(MS.img,x,y,fw,fh,-ax*k,-ay*k,fw*k,fh*k);g.filter='none';g.restore();}
+  const bh=MS.meta.ref*k;msWings(g,c,0,bh,t,false,null);g.filter=look.f;g.drawImage(MS.img,x,y,fw,fh,-ax*k,-ay*k,fw*k,fh*k);g.filter='none';drawMirrorShine(g,c,look.art,'walkF',0,-ax*k,-ay*k,fw*k,fh*k,t);g.restore();}
 function drawMantisSprite(g,P,c,fy){
   if(MS.ok)return drawMantisSets(g,P,c,fy);
   const A=SPR.meta.anims;let name='idle',f=0;
