@@ -13,11 +13,11 @@ Abre `index.html` en el navegador. No necesita instalación ni servidor. La carp
 
 El juego es una app web instalable (PWA): tiene manifiesto, íconos y funciona sin conexión una vez abierto. Para instalarlo tiene que estar publicado en una dirección HTTPS (por ejemplo GitHub Pages). Desde Chrome en Android: abrir la dirección, menú ⋮ → **Instalar app** (o *Agregar a pantalla principal*). Se abre a pantalla completa y apaisado, sin barra del navegador. Si se juega desde el navegador, al entrar al mundo pide pantalla completa y gira a apaisado cuando el teléfono lo permite.
 
-## Contenido de la versión 0.26
+## Contenido de la versión 0.27
 
 | Sistema | Estado |
 |---|---|
-| Sprites | La Mantis usa sprites animados del arte conceptual: quieto (4), caminar (8), tajada frontal (golpe simple y Embestida), tajada hacia arriba (Furia), tajada giratoria (Torbellino), golpe recibido y muerte. Una dirección espejada. Los sets se marcan con un brillo del color del set; el retrato de la madriguera sigue mostrando cada pieza. En la pausa se puede volver al dibujo clásico. |
+| Sprites | La Mantis nueva lleva una guadaña de dos manos y se ve en **4 direcciones**: de frente al bajar y de espalda al subir (también al atacar hacia arriba), espejada a izquierda y derecha. El dibujo depende del set: el que tenga 3 o más piezas equipadas o, si no, el de la coraza. Ámbar y Ciempiés tienen arte propio (caminata de frente y espalda sacada de videos de Google Flow; el Ciempiés además tiene ataques, golpe y muerte de su hoja). Lo que falta se anima por código: estocada, giro del Torbellino, retroceso al recibir golpe y caída. Quitina, Hierro negro y Viuda negra usan por ahora un dibujo existente con otro color. El brillo del refinado (+4 a +15) va sobre la hoja de la guadaña. Atlas: `tools/armar_mantis_sets.py`. En la pausa se puede volver al dibujo clásico. |
 | Personaje | Nombre propio al crear la criatura, placa con nombre y barras de vida y energía sobre la cabeza, y círculo de selección bajo los pies. La Mantis es una guerrera humanoide (hombreras, brazales con hebillas, cinturón, bolso y capa en la forma adulta) basada en el arte conceptual. |
 | Razas | Mantis (guerrera) y Polilla (hechicera) jugables. Escarabajo y Avispa anunciadas. La Mantis tiene Torbellino, Embestida y Furia (+70% de daño por 4 s). El golpe simple hace 70% del daño base. |
 | Metamorfosis | 3 etapas por raza (nivel 6 y 12). En la etapa adulta se elige una de dos ramas. |
